@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPU OPERATIONS DASHBOARD</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#0d47a1">
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+
+<body>
+
+<div class="home-top-section">
+    <div class="header">
+        <div class="header-brand">
+            <div class="header-banner">
+                <img src="images/banner.jpg" alt="Polypropylene Plant"
+                     onerror="this.parentElement.style.display='none'">
+            </div>
+
+            <img src="images/logo.png"
+                 class="logo"
+                 alt="BCPL Logo"
+                 onload="this.style.opacity=1; this.style.transform='scale(1)'">
+
+            <div class="header-titles">
+                <h3>OPERATIONS DASHBOARD</h3>
+                <div class="header-subtitle">Polypropylene Unit • BCPL</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="app-page active" id="page-home">
+
+
+<div class="today-weather-row">
+    <div class="today-weather-summary today-summary-new">
+        <div class="today-date-shift-row">
+            <div id="todayDate"></div>
+            <div class="badge" id="todayShiftBadge">Loading...</div>
+        </div>
+
+        <div id="todayReason"></div>
+    </div>
+</div>
+
+
+<div class="holiday-cards">
+    <div class="holiday-card">
+        <div class="holiday-title">Next GH</div>
+        <div id="nextGH" class="holiday-date">—</div>
+    </div>
+
+    <div class="holiday-card">
+        <div class="holiday-title">Next RH</div>
+        <div id="nextRH" class="holiday-date">—</div>
+    </div>
+</div>
+
+<div class="info-bar">
+
+    <div class="info-row">
+        <span class="info-label">Head of Department</span>
+        <span class="info-name">Sh. Pradeep Rawat</span>
+    </div>
+
+    <div class="info-row">
+        <span class="info-label">Area In-charge</span>
+        <span class="info-name">Sh. Manoj Kumar Haloi</span>
+    </div>
+
+    <div class="info-row">
+        <span class="info-label">Shift In-charge (Current)</span>
+        <span class="info-name" id="presentShiftIncharge">—</span>
+    </div>
+
+</div>
+
+
+<div id="todayNote" class="today-message"></div>
+
+<div id="alertSection" style="margin:10px;"></div>
+
+<div class="card">
+
+    <div class="row">
+    <div class="field">
+        <label>Select Category:</label>
+        <select id="categorySelector" onchange="onCategoryChange()">
+            <option value="" disabled selected>Select Category</option>
+            <option value="exec">Executive</option>
+            <option value="nonexec">Non-Executive</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Select Name:</label>
+        <select id="nameSelector" onchange="onNameChange()"></select>
+    </div>
+</div>
+
+</div>
+
+<div class="card">
+
+    <h3 id="todayTitle">Today's Shift</h3>
+    <div id="today"></div>
+</div>
+
+</div>
+
+<div class="app-page" id="page-shifts">
+
+  <div class="card">
+      <h3 id="shiftCalendarHeading">My Shift Schedule</h3>
+      <div id="next7Days" class="next7-container"></div>
+      <div id="offDayCounter" class="off-day-counter" aria-live="polite"></div>
+      <div id="ecoLeaveCounter" class="eco-leave-counter" aria-live="polite"></div>
+  </div>
+
+  <!-- Select Date & View Shift -->
+  <div class="card">
+    <h3 id="selectedTitle">Select Date & View Team Shift</h3>
+    <label>Select Date:</label>
+    <input type="date" id="datePicker" onchange="renderSelected()">
+    <div id="selected" style="margin-top:10px;"></div>
+  </div>
+
+</div>
+
+
+<div class="app-page" id="page-plant">
+  <div class="card plant-page-card">
+    <h3 id="plantHeader">Major Equipment Status</h3>
+
+    <div id="plantMajorCards" class="plant-major-grid"></div>
+
+    <div id="plantFpuCards" class="plant-fpu-grid"></div>
+
+    <div id="plantDataNote" class="plant-data-note" role="status"></div>
+  </div>
+</div>
+
+<div class="app-page" id="page-production">
+
+<div class="card production-grade-card">
+    <h3>Current Production Grade</h3>
+    <div id="currentProductionGrade">Loading...</div>
+    <div id="productionGradeSince" class="production-grade-since"></div>
+</div>
+
+<div class="info-card production-card">
+
+    <h3 id="productionPlanHeader">Production Plan for <span id="productionPlanMonth">—</span></h3>
+
+    <div id="productionTargets" class="production-targets">
+    </div>
+
+    <div id="productionEmpty" class="production-empty">
+    Production plan not received yet
+</div>
+
+<div class="production-table-wrap" id="productionTableWrap">
+
+    <table class="production-table">
+
+        <thead>
+            <tr>
+                <th>Duration</th>
+                <th>Days</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+
+        <tbody id="productionPlanBody">
+        </tbody>
+
+    </table>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="app-page" id="page-training">
+<div class="card"><h3 id="trainingHeader">Training Schedule</h3>
+    <div id="trainingSection">Loading...</div>
+</div>
+
+</div>
+
+<div class="app-page" id="page-more">
+  <div class="card">
+    <h3>More</h3>
+    <div class="more-menu">
+      <button type="button" onclick="navigateToPage('ims')">
+        IMS Targets
+      </button>
+      <button type="button" onclick="navigateToPage('others')">
+        Others & Settings
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<div class="app-page" id="page-ims">
+  <div class="card ims-card">
+    <h3 id="imsHeader">IMS Targets</h3>
+    <div id="imsSections">
+      Loading IMS data...
+    </div>
+  </div>
+</div>
+
+
+<div class="app-page" id="page-others">
+  <div class="card settings-card">
+    <h3 id="settingsHeader">Settings &amp; App Info</h3>
+
+    <label for="displayMode">Display Mode</label>
+    <select id="displayMode">
+      <option value="light">Light Mode</option>
+      <option value="dark">Dark Mode</option>
+    </select>
+
+    <div class="settings-details">
+      <h4>App Information</h4>
+      <p><span>Application</span><span>PPU Operations Dashboard</span></p>
+      <p><span>Version</span><span>2.0.0</span></p>
+      <p><span>Developer</span><span>Debajit Das, PPU</span></p>
+      <p><span>Copyright</span><span>© 2026</span></p>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
+
+  <button type="button" class="nav-arrow nav-arrow-left"
+          id="navArrowLeft" aria-label="Scroll navigation left">
+    &#8249;
+  </button>
+
+  <div class="nav-scroll" id="navScroll">
+
+  <button type="button" class="nav-item active" data-page="home"
+          onclick="navigateToPage('home')">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 10.5 12 3l9 7.5"></path>
+      <path d="M5.5 9.5V21h13V9.5"></path>
+      <path d="M9 21v-7h6v7"></path>
+    </svg>
+    <span>Home</span>
+  </button>
+
+  <button type="button" class="nav-item" data-page="shifts"
+          onclick="navigateToPage('shifts')">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+      <path d="M16 3v4M8 3v4M3 10h18"></path>
+      <path d="m8 15 2 2 5-5"></path>
+    </svg>
+    <span>Shifts</span>
+  </button>
+
+  
+  <button type="button" class="nav-item" data-page="plant"
+          onclick="navigateToPage('plant')">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 21V5h8v16M6 5h12M10 2h4M5 21h14"/>
+      <path d="M10 9h4M10 13h4M10 17h4"/>
+      <path d="M16 8h3v5h-3"/>
+    </svg>
+    <span>Plant</span>
+  </button>
+
+  <button type="button" class="nav-item" data-page="production"
+          onclick="navigateToPage('production')">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 21V8l6 3V6l6 3V3h6v18Z"></path>
+      <path d="M7 15h2M13 15h2M18 15h1M7 18h2M13 18h2M18 18h1"></path>
+    </svg>
+    <span>Production</span>
+  </button>
+
+  <button type="button" class="nav-item" data-page="training"
+          onclick="navigateToPage('training')">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m2 8 10-5 10 5-10 5Z"></path>
+      <path d="M6 10v6c3 3 9 3 12 0v-6M22 8v7"></path>
+    </svg>
+    <span>Training</span>
+  </button>
+
+  
+<button type="button" class="nav-item" data-page="ims"
+        onclick="navigateToPage('ims')">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="9"></circle>
+    <circle cx="12" cy="12" r="5"></circle>
+    <circle cx="12" cy="12" r="1"></circle>
+  </svg>
+  <span>IMS</span>
+</button>
+
+<button type="button" class="nav-item" data-page="others"
+        onclick="navigateToPage('others')">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="3"></circle>
+    <path d="m19.4 15 .1.1 1.4 1.1-1.5 2.6-1.7-.7a8 8 0 0 1-1.5.9l-.3 1.9h-3l-.3-1.9a8 8 0 0 1-1.5-.9l-1.7.7-1.5-2.6 1.4-1.1a8 8 0 0 1 0-1.8l-1.4-1.1 1.5-2.6 1.7.7a8 8 0 0 1 1.5-.9l.3-1.9h3l.3 1.9a8 8 0 0 1 1.5.9l1.7-.7 1.5 2.6-1.4 1.1a8 8 0 0 1 0 1.7Z" transform="translate(-1 -1) scale(1.05)"></path>
+  </svg>
+  <span>Settings</span>
+</button>
+
+  </div>
+
+  <button type="button" class="nav-arrow nav-arrow-right"
+          id="navArrowRight" aria-label="Scroll navigation right">
+    &#8250;
+  </button>
+
+</nav>
+
+<div class="footer">
+    <div id="lastUpdated"></div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/alerts.js"></script>
+<script src="js/production.js"></script>
+<script src="js/ims.js"></script>
+<script src="js/holiday.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/training.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/status.js"></script>
+<script src="js/selection.js"></script>
+<script src="js/shift-data.js"></script>
+<script src="js/views.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/app.js"></script>
+<script src="js/plant.js"></script>
+
+</body>
+</html>
