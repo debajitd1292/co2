@@ -2,7 +2,7 @@
   "use strict";
 
     const CSV_URL =
-      "https://raw.githubusercontent.com/debajitd1292/ppu/main/updates/plant_status.csv";
+      "https://raw.githubusercontent.com/debajitd1292/co2/main/updates/plant_status.csv";
 
     const REFRESH_INTERVAL = 2 * 60 * 1000;
 
