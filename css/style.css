@@ -3215,9 +3215,9 @@ body.dark .non-executive-badge {
    OFF DAY COUNTER — compact single-line layout
    ========================================================= */
 #page-counters .off-day-counter {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(100, 116, 139, 0.24);
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
     font-size: 11px;
     line-height: 1.3;
 }
@@ -3417,9 +3417,9 @@ body.dark #page-counters .leave-card .eco-leave-value {
 
 /* ECO & Leaves heading — match Rest / OFF Counter separator */
 #page-counters .eco-leave-counter {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(100, 116, 139, 0.24);
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
 }
 
 #page-counters .eco-leave-heading {
@@ -3665,5 +3665,115 @@ body.dark #page-counters .new-counter-label {
 
 body.dark #page-counters .new-counter-value {
     color: #4ade80;
+}
+
+
+/* ===== DOUBLE SHIFT & TRAINING COUNTER ===== */
+
+
+#page-counters .new-counter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+#page-counters .new-counter-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+    padding: 10px 14px;
+    border: 1px solid rgba(100,116,139,.22);
+    border-radius: 12px;
+    background: rgba(148,163,184,.06);
+    line-height: 1.3;
+    box-sizing: border-box;
+}
+
+
+#page-counters .double-shift-item {
+    background: #fff0d9;
+    border: 1px solid #f3c47d;
+}
+
+#page-counters .training-tour-item {
+    background: #e0f0ff;
+    border: 1px solid #9ac8f5;
+}
+
+#page-counters .new-counter-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    color: #334155;
+}
+
+#page-counters .new-counter-value {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+#page-counters .double-shift-item .new-counter-value {
+    color: #b45309;
+}
+
+#page-counters .training-tour-item .new-counter-value {
+    color: #1d4ed8;
+}
+
+@media (max-width: 480px) {
+    #page-counters .new-counter-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Dark mode */
+body.dark #page-counters .double-shift-item {
+    background: #49351f;
+    border-color: #8b6334;
+}
+
+body.dark #page-counters .training-tour-item {
+    background: #1e3a5f;
+    border-color: #426c9e;
+}
+
+body.dark #page-counters .new-counter-label {
+    color: #e2e8f0;
+}
+
+body.dark #page-counters .double-shift-item .new-counter-value {
+    color: #fdba74;
+}
+
+body.dark #page-counters .training-tour-item .new-counter-value {
+    color: #93c5fd;
+}
+
+
+/* Match Double Shift & Training boxes to ECO / Leave height */
+#page-counters .new-counter-item {
+    padding: 6px 12px !important;
+    min-height: 0 !important;
+    height: auto !important;
+    border-width: 1px !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+}
+
+#page-counters .new-counter-label {
+    line-height: 1.2 !important;
+}
+
+#page-counters .new-counter-value {
+    line-height: 1.2 !important;
+}
+
+#page-counters .new-counter-grid {
+    gap: 6px !important;
 }
 
