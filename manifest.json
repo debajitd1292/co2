@@ -1,7 +1,7 @@
 {
   "name": "PPU Shift Dashboard",
   "short_name": "PPU",
-  "start_url": "./index.html?v=39",
+  "start_url": "./index.html?v=1",
   "display": "standalone",
   "background_color": "#0d47a1",
   "theme_color": "#0d47a1",
