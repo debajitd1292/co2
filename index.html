@@ -118,13 +118,12 @@
 
 </div>
 
+
 <div class="app-page" id="page-shifts">
 
   <div class="card">
       <h3 id="shiftCalendarHeading">My Shift Schedule</h3>
       <div id="next7Days" class="next7-container"></div>
-      <div id="offDayCounter" class="off-day-counter" aria-live="polite"></div>
-      <div id="ecoLeaveCounter" class="eco-leave-counter" aria-live="polite"></div>
   </div>
 
   <!-- Select Date & View Shift -->
@@ -133,6 +132,62 @@
     <label>Select Date:</label>
     <input type="date" id="datePicker" onchange="renderSelected()">
     <div id="selected" style="margin-top:10px;"></div>
+  </div>
+
+</div>
+
+<div class="app-page" id="page-counters">
+
+  <div class="card">
+    <h3>Employee Counters</h3>
+
+    <div class="row">
+      <div class="field">
+        <label for="countersCategorySelector">Select Category:</label>
+        <select id="countersCategorySelector" onchange="onCountersCategoryChange()">
+          <option value="" disabled>Select Category</option>
+          <option value="exec">Executive</option>
+          <option value="nonexec">Non-Executive</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="countersNameSelector">Select Name:</label>
+        <select id="countersNameSelector" onchange="onCountersNameChange()">
+          <option value="">Select Name</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Rest / OFF Counter</h3>
+    <div id="offDayCounter" class="off-day-counter" aria-live="polite"></div>
+  </div>
+
+  <div class="card">
+    <h3>ECO & Leave Counter</h3>
+    <div id="ecoLeaveCounter" class="eco-leave-counter" aria-live="polite"></div>
+  </div>
+
+  <div class="card">
+    <h3>Double Shift Counter</h3>
+    <div class="new-counter-grid">
+      <div class="new-counter-item">
+        <span class="new-counter-label">Double Shifts (AB / BC / AC)</span>
+        <span class="new-counter-value" id="doubleShiftCount">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Training / Tour Counter</h3>
+    <div class="new-counter-grid">
+      <div class="new-counter-item">
+        <span class="new-counter-label">Training / Tour (T)</span>
+        <span class="new-counter-value" id="trainingTourCount">—</span>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -273,7 +328,17 @@
     <span>Shifts</span>
   </button>
 
-  
+
+  <button type="button" class="nav-item" data-page="counters"
+          onclick="navigateToPage('counters')">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="13" r="8"></circle>
+      <path d="M12 9v4l3 2M9 2h6M12 2v3M19 6l1.5-1.5"></path>
+    </svg>
+    <span>Counters</span>
+  </button>  
+
+
   <button type="button" class="nav-item" data-page="plant"
           onclick="navigateToPage('plant')">
     <svg viewBox="0 0 24 24" aria-hidden="true">
