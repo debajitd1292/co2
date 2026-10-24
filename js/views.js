@@ -154,7 +154,6 @@ let ecoLeaveRenderToken = 0;
 
 function renderEcoLeaveCounterMarkup() {
     return `
-        <div class="eco-leave-heading">ECO &amp; Leaves Counter:</div>
         <div class="eco-leave-grid">
             <div class="eco-leave-item eco-card">
                 <span class="eco-leave-label">Total ECO</span>
@@ -172,8 +171,8 @@ async function renderEcoLeaveCounter() {
     const box = document.getElementById("ecoLeaveCounter");
     if (!box) return;
 
-    const employee = String(selectedName || "").trim();
-    const category = document.getElementById("categorySelector")?.value || "";
+    const employee = String(countersSelectedName || "").trim();
+    const category = countersSelectedCategory || "";
     const token = ++ecoLeaveRenderToken;
 
     if (!employee || !category) {
@@ -197,7 +196,10 @@ async function renderEcoLeaveCounter() {
     );
 
     if (token !== ecoLeaveRenderToken) return;
-    if (String(selectedName || "").trim() !== employee) return;
+    if (
+        String(countersSelectedName || "").trim() !== employee ||
+        countersSelectedCategory !== category
+    ) return;
 
     let ecoTotal = 0;
     let leaveTotal = 0;
@@ -594,16 +596,12 @@ function renderOffDayCounterMarkup() {
     `).join("");
 
     return `
-        <div class="off-day-counter-heading">Rest / OFF Counter:</div>
         <div class="off-day-counter-grid">${itemMarkup}</div>
         <div class="off-day-warning" id="offDayGapWarning" hidden>
             ⚠️ More than 10 working days between OFF days in the current month
         </div>
         <div class="off-day-warning" id="offDayLimitWarning" hidden>
             ⚠️ Your Rest / OFF count exceeds the prescribed limit, please contact AIC for necessary guidance
-        </div>
-        <div class="off-day-rotational-note">
-            *Applicable only to employees working in Rotational shifts
         </div>
     `;
 }
@@ -628,7 +626,7 @@ function setOffDayCounterValue(id, count, limit, complete) {
 
     animateDataOnFirstLoad(
         element,
-        `off-${selectedName}-${document.getElementById("categorySelector")?.value || ""}-${new Date().getFullYear()}-${id}`
+        `off-${countersSelectedName}-${countersSelectedCategory}-${new Date().getFullYear()}-${id}`
     );
 
 }
@@ -639,8 +637,8 @@ async function renderOffDayCounter() {
 
     box.innerHTML = renderOffDayCounterMarkup();
 
-    const selectedEmployee = String(selectedName || "").trim();
-    const category = document.getElementById("categorySelector")?.value || "";
+    const selectedEmployee = String(countersSelectedName || "").trim();
+    const category = countersSelectedCategory || "";
     const now = new Date();
     const year = now.getFullYear();
     const currentMonth = now.getMonth() + 1;
@@ -733,8 +731,8 @@ async function renderDoubleShiftAndTrainingCounter() {
 
     if (!doubleElement || !trainingElement) return;
 
-    const employee = String(selectedName || "").trim();
-    const category = document.getElementById("categorySelector")?.value || "";
+    const employee = String(countersSelectedName || "").trim();
+    const category = countersSelectedCategory || "";
     const token = ++extraCountersRenderToken;
 
     doubleElement.textContent = "—";
@@ -754,7 +752,10 @@ async function renderDoubleShiftAndTrainingCounter() {
     );
 
     if (token !== extraCountersRenderToken) return;
-    if (String(selectedName || "").trim() !== employee) return;
+    if (
+        String(countersSelectedName || "").trim() !== employee ||
+        countersSelectedCategory !== category
+    ) return;
 
     let doubleTotal = 0;
     let trainingTotal = 0;
