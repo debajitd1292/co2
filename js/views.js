@@ -354,6 +354,7 @@ function renderNext7Days(){
 
     renderOffDayCounter();
     renderEcoLeaveCounter();
+    renderDoubleShiftAndTrainingCounter();
 
     if (!header || header.length === 0 || !data || data.length === 0) {
         box.innerHTML =
@@ -715,6 +716,93 @@ async function renderOffDayCounter() {
     const limitWarning = document.getElementById("offDayLimitWarning");
     if (limitWarning) {
         limitWarning.hidden = !anyOverLimit;
+    }
+}
+
+
+
+/* =========================================================
+   DOUBLE SHIFT & TRAINING / TOUR COUNTERS
+   AB, BC, AC = double shift; T = training/tour
+   ========================================================= */
+let extraCountersRenderToken = 0;
+
+async function renderDoubleShiftAndTrainingCounter() {
+    const doubleElement = document.getElementById("doubleShiftCount");
+    const trainingElement = document.getElementById("trainingTourCount");
+
+    if (!doubleElement || !trainingElement) return;
+
+    const employee = String(selectedName || "").trim();
+    const category = document.getElementById("categorySelector")?.value || "";
+    const token = ++extraCountersRenderToken;
+
+    doubleElement.textContent = "—";
+    trainingElement.textContent = "—";
+
+    if (!employee || !category) return;
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    const today = now.getDate();
+
+    const monthlyData = await Promise.all(
+        Array.from({ length: currentMonth }, (_, index) =>
+            getOffDayMonthSchedule(category, year, index + 1)
+        )
+    );
+
+    if (token !== extraCountersRenderToken) return;
+    if (String(selectedName || "").trim() !== employee) return;
+
+    let doubleTotal = 0;
+    let trainingTotal = 0;
+    let complete = true;
+
+    for (let monthIndex = 0; monthIndex < currentMonth; monthIndex++) {
+        const monthData = monthlyData[monthIndex];
+
+        if (!monthData || !monthData.complete) {
+            complete = false;
+            break;
+        }
+
+        const employeeRow = monthData.rows.slice(1).find(row =>
+            String(row?.[0] || "").trim() === employee
+        );
+
+        if (!employeeRow) {
+            complete = false;
+            break;
+        }
+
+        const month = monthIndex + 1;
+        const daysToCount = month === currentMonth
+            ? today
+            : new Date(year, month, 0).getDate();
+
+        for (let day = 1; day <= daysToCount; day++) {
+            const column = monthData.dayColumns[day - 1];
+
+            if (column == null || column < 0) continue;
+
+            const shift = String(employeeRow[column] || "")
+                .trim()
+                .toUpperCase()
+                .replace(/\*/g, "")
+                .trim();
+
+            if (["AB", "BC", "AC"].includes(shift)) doubleTotal++;
+            if (shift === "T") trainingTotal++;
+        }
+    }
+
+    if (token !== extraCountersRenderToken) return;
+
+    if (complete) {
+        doubleElement.textContent = String(doubleTotal);
+        trainingElement.textContent = String(trainingTotal);
     }
 }
 

@@ -135,6 +135,7 @@ function init(){
     
     refresh();
     renderNext7Days();
+    syncCounterSelectors();
 
     }, 0);
 
@@ -533,12 +534,51 @@ if(alertsText !== undefined){
 }
 
 
+/* ===== COUNTERS PAGE SELECTOR SYNC ===== */
+function syncCounterSelectors() {
+    const mainCategory = document.getElementById("categorySelector");
+    const mainName = document.getElementById("nameSelector");
+    const counterCategory = document.getElementById("countersCategorySelector");
+    const counterName = document.getElementById("countersNameSelector");
+
+    if (!mainCategory || !mainName || !counterCategory || !counterName) return;
+
+    counterCategory.value = mainCategory.value;
+    counterName.innerHTML = mainName.innerHTML;
+    counterName.value = mainName.value;
+}
+
+function onCountersCategoryChange() {
+    const mainCategory = document.getElementById("categorySelector");
+    const counterCategory = document.getElementById("countersCategorySelector");
+
+    if (!mainCategory || !counterCategory) return;
+
+    mainCategory.value = counterCategory.value;
+    onCategoryChange();
+    syncCounterSelectors();
+}
+
+function onCountersNameChange() {
+    const mainName = document.getElementById("nameSelector");
+    const counterName = document.getElementById("countersNameSelector");
+
+    if (!mainName || !counterName) return;
+
+    mainName.value = counterName.value;
+    onNameChange();
+    syncCounterSelectors();
+}
+
+
+
 /* ===== DASHBOARD PAGE NAVIGATION ===== */
 
 function navigateToPage(page, addHistory = true) {
     const validPages = [
         "home",
         "shifts",
+        "counters",
         "plant",
         "production",
         "training",
@@ -691,6 +731,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const initialPage = validPages.includes(savedPage) ? savedPage : "home";
 
     navigateToPage(initialPage, false);
+    syncCounterSelectors();
     history.replaceState(
         { dashboardPage: initialPage },
         "",
