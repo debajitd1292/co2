@@ -786,9 +786,14 @@ async function renderDoubleShiftAndTrainingCounter() {
     for (let monthIndex = 0; monthIndex < currentMonth; monthIndex++) {
         const monthData = monthlyData[monthIndex];
 
-        if (!monthData || !monthData.complete) {
+        if (
+            !monthData ||
+            !monthData.complete ||
+            !monthData.rows ||
+            !monthData.dayColumns
+        ) {
             complete = false;
-            break;
+            continue;
         }
 
         const employeeRow = monthData.rows.slice(1).find(row =>
@@ -797,7 +802,7 @@ async function renderDoubleShiftAndTrainingCounter() {
 
         if (!employeeRow) {
             complete = false;
-            break;
+            continue;
         }
 
         const month = monthIndex + 1;
@@ -824,20 +829,20 @@ async function renderDoubleShiftAndTrainingCounter() {
     if (token !== extraCountersRenderToken) return;
 
     
-    if (complete) {
-        doubleElement.textContent = String(doubleTotal);
-        trainingElement.textContent = String(trainingTotal);
+    const suffix = complete ? "" : "*";
 
-        animateDataOnFirstLoad(
-            doubleElement,
-            `double-shift-${employee}-${category}-${year}`
-        );
+    doubleElement.textContent = String(doubleTotal) + suffix;
+    trainingElement.textContent = String(trainingTotal) + suffix;
 
-        animateDataOnFirstLoad(
-            trainingElement,
-            `training-tour-${employee}-${category}-${year}`
-        );
-    }
+    animateDataOnFirstLoad(
+        doubleElement,
+        `double-shift-${employee}-${category}-${year}`
+    );
+
+    animateDataOnFirstLoad(
+        trainingElement,
+        `training-tour-${employee}-${category}-${year}`
+    );
 
 }
 
