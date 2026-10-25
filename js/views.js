@@ -152,20 +152,41 @@ async function renderSelected(){
 
 let ecoLeaveRenderToken = 0;
 
+
 function renderEcoLeaveCounterMarkup() {
     return `
-        <div class="eco-leave-grid">
-            <div class="eco-leave-item eco-card">
-                <span class="eco-leave-label">Total ECO</span>
-                <span class="eco-leave-value" id="totalEcoValue">— / 26</span>
+        <div class="combined-counter-section">
+            <h3 class="combined-counter-heading">Double Shift &amp; ECO Counter</h3>
+            <div class="eco-leave-grid">
+                <div class="eco-leave-item double-shift-item">
+                    <span class="eco-leave-label">Double Shift</span>
+                    <span class="eco-leave-value double-shift-value" id="doubleShiftCount">—</span>
+                </div>
+
+                <div class="eco-leave-item eco-card">
+                    <span class="eco-leave-label">Total ECO</span>
+                    <span class="eco-leave-value" id="totalEcoValue">— / 26</span>
+                </div>
             </div>
-            <div class="eco-leave-item leave-card">
-                <span class="eco-leave-label">Total Leaves</span>
-                <span class="eco-leave-value" id="totalLeaveValue">—</span>
+        </div>
+
+        <div class="combined-counter-section">
+            <h3 class="combined-counter-heading">Training / Tour &amp; Leave Counter</h3>
+            <div class="eco-leave-grid">
+                <div class="eco-leave-item training-tour-item">
+                    <span class="eco-leave-label">Training / Tour</span>
+                    <span class="eco-leave-value training-tour-value" id="trainingTourCount">—</span>
+                </div>
+
+                <div class="eco-leave-item leave-card">
+                    <span class="eco-leave-label">Total Leaves</span>
+                    <span class="eco-leave-value" id="totalLeaveValue">—</span>
+                </div>
             </div>
         </div>
     `;
 }
+
 
 async function renderEcoLeaveCounter() {
     const box = document.getElementById("ecoLeaveCounter");
