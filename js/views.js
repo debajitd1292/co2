@@ -264,13 +264,14 @@ async function renderEcoLeaveCounter() {
                 .toUpperCase();
 
             const hasExtraEco = rawShift.includes("*");
-            const shift = rawShift.replace(/\*/g, "").trim();
+            const isHalfLeave = rawShift.includes("#");
+            const shift = rawShift.replace(/[*#]/g, "").trim();
 
             const dateKey =
                 `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
             if (shift === "L") {
-                leaveTotal++;
+                leaveTotal += isHalfLeave ? 0.5 : 1;
             }
 
             if (!shift || shift === "-" || shift === "L" || shift === "T") {
@@ -434,7 +435,7 @@ function renderNext7Days(){
         const dateStr = `${dd}-${mm}-${year}`;
 
         const rawShift = getShift(dateStr, selectedName) || "-";
-        const displayShift = rawShift.replace(/\*/g, "");
+        const displayShift = rawShift.replace(/[*#]/g, "");
 
         let shiftClass;
 
@@ -812,7 +813,7 @@ async function renderDoubleShiftAndTrainingCounter() {
             const shift = String(employeeRow[column] || "")
                 .trim()
                 .toUpperCase()
-                .replace(/\*/g, "")
+                .replace(/[*#]/g, "")
                 .trim();
 
             if (["AB", "BC", "AC"].includes(shift)) doubleTotal++;
@@ -822,10 +823,22 @@ async function renderDoubleShiftAndTrainingCounter() {
 
     if (token !== extraCountersRenderToken) return;
 
+    
     if (complete) {
         doubleElement.textContent = String(doubleTotal);
         trainingElement.textContent = String(trainingTotal);
+
+        animateDataOnFirstLoad(
+            doubleElement,
+            `double-shift-${employee}-${category}-${year}`
+        );
+
+        animateDataOnFirstLoad(
+            trainingElement,
+            `training-tour-${employee}-${category}-${year}`
+        );
     }
+
 }
 
 
