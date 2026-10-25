@@ -828,11 +828,8 @@ async function renderDoubleShiftAndTrainingCounter() {
 
     if (token !== extraCountersRenderToken) return;
 
-    
-    const suffix = complete ? "" : "*";
-
-    doubleElement.textContent = String(doubleTotal) + suffix;
-    trainingElement.textContent = String(trainingTotal) + suffix;
+    doubleElement.textContent = String(doubleTotal);
+    trainingElement.textContent = String(trainingTotal);
 
     animateDataOnFirstLoad(
         doubleElement,
