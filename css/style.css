@@ -3797,3 +3797,24 @@ body.dark #page-counters .leave-card .eco-leave-value {
         font-size: 16px;
     }
 }
+
+
+/* Separator between the two combined counter sections */
+#page-counters .combined-counter-section + .combined-counter-section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(148, 163, 184, 0.30);
+}
+
+body.dark #page-counters .combined-counter-section + .combined-counter-section {
+    border-top-color: rgba(148, 163, 184, 0.24);
+}
+
+
+/* Match Rest / OFF counter labels with Double Shift / ECO */
+#page-counters .off-day-counter .off-day-count-label,
+#page-counters .off-day-counter .off-day-counter-label {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1.3;
+}
