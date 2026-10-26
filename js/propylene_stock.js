@@ -54,7 +54,9 @@ function parseCsv(text) {
     throw new Error("Propylene Stock CSV is empty.");
   }
 
-  const headers = records.shift().map(h => h.trim());
+  const headers = records.shift().map((h, i) =>
+    (i === 0 ? h.replace(/^\uFEFF/, "") : h).trim()
+  );
 
   return records.map(values => {
     const item = {};
@@ -488,6 +490,7 @@ function initPropyleneStockCalculator() {
     }
   }
 
+  window.runPropyleneStockCalculation = calculate;
   calculateButton.addEventListener("click", calculate);
 }
 
