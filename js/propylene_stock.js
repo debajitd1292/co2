@@ -502,3 +502,102 @@ if (document.readyState === "loading") {
 } else {
   initPropyleneStockCalculator();
 }
+
+// Connect the Propylene Stock calculator to the dashboard UI
+window.calculatePropyleneStock = calculatePropyleneStock;
+
+function initPropyleneStockCalculator() {
+  const button = document.getElementById("calculatePropyleneStockBtn");
+  const resultBox = document.getElementById("propyleneStockResult");
+
+  const fields = {
+    sphereA: document.getElementById("sphereALevel"),
+    sphereB: document.getElementById("sphereBLevel"),
+    sphereC: document.getElementById("sphereCLevel")
+  };
+
+  if (!button || !resultBox ||
+      Object.values(fields).some(field => !field)) {
+    console.error("Propylene Stock calculator: HTML elements not found.");
+    return;
+  }
+
+  const storageKey = "ppuCalculator:propylene-stock:v1";
+
+  // Restore previously saved inputs
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+
+    Object.entries(fields).forEach(([key, field]) => {
+      if (saved[key] !== undefined) field.value = saved[key];
+    });
+  } catch (error) {
+    console.warn("Could not restore calculator inputs.", error);
+  }
+
+  // Automatically save inputs
+  Object.entries(fields).forEach(([key, field]) => {
+    field.addEventListener("input", () => {
+      const values = {};
+      Object.entries(fields).forEach(([name, input]) => {
+        values[name] = input.value;
+      });
+
+      localStorage.setItem(storageKey, JSON.stringify(values));
+    });
+  });
+
+  async function calculate() {
+    resultBox.classList.remove(
+      "status-low", "status-normal", "status-high"
+    );
+    resultBox.textContent = "Calculating...";
+
+    try {
+      const result = await calculatePropyleneStock({
+        sphereA: fields.sphereA.value,
+        sphereB: fields.sphereB.value,
+        sphereC: fields.sphereC.value
+      });
+
+      const stock = result.approxPumpableStockMT;
+
+      if (!Number.isFinite(stock)) {
+        throw new Error("The calculated stock is not a valid number.");
+      }
+
+      let status;
+
+      if (stock < 150) {
+        status = "status-low";
+      } else if (stock <= 600) {
+        status = "status-normal";
+      } else {
+        status = "status-high";
+      }
+
+      resultBox.classList.add(status);
+      resultBox.textContent =
+        `Approx. Pumpable Stock: ${stock.toFixed(2)} MT`;
+
+    } catch (error) {
+      resultBox.classList.remove(
+        "status-low", "status-normal", "status-high"
+      );
+      resultBox.textContent = `Calculation failed: ${error.message}`;
+      console.error("Propylene Stock calculation error:", error);
+    }
+  }
+
+  // Expose the function for the button's inline onclick
+  window.runPropyleneStockCalculation = calculate;
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    initPropyleneStockCalculator
+  );
+} else {
+  initPropyleneStockCalculator();
+}
