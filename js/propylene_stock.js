@@ -213,7 +213,7 @@ function liquidVolume(data, tableName, levelMM) {
 }
 
 // Main calculation
-export async function calculatePropyleneStock(
+async function calculatePropyleneStock(
   { sphereA, sphereB, sphereC },
   csvUrl = DEFAULT_CSV_URL
 ) {
@@ -345,3 +345,146 @@ export async function calculatePropyleneStock(
     deductionMT: 30
   };
 }
+
+
+/* ===== PPU DASHBOARD CALCULATOR INTEGRATION ===== */
+
+window.calculatePropyleneStock = calculatePropyleneStock;
+
+window.addEventListener("DOMContentLoaded", function () {
+  const calculateButton = document.getElementById("calculatePropyleneStockBtn");
+  const resultBox = document.getElementById("propyleneStockResult");
+
+  const fields = {
+    sphereA: document.getElementById("sphereALevel"),
+    sphereB: document.getElementById("sphereBLevel"),
+    sphereC: document.getElementById("sphereCLevel")
+  };
+
+  if (
+    !calculateButton ||
+    !resultBox ||
+    Object.values(fields).some(field => !field)
+  ) {
+    return;
+  }
+
+  // Each calculator must have its own unique storage key.
+  const STORAGE_KEY = "ppuCalculator:propylene-stock:v1";
+
+  function readSavedInputs() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function saveInputs() {
+    const values = {};
+
+    Object.entries(fields).forEach(([key, field]) => {
+      values[key] = field.value;
+    });
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+    } catch (error) {
+      console.warn("Could not autosave calculator inputs:", error);
+    }
+  }
+
+  // Restore previously entered levels when the page is reopened.
+  const saved = readSavedInputs();
+
+  Object.entries(fields).forEach(([key, field]) => {
+    if (saved[key] !== undefined) {
+      field.value = saved[key];
+    }
+
+    field.addEventListener("input", saveInputs);
+    field.addEventListener("change", saveInputs);
+  });
+
+  function setResultStyle(stockMT) {
+    resultBox.classList.remove(
+      "status-low",
+      "status-normal",
+      "status-high",
+      "error"
+    );
+
+    if (stockMT < 150) {
+      resultBox.classList.add("status-low");
+    } else if (stockMT <= 600) {
+      resultBox.classList.add("status-normal");
+    } else {
+      resultBox.classList.add("status-high");
+    }
+  }
+
+  async function calculate() {
+    const sphereA = fields.sphereA.value;
+    const sphereB = fields.sphereB.value;
+    const sphereC = fields.sphereC.value;
+
+    resultBox.hidden = false;
+    resultBox.classList.remove(
+      "error",
+      "status-low",
+      "status-normal",
+      "status-high"
+    );
+
+    if ([sphereA, sphereB, sphereC].some(value => value.trim() === "")) {
+      resultBox.textContent =
+        "Please enter the levels for Sphere A, Sphere B and Sphere C.";
+      resultBox.classList.add("error");
+      return;
+    }
+
+    calculateButton.disabled = true;
+    calculateButton.textContent = "Calculating…";
+    resultBox.textContent = "Calculating pumpable stock…";
+
+    try {
+      const result = await calculatePropyleneStock({
+        sphereA,
+        sphereB,
+        sphereC
+      });
+
+      const stock = result.approxPumpableStockMT;
+
+      if (!Number.isFinite(stock)) {
+        throw new Error("The calculated stock value is not valid.");
+      }
+
+      const status =
+        stock < 150 ? "Low" :
+        stock <= 600 ? "Normal" :
+        "High";
+
+      resultBox.textContent =
+        `Approx Pumpable Stock: ${stock.toFixed(2)} MT — ${status}`;
+
+      setResultStyle(stock);
+      saveInputs();
+
+    } catch (error) {
+      console.error("Propylene stock calculation failed:", error);
+
+      resultBox.textContent = error && error.message
+        ? error.message
+        : "Unable to calculate pumpable stock. Check the input levels and lookup CSV.";
+
+      resultBox.classList.add("error");
+
+    } finally {
+      calculateButton.disabled = false;
+      calculateButton.textContent = "Calculate Stock";
+    }
+  }
+
+  calculateButton.addEventListener("click", calculate);
+});
