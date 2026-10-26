@@ -351,7 +351,7 @@ async function calculatePropyleneStock(
 
 window.calculatePropyleneStock = calculatePropyleneStock;
 
-window.addEventListener("DOMContentLoaded", function () {
+function initPropyleneStockCalculator() {
   const calculateButton = document.getElementById("calculatePropyleneStockBtn");
   const resultBox = document.getElementById("propyleneStockResult");
 
@@ -429,6 +429,8 @@ window.addEventListener("DOMContentLoaded", function () {
     const sphereC = fields.sphereC.value;
 
     resultBox.hidden = false;
+    resultBox.style.display = "block";
+
     resultBox.classList.remove(
       "error",
       "status-low",
@@ -487,4 +489,13 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 
   calculateButton.addEventListener("click", calculate);
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    initPropyleneStockCalculator
+  );
+} else {
+  initPropyleneStockCalculator();
+}
