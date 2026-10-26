@@ -4573,3 +4573,6 @@ volume_config,sphere_a,,,,,,795267.5164402389
 volume_config,sphere_b,,,,,,795421.6322792309
 volume_config,sphere_c,,,,,,795553.9313226508
 volume_config,off_spec,,,,,,795091.271
+operating_parameter,sphere_a,,,10.8,,,
+operating_parameter,sphere_b,,,10.97,,,
+operating_parameter,sphere_c,,,10.82,,,
