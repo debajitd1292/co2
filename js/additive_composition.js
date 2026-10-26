@@ -1,85 +1,155 @@
 
-/* Additive Composition Calculators
+/* Additive Composition Calculator
+   Data source: calculators/additive.csv
    PPU Operations Dashboard
-   Formula: Bags = Batch (MT) × PPM / Bag Weight (kg) / 1000
 */
 
 (function () {
   "use strict";
 
-  const ADDITIVE_CONFIG = {
-    "additive-raffia": {
-      title: "Additive Composition - Raffia",
-      defaultBatch: 135,
-      additives: [
-        { name: "AO 1010", ppm: 450, bagWeight: 20 },
-        { name: "IRGAPHOS 168", ppm: 900, bagWeight: 25 },
-        { name: "DHT 4A", ppm: 300, bagWeight: 20 }
-      ]
-    },
+  const CSV_URL = "./calculators/additive.csv";
+  const STORAGE_PREFIX = "ppuCalculator:additive:";
 
-    "additive-im": {
-      title: "Additive Composition - IM",
-      defaultBatch: 220,
-      additives: [
-        { name: "AO 1010", ppm: 450, bagWeight: 20 },
-        { name: "IRGAPHOS 168", ppm: 450, bagWeight: 25 },
-        { name: "CAST", ppm: 800, bagWeight: 20 }
-      ]
-    },
-
-    "additive-tq": {
-      title: "Additive Composition - TQ",
-      defaultBatch: 100,
-      additives: [
-        { name: "AO 1010", ppm: 450, bagWeight: 20 },
-        { name: "IRGAPHOS 168", ppm: 900, bagWeight: 25 },
-        { name: "CAST", ppm: 250, bagWeight: 20 },
-        { name: "DHT 4A", ppm: 250, bagWeight: 20 },
-        { name: "Erucamide", ppm: 1300, bagWeight: 25 },
-        { name: "Oleamide", ppm: 1000, bagWeight: 25 },
-        { name: "Silobloc", ppm: 2500, bagWeight: 25 }
-      ]
-    }
+  const CATEGORY_KEYS = {
+    "Raffia": "additive-raffia",
+    "IM": "additive-im",
+    "TQ": "additive-tq"
   };
 
-  function initAdditiveCalculators() {
-    const selector = document.getElementById("calculatorType");
-    const propylenePanel = document.getElementById(
-      "propyleneStockCalculator"
-    );
+  const CATEGORY_LABELS = {
+    "Raffia": "Additive Composition - Raffia",
+    "IM": "Additive Composition - IM",
+    "TQ": "Additive Composition - TQ"
+  };
 
-    if (
-      !selector ||
-      !propylenePanel ||
-      document.getElementById("additiveCalculatorPanel")
-    ) {
-      return;
+  let additiveData = [];
+
+  function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let field = "";
+    let quoted = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const next = text[i + 1];
+
+      if (char === '"' && quoted && next === '"') {
+        field += '"';
+        i++;
+      } else if (char === '"') {
+        quoted = !quoted;
+      } else if (char === "," && !quoted) {
+        row.push(field.trim());
+        field = "";
+      } else if (
+        (char === "\n" || char === "\r") &&
+        !quoted
+      ) {
+        if (char === "\r" && next === "\n") i++;
+
+        row.push(field.trim());
+
+        if (row.some(value => value !== "")) {
+          rows.push(row);
+        }
+
+        row = [];
+        field = "";
+      } else {
+        field += char;
+      }
     }
 
-    // Add the three options to the existing dropdown.
-    Object.entries(ADDITIVE_CONFIG).forEach(([value, config]) => {
-      const exists = Array.from(selector.options).some(
-        option => option.value === value
+    if (field !== "" || row.length) {
+      row.push(field.trim());
+      if (row.some(value => value !== "")) rows.push(row);
+    }
+
+    if (!rows.length) return [];
+
+    const headers = rows.shift().map((header, index) =>
+      index === 0
+        ? header.replace(/^\uFEFF/, "").trim().toLowerCase()
+        : header.trim().toLowerCase()
+    );
+
+    return rows.map(values => {
+      const record = {};
+      headers.forEach((header, index) => {
+        record[header] = values[index] || "";
+      });
+      return record;
+    });
+  }
+
+  async function loadCSV() {
+    const response = await fetch(
+      CSV_URL + "?v=" + Date.now(),
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+      throw new Error("Could not load calculators/additive.csv");
+    }
+
+    const text = await response.text();
+    const records = parseCSV(text);
+
+    additiveData = records
+      .map(record => ({
+        category: (record.category || "").trim(),
+        name: (record.additive_name || "").trim(),
+        ppm: Number(record.ppm),
+        bagWeight: Number(record.bag_weight_kg),
+        defaultBatch: Number(record.default_batch_mt)
+      }))
+      .filter(item =>
+        CATEGORY_KEYS[item.category] &&
+        item.name &&
+        Number.isFinite(item.ppm) &&
+        item.ppm >= 0 &&
+        Number.isFinite(item.bagWeight) &&
+        item.bagWeight > 0 &&
+        Number.isFinite(item.defaultBatch) &&
+        item.defaultBatch > 0
       );
 
-      if (!exists) {
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = config.title;
-        selector.appendChild(option);
-      }
-    });
+    if (!additiveData.length) {
+      throw new Error("No valid additive records found in CSV.");
+    }
+  }
 
-    // Create the additive calculator panel.
-    const panel = document.createElement("div");
-    panel.id = "additiveCalculatorPanel";
-    panel.className = "calculator-form";
-    panel.hidden = true;
+  function readBatch(category, defaultBatch) {
+    try {
+      const saved = localStorage.getItem(
+        STORAGE_PREFIX + category
+      );
 
-    propylenePanel.insertAdjacentElement("afterend", panel);
+      return saved !== null ? saved : String(defaultBatch);
+    } catch (_) {
+      return String(defaultBatch);
+    }
+  }
 
-    // Compact styling to fit all four table columns on one line.
+  function saveBatch(category, value) {
+    try {
+      localStorage.setItem(
+        STORAGE_PREFIX + category,
+        value
+      );
+    } catch (error) {
+      console.warn("Could not save batch quantity:", error);
+    }
+  }
+
+  function formatBags(value) {
+    return value.toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
+  }
+
+  function addStyles() {
+    if (document.getElementById("additiveCalculatorStyles")) return;
+
     const style = document.createElement("style");
     style.id = "additiveCalculatorStyles";
 
@@ -202,105 +272,102 @@
     `;
 
     document.head.appendChild(style);
+  }
 
-    // Save each calculator's batch quantity separately.
-    function readBatch(key, defaultBatch) {
-      try {
-        const saved = JSON.parse(
-          localStorage.getItem("ppuCalculator:" + key + ":v1") || "{}"
-        );
+  function initCalculator() {
+    const selector = document.getElementById("calculatorType");
+    const propylenePanel = document.getElementById(
+      "propyleneStockCalculator"
+    );
 
-        return saved.batch !== undefined
-          ? saved.batch
-          : String(defaultBatch);
-      } catch (_) {
-        return String(defaultBatch);
+    if (!selector || !propylenePanel) {
+      console.error(
+        "Additive calculator: existing calculator elements not found."
+      );
+      return;
+    }
+
+    let panel = document.getElementById("additiveCalculatorPanel");
+
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.id = "additiveCalculatorPanel";
+      panel.className = "calculator-form";
+      panel.hidden = true;
+
+      propylenePanel.insertAdjacentElement("afterend", panel);
+    }
+
+    addStyles();
+
+    Object.entries(CATEGORY_KEYS).forEach(([category, key]) => {
+      const exists = Array.from(selector.options).some(
+        option => option.value === key
+      );
+
+      if (!exists) {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = CATEGORY_LABELS[category];
+        selector.appendChild(option);
       }
-    }
+    });
 
-    function saveBatch(key, batch) {
-      try {
-        localStorage.setItem(
-          "ppuCalculator:" + key + ":v1",
-          JSON.stringify({ batch })
-        );
-      } catch (error) {
-        console.warn(
-          "Could not autosave additive batch amount:",
-          error
-        );
+    function renderCalculator(category) {
+      const items = additiveData.filter(
+        item => item.category === category
+      );
+
+      if (!items.length) {
+        panel.innerHTML =
+          `<p>No additive data found for ${category}.</p>`;
+        return;
       }
-    }
 
-    function formatBags(value) {
-      return value.toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
-    }
-
-    function renderCalculator(key) {
-      const config = ADDITIVE_CONFIG[key];
-      if (!config) return;
-
-      const batchValue = readBatch(key, config.defaultBatch);
+      const defaultBatch = items[0].defaultBatch;
+      const batchValue = readBatch(category, defaultBatch);
 
       panel.innerHTML = `
-        <p class="calculator-description">
-          Enter the batch quantity to calculate the required additive bags.
-        </p>
-
         <div class="additive-batch-row">
-          <label
-            class="additive-batch-label"
-            for="additiveBatchAmount"
-          >Batch to be prepared for</label>
+          <label class="additive-batch-label"
+                 for="additiveBatchAmount">
+            Batch to be prepared for
+          </label>
 
-          <input
-            class="additive-batch-input"
-            id="additiveBatchAmount"
-            type="number"
-            inputmode="decimal"
-            min="0"
-            step="any"
-            value="${batchValue}"
-            aria-label="Batch to be prepared for, in metric tonnes"
-          >
+          <input class="additive-batch-input"
+                 id="additiveBatchAmount"
+                 type="number"
+                 inputmode="decimal"
+                 min="0"
+                 step="any"
+                 value="${batchValue}"
+                 aria-label="Batch to be prepared for, in MT">
 
           <span class="additive-batch-unit">MT</span>
         </div>
 
-        <button
-          type="button"
-          id="calculateAdditiveBagsBtn"
-          class="calculator-action additive-calculate-button"
-        >Calculate Bags</button>
+        <button type="button"
+                id="calculateAdditiveBagsBtn"
+                class="calculator-action additive-calculate-button">
+          Calculate Bags
+        </button>
 
-        <div
-          id="additiveResults"
-          role="status"
-          aria-live="polite"
-          hidden
-        ></div>
+        <div id="additiveResults"
+             role="status"
+             aria-live="polite"
+             hidden></div>
       `;
 
-      const batchInput = panel.querySelector("#additiveBatchAmount");
-      const calculateButton = panel.querySelector(
-        "#calculateAdditiveBagsBtn"
-      );
+      const input = panel.querySelector("#additiveBatchAmount");
+      const button = panel.querySelector("#calculateAdditiveBagsBtn");
       const results = panel.querySelector("#additiveResults");
 
-      batchInput.addEventListener("input", () => {
-        saveBatch(key, batchInput.value);
-      });
-
-      batchInput.addEventListener("change", () => {
-        saveBatch(key, batchInput.value);
-      });
-
       function calculate() {
-        const batch = Number(batchInput.value);
+        const batch = Number(input.value);
         results.hidden = false;
 
         if (
-          batchInput.value.trim() === "" ||
+          input.value.trim() === "" ||
           !Number.isFinite(batch) ||
           batch <= 0
         ) {
@@ -312,9 +379,9 @@
           return;
         }
 
-        saveBatch(key, batchInput.value);
+        saveBatch(category, input.value);
 
-        const rows = config.additives.map(item => {
+        const rows = items.map(item => {
           const bags =
             (batch * item.ppm) / item.bagWeight / 1000;
 
@@ -329,7 +396,9 @@
         }).join("");
 
         results.innerHTML = `
-          <div class="additive-result-title">${config.title}</div>
+          <div class="additive-result-title">
+            ${CATEGORY_LABELS[category]}
+          </div>
 
           <table class="additive-table">
             <thead>
@@ -340,43 +409,57 @@
                 <th>Bags Required</th>
               </tr>
             </thead>
-
             <tbody>${rows}</tbody>
           </table>
         `;
       }
 
-      calculateButton.addEventListener("click", calculate);
+      input.addEventListener("input", () => {
+        saveBatch(category, input.value);
+      });
 
-      // Display results immediately for the default or saved batch.
+      button.addEventListener("click", calculate);
+
       calculate();
     }
 
-    function showSelectedCalculator() {
+    function updateSelectedCalculator() {
       const selected = selector.value;
+      const category = Object.keys(CATEGORY_KEYS).find(
+        name => CATEGORY_KEYS[name] === selected
+      );
 
-      const isPropylene =
-        selected === "propylene-stock" || selected === "";
-
-      propylenePanel.style.display = isPropylene ? "" : "none";
-      panel.hidden = isPropylene;
-
-      if (!isPropylene && ADDITIVE_CONFIG[selected]) {
-        renderCalculator(selected);
+      if (category) {
+        propylenePanel.style.display = "none";
+        panel.hidden = false;
+        renderCalculator(category);
+      } else {
+        panel.hidden = true;
+        propylenePanel.style.display = "";
       }
     }
 
-    selector.addEventListener("change", showSelectedCalculator);
+    selector.addEventListener("change", updateSelectedCalculator);
 
-    showSelectedCalculator();
+    loadCSV()
+      .then(updateSelectedCalculator)
+      .catch(error => {
+        console.error("Additive calculator error:", error);
+        panel.hidden = false;
+        propylenePanel.style.display = "none";
+        panel.innerHTML = `
+          <p class="calculator-result error">
+            Unable to load additive data. Please check that
+            calculators/additive.csv exists and has been committed.
+            Then refresh the dashboard.
+          </p>
+        `;
+      });
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      initAdditiveCalculators
-    );
+    document.addEventListener("DOMContentLoaded", initCalculator);
   } else {
-    initAdditiveCalculators();
+    initCalculator();
   }
 })();
