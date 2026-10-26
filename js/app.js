@@ -643,6 +643,7 @@ function navigateToPage(page, addHistory = true) {
         "training",
         "more",
         "ims",
+        "calculator",
         "others"
     ];
 
@@ -784,6 +785,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "production",
         "training",
         "ims",
+        "calculator",
         "others"
     ];
 
@@ -813,4 +815,3 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });
-
