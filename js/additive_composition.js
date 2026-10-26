@@ -144,7 +144,7 @@
   }
 
   function formatBags(value) {
-    return value.toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
+    return value.toFixed(1);
   }
 
   function addStyles() {
