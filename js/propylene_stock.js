@@ -1,13 +1,3 @@
-
-/**
- * Propylene Pumpable Stock Calculator
- * Inputs: Sphere A, B and C levels in mm
- * Output: Approx Pumpable Stock in MT
- *
- * CSV file:
- * calculators/propylene_stock_lookup.csv
- */
-
 const DEFAULT_CSV_URL = "./calculators/propylene_stock_lookup.csv";
 const MILLION = 1000000;
 
@@ -461,16 +451,11 @@ function initPropyleneStockCalculator() {
       const stock = result.approxPumpableStockMT;
 
       if (!Number.isFinite(stock)) {
-        throw new Error("The calculated stock value is not valid.");
+        throw new Error("The calculated stock value is not valid");
       }
 
-      const status =
-        stock < 150 ? "Low" :
-        stock <= 600 ? "Normal" :
-        "High";
-
       resultBox.textContent =
-        `Approx Pumpable Stock: ${stock.toFixed(2)} MT — ${status}`;
+      `Approx Pumpable Stock: ${stock.toFixed(2)} MT`;
 
       setResultStyle(stock);
       saveInputs();
@@ -480,7 +465,7 @@ function initPropyleneStockCalculator() {
 
       resultBox.textContent = error && error.message
         ? error.message
-        : "Unable to calculate pumpable stock. Check the input levels and lookup CSV.";
+        : "Unable to calculate pumpable stock";
 
       resultBox.classList.add("error");
 
