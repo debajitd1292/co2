@@ -263,32 +263,13 @@ async function calculatePropyleneStock(
     data, "sphere_c", levels.sphere_c
   );
 
-  // Vapour volumes
-  const vapourA =
-    getTotalVolume(data, "sphere_a") - liquidA;
-
-  const vapourB =
-    getTotalVolume(data, "sphere_b") - liquidB;
-
-  const vapourC =
-    getTotalVolume(data, "sphere_c") - liquidC;
-
-  // Densities
+    // Liquid densities only
   const liquidDensityA = getDensity(
     data, pressureA, "liquid_density_kg_m3"
   );
 
-  const vapourDensityA = getDensity(
-    data, pressureA, "vapour_density_kg_m3"
-  );
-
   const liquidDensityB = getDensity(
     data, pressureB, "liquid_density_kg_m3"
-  );
-
-  // Matches the pressure reference used in the workbook
-  const vapourDensityB = getDensity(
-    data, pressureA, "vapour_density_kg_m3"
   );
 
   const liquidDensityC = getDensity(
@@ -298,29 +279,12 @@ async function calculatePropyleneStock(
     11
   );
 
-  const vapourDensityC = getDensity(
-    data, pressureB, "vapour_density_kg_m3"
-  );
+  // Liquid mass only, in metric tonnes
+  const massA = (liquidA * liquidDensityA) / MILLION;
+  const massB = (liquidB * liquidDensityB) / MILLION;
+  const massC = (liquidC * liquidDensityC) / MILLION;
 
-  // Mass in metric tonnes
-  const massA =
-    (
-      liquidA * liquidDensityA +
-      vapourA * vapourDensityA
-    ) / MILLION;
-
-  const massB =
-    (
-      liquidB * liquidDensityB +
-      vapourB * vapourDensityB
-    ) / MILLION;
-
-  const massC =
-    (
-      liquidC * liquidDensityC +
-      vapourC * vapourDensityC
-    ) / MILLION;
-
+  // Total liquid stock before fixed deduction
   const totalMass = massA + massB + massC;
 
   // Workbook deduction: 10 MT per sphere
@@ -451,7 +415,7 @@ function initPropyleneStockCalculator() {
       const stock = result.approxPumpableStockMT;
 
       if (!Number.isFinite(stock)) {
-        throw new Error("The calculated stock value is not valid");
+        throw new Error("The calculated stock value is not valid.");
       }
 
       resultBox.textContent =
@@ -465,7 +429,7 @@ function initPropyleneStockCalculator() {
 
       resultBox.textContent = error && error.message
         ? error.message
-        : "Unable to calculate pumpable stock";
+        : "Unable to calculate pumpable stock. Check the input levels and lookup CSV.";
 
       resultBox.classList.add("error");
 
