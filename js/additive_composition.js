@@ -221,19 +221,19 @@
       #additiveCalculatorPanel .additive-table th:nth-child(2),
       #additiveCalculatorPanel .additive-table td:nth-child(2) {
         width: 16%;
-        text-align: right;
+        text-align: center;
       }
 
       #additiveCalculatorPanel .additive-table th:nth-child(3),
       #additiveCalculatorPanel .additive-table td:nth-child(3) {
         width: 19%;
-        text-align: right;
+        text-align: center;
       }
 
       #additiveCalculatorPanel .additive-table th:nth-child(4),
       #additiveCalculatorPanel .additive-table td:nth-child(4) {
         width: 28%;
-        text-align: right;
+        text-align: center;
       }
 
       #additiveCalculatorPanel .additive-calculate-button {
