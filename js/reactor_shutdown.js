@@ -403,21 +403,32 @@
           </div>
         `;
 
+        
         if (!reactorRunning) {
           countdownHTML = `
             <div class="reactor-result-row">
               <span>Shutdown in</span>
-              <strong>Reactor is under shutdown</strong>
+              <strong>Already under shutdown</strong>
             </div>
             <div class="reactor-result-row">
               <span>Expected Shutdown On</span>
-              <strong>Already under shutdown</strong>
+              <strong>Not applicable</strong>
             </div>
           `;
-        } else if (changeRate !== null && changeRate !== 0) {
-          // Mirrors the workbook:
-          // ABS((latest stock - C3 to consume - load × elapsed hours)
-          //     / stock change rate)
+        } else if (changeRate !== null && changeRate > 0) {
+          countdownHTML = `
+            <div class="reactor-result-row">
+              <span>Shutdown in</span>
+              <strong></strong>
+            </div>
+            <div class="reactor-result-row">
+              <span>Expected Shutdown On</span>
+              <strong class="running">
+                Plant will continue running — C3 stock is increasing
+              </strong>
+            </div>
+          `;
+        } else if (changeRate !== null && changeRate < 0) {
           const remaining =
             stockLatest - c3Consumed - reactorLoad * elapsedHours;
 
@@ -439,7 +450,19 @@
               </div>
             `;
           }
+        } else if (changeRate === 0) {
+          countdownHTML = `
+            <div class="reactor-result-row">
+              <span>Shutdown in</span>
+              <strong></strong>
+            </div>
+            <div class="reactor-result-row">
+              <span>Expected Shutdown On</span>
+              <strong>Unable to estimate — C3 stock is unchanged</strong>
+            </div>
+          `;
         }
+
 
         const statusText = reactorRunning
           ? "Reactor is Running"
