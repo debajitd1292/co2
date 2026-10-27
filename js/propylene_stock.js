@@ -379,6 +379,27 @@ function initPropyleneStockCalculator() {
     }
   }
 
+  function updateSphereLevelWarning() {
+  const inputs = [
+    document.getElementById("sphereALevel"),
+    document.getElementById("sphereBLevel"),
+    document.getElementById("sphereCLevel")
+  ];
+
+  const warning = document.getElementById("sphereLevelWarning");
+
+  if (!warning || inputs.some(input => !input)) return;
+
+  const allEntered = inputs.every(input => input.value.trim() !== "");
+  warning.classList.toggle("hidden", allEntered);
+}
+
+["sphereALevel", "sphereBLevel", "sphereCLevel"].forEach(id => {
+  document.getElementById(id)?.addEventListener("input", updateSphereLevelWarning);
+});
+
+updateSphereLevelWarning();
+
   async function calculate() {
     const sphereA = fields.sphereA.value;
     const sphereB = fields.sphereB.value;
