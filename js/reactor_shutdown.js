@@ -117,11 +117,11 @@
       month: "short"
     });
 
-    const timeText = date.toLocaleTimeString("en-GB", {
+    const timeText = date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false
-    });
+      hour12: true
+    }).replace(/\b(am|pm)\b/g, match => match.toUpperCase());
 
     const displayTime = ["06:00", "14:00", "22:00"].includes(timeText)
       ? `${timeText} hours`
@@ -192,7 +192,7 @@
     );
     const minutes = totalMinutes % 60;
 
-    return `${days} Days, ${remainingHours} Hours, ${minutes} Minutes`;
+    return `${days} D, ${remainingHours} H, ${minutes} M`;
   }
 
   function formatDateTime(date) {
