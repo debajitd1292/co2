@@ -4003,3 +4003,13 @@ body.dark #page-calculator .calculator-result.status-high {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
+
+.sphere-level-warning {
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sphere-level-warning.hidden {
+  display: none;
+}
