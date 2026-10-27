@@ -231,7 +231,7 @@
     )) {
       const option = document.createElement("option");
       option.value = CALCULATOR_KEY;
-      option.textContent = "Reactor Shutdown Calculator";
+      option.textContent = "Reactor Shutdown Planner";
       selector.appendChild(option);
     }
 
@@ -242,11 +242,6 @@
       const times = getReadingTimes(now);
 
       panel.innerHTML = `
-        <div class="reactor-present-time">
-          <span>Present Time</span>
-          <strong id="reactorPresentTime">${formatDateTime(now)}</strong>
-        </div>
-
         <div class="reactor-input-grid">
           <label class="reactor-field">
             <span>C3 to be consumed till shutdown (MT)</span>
@@ -295,10 +290,6 @@
 
         <div id="reactorShutdownResults" aria-live="polite"></div>
 
-        <p class="reactor-note">
-          Stock readings are saved against their actual date and time.
-          Enter the latest available readings before relying on the estimate.
-        </p>
       `;
 
       const consumedInput = panel.querySelector("#reactorC3Consumed");
