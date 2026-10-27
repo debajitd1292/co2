@@ -258,7 +258,7 @@
             <span>Reactor Load (MT/hr)</span>
             <input id="reactorLoad" type="number"
               min="0" step="any"
-              value="${readInput("reactorLoad", config.reactor_load)}">
+              value="${readInput("reactorLoad", "")}" placeholder="Enter load in MT/hr">
           </label>
         </div>
 
@@ -269,21 +269,21 @@
             <span>Stock at ${formatReadingTime(times.latest)}</span>
             <input id="reactorStockLatest" type="number"
               step="any"
-              value="${readStock(times.latest, config.stock_latest)}">
+              value="${readStock(times.latest, "")}" placeholder="Enter stock in MT">
           </label>
 
           <label class="reactor-field">
             <span>Stock at ${formatReadingTime(times.previous)}</span>
             <input id="reactorStockPrevious" type="number"
               step="any"
-              value="${readStock(times.previous, config.stock_previous)}">
+              value="${readStock(times.previous, "")}" placeholder="Enter stock in MT">
           </label>
 
           <label class="reactor-field">
             <span>Stock at ${formatReadingTime(times.earlier)}</span>
             <input id="reactorStockEarlier" type="number"
               step="any"
-              value="${readStock(times.earlier, config.stock_earlier)}">
+              value="${readStock(times.earlier, "")}" placeholder="Enter stock in MT">
           </label>
         </div>
 
