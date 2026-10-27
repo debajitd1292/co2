@@ -4004,10 +4004,16 @@ body.dark #page-calculator .calculator-result.status-high {
     }
 }
 
-.sphere-level-warning {
-  color: #dc2626;
+#page-calculator .calculator-description.sphere-level-warning {
+  color: #dc2626 !important;
   font-size: 12px;
   font-weight: 600;
+  margin: 6px 0 0;
+  text-align: center;
+}
+
+#page-calculator .sphere-level-warning.hidden {
+  display: none !important;
 }
 
 .sphere-level-warning.hidden {
