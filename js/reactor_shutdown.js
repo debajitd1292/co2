@@ -196,14 +196,14 @@
   }
 
   function formatDateTime(date) {
-    return date.toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true
-    });
+      return date.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      }).replace(/\b(am|pm)\b/gi, match => match.toUpperCase());
   }
 
   function init() {
@@ -461,7 +461,7 @@
             </div>
             <div class="reactor-result-row">
               <span>Expected Shutdown On</span>
-              <strong>Unable to estimate — C3 stock is unchanged</strong>
+              <strong>C3 Stock change rate is Zero</strong>
             </div>
           `;
         }
@@ -497,8 +497,7 @@
           ${
             changeRate === 0
               ? `<p class="reactor-warning">
-                   Stock change rate is zero. Shutdown timing cannot
-                   be estimated using the workbook formula.
+                   C3 Stock change rate is Zero
                  </p>`
               : ""
           }
@@ -506,8 +505,7 @@
           ${
             changeRate === null
               ? `<p class="reactor-warning">
-                   Enter at least two valid stock readings to calculate
-                   the change rate.
+                   Please enter Reactor load and atleast 2 latest C3 stock reading
                  </p>`
               : ""
           }
@@ -544,8 +542,7 @@
           panel.hidden = false;
           panel.innerHTML = `
             <p class="reactor-error">
-              Unable to load calculators/reactor_shutdown.csv.
-              Check the file path and refresh the dashboard.
+              Check the file path and refresh the dashboard
             </p>
           `;
         }
