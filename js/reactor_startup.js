@@ -121,12 +121,8 @@
       hour12: false
     });
 
-    const displayTime = ["06:00", "14:00", "22:00"].includes(timeText)
-      ? `${timeText} Hours`
-      : timeText;
-
-    return `${dateText}, ${displayTime}`;
-    }
+    return `${dateText}, ${timeText}`;
+  }
 
   function formatDateTime(date) {
     return date.toLocaleString("en-IN", {
@@ -209,11 +205,11 @@
         margin-top: 8px;
       }
 
-        #reactorStartupCalculator .startup-input-grid {
+      #reactorStartupCalculator .startup-input-grid {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        margin-bottom: 10px;
+        gap: 12px;
+        margin-bottom: 16px;
       }
 
       #reactorStartupCalculator .startup-field {
@@ -235,17 +231,17 @@
         min-width: 0;
       }
 
-        #reactorStartupCalculator .startup-stock-heading {
+      #reactorStartupCalculator .startup-stock-heading {
         font-weight: 700;
         font-size: 13px;
-        margin: 8px 0 5px;
+        margin: 12px 0 8px;
       }
 
-        #reactorStartupCalculator .startup-stock-grid {
+      #reactorStartupCalculator .startup-stock-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 7px;
-        margin-bottom: 8px;
+        gap: 10px;
+        margin-bottom: 12px;
       }
 
       #reactorStartupCalculator .startup-calculate-button {
@@ -260,12 +256,12 @@
         margin-top: 8px;
       }
 
-        #reactorStartupCalculator .startup-result-row {
+      #reactorStartupCalculator .startup-result-row {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 10px;
-        padding: 6px 0;
+        gap: 12px;
+        padding: 9px 0;
         font-size: 13px;
       }
 
