@@ -121,7 +121,11 @@
       hour12: false
     });
 
-    return `${dateText}, ${timeText}`;
+    const displayTime = ["06:00", "14:00", "22:00"].includes(timeText)
+      ? `${timeText} hours`
+      : timeText;
+
+    return `${dateText}, ${displayTime}`;
   }
 
   function formatDateTime(date) {
