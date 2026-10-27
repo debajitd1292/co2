@@ -119,7 +119,7 @@
       hour: "2-digit",
       minute: "2-digit",
       hour12: true
-    }).replace(/\b(am|pm)\b/g, match => match.toUpperCase());
+    }).replace(/am/i, "AM").replace(/pm/i, "PM");
 
     const displayTime = ["06:00", "14:00", "22:00"].includes(timeText)
       ? `${timeText} hours`
