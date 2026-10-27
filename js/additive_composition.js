@@ -18,8 +18,8 @@
 
   const CATEGORY_LABELS = {
     "Raffia": "Additive Composition - Raffia",
-    "IM": "Additive Composition - IM",
-    "TQ": "Additive Composition - TQ"
+    "IM": "Additive Composition - Injection Moulding",
+    "TQ": "Additive Composition - Tubular Quenched Film"
   };
 
   let additiveData = [];
@@ -158,14 +158,25 @@
         margin-top: 8px;
       }
 
-      #additiveCalculatorPanel .additive-batch-row {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        flex-wrap: nowrap;
-        margin: 10px 0 12px;
-        width: 100%;
-      }
+    #additiveCalculatorPanel .additive-batch-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: nowrap;
+    margin: 10px 0 12px;
+    width: 100%;
+}
+
+#additiveCalculatorPanel .additive-batch-label,
+#additiveCalculatorPanel .additive-batch-input,
+#additiveCalculatorPanel .additive-batch-unit {
+    align-self: center;
+}
+
+#additiveCalculatorPanel .additive-batch-label {
+    margin: 0;
+    line-height: 1.3;
+}
 
       #additiveCalculatorPanel .additive-batch-label {
         flex: 0 0 auto;
@@ -264,6 +275,15 @@
         #additiveCalculatorPanel .additive-table {
           font-size: 12px;
         }
+
+
+      #additiveCalculatorPanel .additive-rounding-note {
+        color: #2563eb;
+        font-size: 11px;
+        line-height: 1.4;
+        margin: 8px 0;
+        font-weight: 500;
+      }
 
         #additiveCalculatorPanel .additive-table th,
         #additiveCalculatorPanel .additive-table td {
@@ -436,6 +456,11 @@
             </thead>
             <tbody>${rows}</tbody>
           </table>
+
+          
+          <p class="additive-rounding-note">
+            *The required number of bags may be rounded off to the nearest whole number
+          </p>
 
           <div class="additive-summary">
             <div><strong>Total PPM:</strong> ${totalPPM}</div>
