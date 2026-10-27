@@ -4009,7 +4009,7 @@ body.dark #page-calculator .calculator-result.status-high {
   font-size: 12px;
   font-weight: 600;
   margin: 6px 0 0;
-  text-align: center;
+  text-align: left;
 }
 
 #page-calculator .sphere-level-warning.hidden {
