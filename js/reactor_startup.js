@@ -129,14 +129,14 @@
   }
 
   function formatDateTime(date) {
-    return date.toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true
-    });
+      return date.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      }).replace(/\b(am|pm)\b/gi, match => match.toUpperCase());
   }
 
   function formatCountdown(hours) {
@@ -497,7 +497,7 @@
 
         if (target <= latest) {
           warning =
-            "The latest C3 stock is already at or above the target stock.";
+            "The latest C3 stock is already at or above the target stock";
           timeHTML = `
             <div class="startup-result-row">
               <span>Expected Start Up In</span>
@@ -596,8 +596,7 @@
           panel.hidden = false;
           panel.innerHTML = `
             <p class="startup-error">
-              Unable to load calculators/reactor_startup.csv.
-              Check the file path and refresh the dashboard.
+              Check the file path and refresh the dashboard
             </p>
           `;
         }
