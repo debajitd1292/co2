@@ -1372,13 +1372,15 @@ body.dark .ims-section {
     padding: 0;
 }
 
-.ims-card > h3 {
+.ims-card > h3,
+#page-calculator #calculatorHeader {
     margin: 8px 0 16px;
     padding: 14px 12px;
     border-radius: 12px;
     text-align: center;
     font-size: 17px;
     font-weight: 700;
+    line-height: 1.4;
     background: linear-gradient(135deg, #1f4e79, #2563a6);
     color: #ffffff;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
@@ -1632,9 +1634,20 @@ body.dark #page-ims .ims-card {
     padding: 17px 12px 14px;
 }
 
-body.dark #page-ims .ims-card > h3 {
+body.dark #page-ims .ims-card > h3,
+body.dark #page-calculator #calculatorHeader {
     margin: 0 0 14px;
+    padding: 12px 14px;
     border-radius: 10px;
+    background: linear-gradient(135deg, #1e3a5f, #263b59);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-sizing: border-box;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+body.dark #page-calculator #calculatorHeader {
+    text-align: left;
 }
 
 body:not(.dark) #page-ims .ims-card {
@@ -3841,9 +3854,10 @@ body.dark #page-counters .combined-counter-section + .combined-counter-section {
     padding: 16px;
 }
 
-#page-calculator #calculatorHeader {
-    margin-top: 0;
-    margin-bottom: 18px;
+body:not(.dark) #page-calculator #calculatorHeader {
+    margin: 0 0 14px;
+    border-radius: 10px;
+    text-align: left;
 }
 
 #page-calculator label {
