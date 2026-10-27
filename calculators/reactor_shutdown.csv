@@ -1,0 +1,6 @@
+﻿setting,default_value,unit
+c3_to_be_consumed,150,MT
+stock_latest,564,MT
+stock_previous,570,MT
+stock_earlier,583,MT
+reactor_load,7,MT/hr
