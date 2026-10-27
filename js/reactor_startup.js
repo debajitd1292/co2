@@ -505,11 +505,24 @@
               <strong>Not applicable</strong>
             </div>
           `;
+        
         } else if (changeRate === null) {
           warning = "Enter at least two valid stock readings.";
-        } else if (changeRate <= 0) {
-          warning =
-            "C3 stock is not increasing. A startup estimate cannot be calculated from the current trend.";
+        } else if (changeRate < 0) {
+          timeHTML = `
+            <div class="startup-result-row">
+              <span>Expected Start Up In</span>
+              <strong></strong>
+            </div>
+            <div class="startup-result-row">
+              <span>Expected Start Up On</span>
+              <strong class="startup-warning">
+                Not sufficient C3 stock build up rate for plant startup
+              </strong>
+            </div>
+          `;
+        } else if (changeRate === 0) {
+          warning = "C3 stock is unchanged. Startup time cannot be estimated.";
         } else if (remainingToTarget <= 0) {
           warning =
             "The target stock is estimated to have already been reached.";
@@ -535,6 +548,7 @@
             warning = "Unable to calculate a valid startup estimate.";
           }
         }
+
 
         results.innerHTML = `
           <div class="startup-status-card">
