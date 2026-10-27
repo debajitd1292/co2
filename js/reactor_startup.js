@@ -369,21 +369,21 @@
             <span>Stock at ${formatReadingTime(times.latest)}</span>
             <input id="startupStockLatest" type="number"
               min="0" step="any"
-              value="${readStock(times.latest, config.stock_latest)}">
+              value="${readStock(times.latest, "")}" placeholder="Enter stock in MT">
           </label>
 
           <label class="startup-field">
             <span>Stock at ${formatReadingTime(times.previous)}</span>
             <input id="startupStockPrevious" type="number"
               min="0" step="any"
-              value="${readStock(times.previous, config.stock_previous)}">
+              value="${readStock(times.previous, "")}" placeholder="Enter stock in MT">
           </label>
 
           <label class="startup-field">
             <span>Stock at ${formatReadingTime(times.earlier)}</span>
             <input id="startupStockEarlier" type="number"
               min="0" step="any"
-              value="${readStock(times.earlier, config.stock_earlier)}">
+              value="${readStock(times.earlier, "")}" placeholder="Enter stock in MT">
           </label>
         </div>
 
@@ -434,8 +434,7 @@
         ) {
           results.innerHTML = `
             <p class="startup-error">
-              Enter valid non-negative values for target C3 stock
-              and the latest stock reading.
+              Please enter atleast 2 latest C3 stock reading
             </p>
           `;
           return;
