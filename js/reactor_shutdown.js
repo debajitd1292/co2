@@ -427,7 +427,7 @@
             <div class="reactor-result-row">
               <span>Expected Shutdown On</span>
               <strong class="running">
-                Plant will continue running — C3 stock is increasing
+                Plant to keep running as C3 stock building up
               </strong>
             </div>
           `;
