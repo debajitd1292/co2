@@ -242,10 +242,23 @@
       }
 
       #additiveCalculatorPanel .additive-result-title {
-        margin: 12px 0 4px;
-        font-weight: 700;
-        font-size: 13px;
-      }
+      margin: 12px 0 4px;
+      font-weight: 700;
+      font-size: 13px;
+     }
+
+#additiveCalculatorPanel .additive-summary {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--card-bg, rgba(128,128,128,.08));
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+#additiveCalculatorPanel .additive-summary strong {
+  font-weight: 700;
+}
 
       @media (min-width: 520px) {
         #additiveCalculatorPanel .additive-table {
@@ -381,9 +394,21 @@
 
         saveBatch(category, input.value);
 
+        
+        let totalPPM = 0;
+        let totalBags = 0;
+        let totalAdditiveKg = 0;
+
         const rows = items.map(item => {
           const bags =
             (batch * item.ppm) / item.bagWeight / 1000;
+
+          // Round each additive's bag quantity to a whole bag.
+          const roundedBags = Math.round(bags);
+
+          totalPPM += item.ppm;
+          totalBags += roundedBags;
+          totalAdditiveKg += roundedBags * item.bagWeight;
 
           return `
             <tr>
@@ -411,6 +436,12 @@
             </thead>
             <tbody>${rows}</tbody>
           </table>
+
+          <div class="additive-summary">
+            <div><strong>Total PPM:</strong> ${totalPPM}</div>
+            <div><strong>Total Bags:</strong> ${totalBags}</div>
+            <div><strong>Total Additive:</strong> ${totalAdditiveKg} kg</div>
+          </div>
         `;
       }
 
