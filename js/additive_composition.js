@@ -17,9 +17,9 @@
   };
 
   const CATEGORY_LABELS = {
-    "Raffia": "Additive Composition - Raffia",
-    "IM": "Additive Composition - Injection Moulding",
-    "TQ": "Additive Composition - Tubular Quenched Film"
+    "Raffia": "WH034N Composition",
+    "IM": "IH120N Composition",
+    "TQ": "FH110N Composition"
   };
 
   let additiveData = [];
