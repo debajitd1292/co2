@@ -248,7 +248,7 @@
       panel.innerHTML = `
         <div class="reactor-input-grid">
           <label class="reactor-field">
-            <span>C3 to be consumed till shutdown (MT)</span>
+            <span>C3 to be consumed till (MT)</span>
             <input id="reactorC3Consumed" type="number"
               min="0" step="any"
               value="${readInput("c3Consumed", config.c3_to_be_consumed)}">
@@ -461,7 +461,7 @@
             </div>
             <div class="reactor-result-row">
               <span>Expected Shutdown On</span>
-              <strong>C3 Stock change rate is Zero</strong>
+              <strong>Unable to estimate — C3 stock is unchanged</strong>
             </div>
           `;
         }
@@ -497,7 +497,8 @@
           ${
             changeRate === 0
               ? `<p class="reactor-warning">
-                   C3 Stock change rate is Zero
+                   Stock change rate is zero. Shutdown timing cannot
+                   be estimated using the workbook formula.
                  </p>`
               : ""
           }
@@ -505,7 +506,8 @@
           ${
             changeRate === null
               ? `<p class="reactor-warning">
-                   Please enter Reactor load and atleast 2 latest C3 stock reading
+                   Enter at least two valid stock readings to calculate
+                   the change rate.
                  </p>`
               : ""
           }
@@ -542,7 +544,8 @@
           panel.hidden = false;
           panel.innerHTML = `
             <p class="reactor-error">
-              Check the file path and refresh the dashboard
+              Unable to load calculators/reactor_shutdown.csv.
+              Check the file path and refresh the dashboard.
             </p>
           `;
         }
