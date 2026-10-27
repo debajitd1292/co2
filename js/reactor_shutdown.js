@@ -374,17 +374,20 @@
         let stockClass = "neutral";
 
         if (changeRate !== null) {
-          if (changeRate < 0) {
-            stockStatus =
-              `C3 stock depleting at ${formatOneDecimal(changeRate)} MT/hr`;
-            stockClass = "depleting";
-          } else if (changeRate > 0) {
-            stockStatus =
-              `C3 stock increasing at ${formatOneDecimal(changeRate)} MT/hr`;
-            stockClass = "increasing";
-          } else {
-            stockStatus = "C3 stock unchanged at 0.0 MT/hr";
-          }
+          
+        if (changeRate < 0) {
+  stockStatus =
+    `Depleting at ${formatOneDecimal(changeRate)} MT/hr`;
+  stockClass = "depleting";
+} else if (changeRate > 0) {
+  stockStatus =
+    `Increasing at ${formatOneDecimal(changeRate)} MT/hr`;
+  stockClass = "increasing";
+} else {
+  stockStatus = "Unchanged at 0.0 MT/hr";
+  stockClass = "neutral";
+}
+
         }
 
         const reactorRunning = reactorLoad > 0;
@@ -549,13 +552,32 @@
         text-align: right;
       }
 
-      #reactorShutdownCalculator .reactor-input-grid,
-      #reactorShutdownCalculator .reactor-stock-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        margin-bottom: 12px;
-      }
+      
+#reactorShutdownCalculator .reactor-input-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+#reactorShutdownCalculator .reactor-input-grid .reactor-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(100px, 45%);
+  align-items: center;
+  gap: 12px;
+}
+
+#reactorShutdownCalculator .reactor-input-grid .reactor-field span {
+  line-height: 1.4;
+}
+
+#reactorShutdownCalculator .reactor-stock-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
 
       #reactorShutdownCalculator .reactor-stock-grid {
         grid-template-columns: 1fr;
