@@ -344,8 +344,7 @@
         if (!validInputs) {
           results.innerHTML = `
             <p class="reactor-error">
-              Please enter valid non-negative values for C3 to be
-              consumed, reactor load and the latest stock reading.
+              Please enter Reactor load and atleast 2 latest C3 stock reading
             </p>
           `;
           return;
