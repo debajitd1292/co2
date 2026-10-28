@@ -4019,3 +4019,570 @@ body.dark #page-calculator .calculator-result.status-high {
 .sphere-level-warning.hidden {
   display: none;
 }
+
+/* Additive rounding note — blue on mobile and desktop */
+#page-calculator p.additive-rounding-note {
+    color: #2563eb !important;
+    font-size: 11px;
+    line-height: 1.4;
+    margin: 8px 0;
+    font-weight: 500;
+}
+
+/* =========================================================
+   36. CALCULATOR STYLES — extracted from calculator scripts
+   Keep calculator presentation in this stylesheet, not JS.
+   ========================================================= */
+
+/* 36A. Additive composition calculator */
+#additiveCalculatorPanel {
+        margin-top: 8px;
+      }
+
+    #additiveCalculatorPanel .additive-batch-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: nowrap;
+    margin: 10px 0 12px;
+    width: 100%;
+}
+
+#additiveCalculatorPanel .additive-batch-label,
+#additiveCalculatorPanel .additive-batch-input,
+#additiveCalculatorPanel .additive-batch-unit {
+    align-self: center;
+}
+
+#additiveCalculatorPanel .additive-batch-label {
+    margin: 0;
+    line-height: 1.3;
+}
+
+      #additiveCalculatorPanel .additive-batch-label {
+        flex: 0 0 auto;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      #additiveCalculatorPanel .additive-batch-input {
+        flex: 1 1 70px;
+        width: 70px;
+        min-width: 45px;
+        max-width: 130px;
+        box-sizing: border-box;
+      }
+
+      #additiveCalculatorPanel .additive-batch-unit {
+        flex: 0 0 auto;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      #additiveCalculatorPanel .additive-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin-top: 10px;
+        font-size: clamp(9px, 2.65vw, 12px);
+      }
+
+      #additiveCalculatorPanel .additive-table th,
+      #additiveCalculatorPanel .additive-table td {
+        padding: 8px 3px;
+        text-align: left;
+        border-bottom: 1px solid
+          var(--border-color, rgba(128,128,128,.25));
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #additiveCalculatorPanel .additive-table th {
+        font-weight: 700;
+        opacity: .82;
+      }
+
+      #additiveCalculatorPanel .additive-table th:nth-child(1),
+      #additiveCalculatorPanel .additive-table td:nth-child(1) {
+        width: 37%;
+      }
+
+      #additiveCalculatorPanel .additive-table th:nth-child(2),
+      #additiveCalculatorPanel .additive-table td:nth-child(2) {
+        width: 16%;
+        text-align: center;
+      }
+
+      #additiveCalculatorPanel .additive-table th:nth-child(3),
+      #additiveCalculatorPanel .additive-table td:nth-child(3) {
+        width: 19%;
+        text-align: center;
+      }
+
+      #additiveCalculatorPanel .additive-table th:nth-child(4),
+      #additiveCalculatorPanel .additive-table td:nth-child(4) {
+        width: 28%;
+        text-align: center;
+      }
+
+      #additiveCalculatorPanel .additive-calculate-button {
+        width: 100%;
+        margin-top: 4px;
+      }
+
+      #additiveCalculatorPanel .additive-result-title {
+      margin: 12px 0 4px;
+      font-weight: 700;
+      font-size: 13px;
+     }
+
+#additiveCalculatorPanel .additive-summary {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--card-bg, rgba(128,128,128,.08));
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+#additiveCalculatorPanel .additive-summary strong {
+  font-weight: 700;
+}
+
+      @media (min-width: 520px) {
+        #additiveCalculatorPanel .additive-table {
+          font-size: 12px;
+        }
+
+        #additiveCalculatorPanel .additive-table th,
+        #additiveCalculatorPanel .additive-table td {
+          padding: 9px 6px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        #additiveCalculatorPanel .additive-table {
+          font-size: 9px;
+        }
+
+        #additiveCalculatorPanel .additive-table th,
+        #additiveCalculatorPanel .additive-table td {
+          padding-left: 2px;
+          padding-right: 2px;
+        }
+      }
+
+#additiveCalculatorPanel .additive-rounding-note {
+        color: #2563eb;
+        font-size: 11px;
+        line-height: 1.4;
+        margin: 8px 0;
+        font-weight: 500;
+      }
+
+/* 36B. Reactor shutdown planner */
+#reactorShutdownCalculator {
+        margin-top: 8px;
+      }
+
+      #reactorShutdownCalculator .reactor-present-time {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        font-size: 13px;
+      }
+
+      #reactorShutdownCalculator .reactor-present-time strong {
+        text-align: right;
+      }
+
+      
+#reactorShutdownCalculator .reactor-input-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+#reactorShutdownCalculator .reactor-input-grid .reactor-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(100px, 45%);
+  align-items: center;
+  gap: 12px;
+}
+
+#reactorShutdownCalculator .reactor-input-grid .reactor-field span {
+  line-height: 1.4;
+}
+
+#reactorShutdownCalculator .reactor-stock-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+
+      #reactorShutdownCalculator .reactor-stock-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #reactorShutdownCalculator .reactor-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      #reactorShutdownCalculator .reactor-field input {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+      }
+
+      #reactorShutdownCalculator .reactor-stock-heading {
+        font-weight: 700;
+        font-size: 13px;
+        margin: 12px 0 8px;
+      }
+
+      #reactorShutdownCalculator .reactor-calculate-button {
+        width: 100%;
+        margin: 4px 0 12px;
+      }
+
+      #reactorShutdownCalculator .reactor-status-card {
+        border: 1px solid var(--border-color, rgba(128,128,128,.25));
+        border-radius: 10px;
+        padding: 12px;
+        margin-top: 8px;
+      }
+
+      #reactorShutdownCalculator .reactor-result-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 9px 0;
+        font-size: 13px;
+      }
+
+      #reactorShutdownCalculator .reactor-result-row + .reactor-result-row {
+        border-top: 1px solid var(--border-color, rgba(128,128,128,.18));
+      }
+
+      #reactorShutdownCalculator .reactor-result-row > span {
+        flex: 1 1 42%;
+      }
+
+      #reactorShutdownCalculator .reactor-result-row > strong {
+        flex: 1 1 58%;
+        text-align: right;
+      }
+
+      #reactorShutdownCalculator .reactor-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 7px;
+        font-size: 12px;
+      }
+
+      #reactorShutdownCalculator .running,
+      #reactorShutdownCalculator .increasing {
+        color: #16a34a;
+      }
+
+      #reactorShutdownCalculator .shutdown {
+        color: #dc2626;
+      }
+
+      #reactorShutdownCalculator .depleting {
+        color: #dc2626;
+      }
+
+      #reactorShutdownCalculator .neutral {
+        color: var(--text-color, inherit);
+        opacity: .8;
+      }
+
+      #reactorShutdownCalculator .reactor-note,
+      #reactorShutdownCalculator .reactor-warning,
+      #reactorShutdownCalculator .reactor-error {
+        font-size: 12px;
+        line-height: 1.5;
+        margin-top: 10px;
+      }
+
+      #reactorShutdownCalculator .reactor-warning,
+      #reactorShutdownCalculator .reactor-error {
+        color: #dc2626;
+      }
+
+      @media (min-width: 520px) {
+        #reactorShutdownCalculator .reactor-stock-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+/* 36C. Reactor startup planner */
+#reactorStartupCalculator {
+        margin-top: 8px;
+      }
+
+      #reactorStartupCalculator .startup-input-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      #reactorStartupCalculator .startup-field {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(100px, 45%);
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      #reactorStartupCalculator .startup-field span {
+        line-height: 1.4;
+      }
+
+      #reactorStartupCalculator .startup-field input {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+      }
+
+      #reactorStartupCalculator .startup-stock-heading {
+        font-weight: 700;
+        font-size: 13px;
+        margin: 12px 0 8px;
+      }
+
+      #reactorStartupCalculator .startup-stock-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      #reactorStartupCalculator .startup-calculate-button {
+        width: 100%;
+        margin: 4px 0 12px;
+      }
+
+      #reactorStartupCalculator .startup-status-card {
+        border: 1px solid var(--border-color, rgba(128,128,128,.25));
+        border-radius: 10px;
+        padding: 12px;
+        margin-top: 8px;
+      }
+
+      #reactorStartupCalculator .startup-result-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 9px 0;
+        font-size: 13px;
+      }
+
+      #reactorStartupCalculator .startup-result-row + .startup-result-row {
+        border-top: 1px solid var(--border-color, rgba(128,128,128,.18));
+      }
+
+      #reactorStartupCalculator .startup-result-row > span {
+        flex: 1 1 42%;
+      }
+
+      #reactorStartupCalculator .startup-result-row > strong {
+        flex: 1 1 58%;
+        text-align: right;
+      }
+
+      #reactorStartupCalculator .increasing {
+        color: #16a34a;
+      }
+
+      #reactorStartupCalculator .depleting,
+      #reactorStartupCalculator .startup-warning,
+      #reactorStartupCalculator .startup-error {
+        color: #dc2626;
+      }
+
+      #reactorStartupCalculator .startup-warning,
+      #reactorStartupCalculator .startup-error {
+        font-size: 12px;
+        line-height: 1.5;
+        margin-top: 10px;
+      }
+
+      @media (min-width: 520px) {
+        #reactorStartupCalculator .startup-stock-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        #reactorStartupCalculator .startup-stock-grid .startup-field {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+/* 36D. Shared calculator label and input refinements
+   Uses the light blue from the Current Production Grade heading.
+   Scoped to calculator UI to avoid changing other dashboard pages.
+*/
+#page-calculator .calculator-input-group > label,
+#additiveCalculatorPanel .additive-batch-label,
+#reactorShutdownCalculator .reactor-field > span,
+#reactorShutdownCalculator .reactor-stock-heading,
+#reactorStartupCalculator .startup-field > span,
+#reactorStartupCalculator .startup-stock-heading,
+#additiveCalculatorPanel .additive-result-title {
+    color: #82BFFF;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+#page-calculator .calculator-input-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+}
+
+#page-calculator .calculator-input-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(100px, 42%);
+    align-items: center;
+    gap: 10px;
+}
+
+#page-calculator .calculator-input-group > label {
+    margin: 0;
+    align-self: center;
+    line-height: 1.35;
+}
+
+#page-calculator .calculator-input-group input,
+#additiveCalculatorPanel .additive-batch-input,
+#reactorShutdownCalculator .reactor-field input,
+#reactorStartupCalculator .startup-field input {
+    height: 40px;
+    min-height: 40px;
+    margin-top: 0;
+    padding: 7px 10px;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+
+/* Compact inline labels and fields for reactor planner inputs */
+#reactorShutdownCalculator .reactor-input-grid .reactor-field,
+#reactorShutdownCalculator .reactor-stock-grid .reactor-field,
+#reactorStartupCalculator .startup-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(100px, 42%);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#reactorShutdownCalculator .reactor-field > span,
+#reactorStartupCalculator .startup-field > span {
+    margin: 0;
+    align-self: center;
+}
+
+#reactorShutdownCalculator .reactor-stock-grid,
+#reactorStartupCalculator .startup-stock-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+#reactorShutdownCalculator .reactor-field input,
+#reactorStartupCalculator .startup-field input {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Keep the three sphere fields compact and vertically aligned on phones */
+#page-calculator .calculator-input-grid {
+    gap: 10px;
+}
+
+#page-calculator .calculator-input-group input {
+    max-width: 100%;
+}
+
+/* Ensure the rounding note remains blue on mobile as well as desktop */
+#additiveCalculatorPanel .additive-rounding-note {
+    color: #2563eb !important;
+    font-size: 11px;
+    line-height: 1.4;
+    margin: 8px 0;
+    font-weight: 500;
+}
+
+@media (min-width: 520px) {
+    #reactorShutdownCalculator .reactor-stock-grid,
+    #reactorStartupCalculator .startup-stock-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 380px) {
+    #reactorShutdownCalculator .reactor-input-grid .reactor-field,
+    #reactorShutdownCalculator .reactor-stock-grid .reactor-field,
+    #reactorStartupCalculator .startup-field {
+        grid-template-columns: minmax(0, 1fr) minmax(88px, 40%);
+        gap: 7px;
+    }
+
+    #reactorShutdownCalculator .reactor-field > span,
+    #reactorStartupCalculator .startup-field > span {
+        font-size: 12px;
+    }
+}
+
+
+/* 36E. Stock-reading timestamp labels — shared startup/shutdown styling */
+#reactorShutdownCalculator .reactor-stock-grid .stock-reading-label,
+#reactorStartupCalculator .startup-stock-grid .stock-reading-label {
+    color: #ffffff !important;
+    font-size: 11px !important;
+    font-weight: 500;
+    line-height: 1.3;
+    display: block;
+    align-self: center;
+}
+
+/* Keep startup and shutdown stock-reading rows consistent on desktop */
+@media (min-width: 520px) {
+    #reactorShutdownCalculator .reactor-stock-grid,
+    #reactorStartupCalculator .startup-stock-grid {
+        display: flex !important;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    #reactorShutdownCalculator .reactor-stock-grid .reactor-field,
+    #reactorStartupCalculator .startup-stock-grid .startup-field {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(100px, 42%);
+        align-items: center;
+        gap: 10px;
+    }
+}
