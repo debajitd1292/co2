@@ -4588,11 +4588,11 @@ body.dark #page-calculator .calculator-result.status-high {
     }
 }
 
-/* Dark dropdowns on Home and Counters pages */
-#page-home #categorySelector,
-#page-home #nameSelector,
-#page-counters #countersCategorySelector,
-#page-counters #countersNameSelector {
+/* Dark-mode dropdown styling — Home and Counters */
+body.dark #page-home #categorySelector,
+body.dark #page-home #nameSelector,
+body.dark #page-counters #countersCategorySelector,
+body.dark #page-counters #countersNameSelector {
     background: #202938 !important;
     color: #e2e8f0 !important;
     border: 1px solid #405875;
