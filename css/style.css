@@ -4560,14 +4560,26 @@ body.dark #page-calculator .calculator-result.status-high {
 
 
 /* 36E. Stock-reading timestamp labels — shared startup/shutdown styling */
+/* Stock reading labels — theme-aware styling */
 #reactorShutdownCalculator .reactor-stock-grid .stock-reading-label,
 #reactorStartupCalculator .startup-stock-grid .stock-reading-label {
-    color: #ffffff !important;
     font-size: 11px !important;
     font-weight: 500;
     line-height: 1.3;
     display: block;
     align-self: center;
+}
+
+/* Dark mode: white text */
+body.dark #reactorShutdownCalculator .reactor-stock-grid .stock-reading-label,
+body.dark #reactorStartupCalculator .startup-stock-grid .stock-reading-label {
+    color: #ffffff !important;
+}
+
+/* Light mode: dark text */
+body:not(.dark) #reactorShutdownCalculator .reactor-stock-grid .stock-reading-label,
+body:not(.dark) #reactorStartupCalculator .startup-stock-grid .stock-reading-label {
+    color: #344054 !important;
 }
 
 /* Keep startup and shutdown stock-reading rows consistent on desktop */
@@ -4596,18 +4608,4 @@ body.dark #page-counters #countersNameSelector {
     background: #202938 !important;
     color: #e2e8f0 !important;
     border: 1px solid #405875;
-}
-
-/* Stock reading labels — theme-aware colours */
-
-/* Dark mode */
-body.dark #reactorStartupCalculator .startup-field span,
-body.dark #reactorShutdownCalculator .reactor-field span {
-    color: #ffffff !important;
-}
-
-/* Light mode */
-body:not(.dark) #reactorStartupCalculator .startup-field span,
-body:not(.dark) #reactorShutdownCalculator .reactor-field span {
-    color: #344054 !important;
 }
