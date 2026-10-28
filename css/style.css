@@ -138,12 +138,9 @@ h1 {
     height:60px; 
     border-radius:50%;
     object-fit:cover;
-
     box-shadow:0 2px 8px rgba(0,0,0,0.3);
-
     background:transparent;
     padding:0;
-
     opacity:0;                      
     transform:scale(0.8);           
     transition:all 0.4s ease;       
@@ -325,18 +322,14 @@ select:focus, input:focus {
 .shift-active-box::before {
     content: "";
     position: absolute;
-
-    top: -0px;
+    top: 0;
     left: -2px;
     right: -2px;
     bottom: -2px;
-
     border-radius: 12px;
-
     background: linear-gradient(90deg, transparent, #0d47a1, transparent);
     background-size: 200% 100%;
     animation: moveBorder 2s linear infinite;
-
     z-index: 0;
 }
 
@@ -394,19 +387,14 @@ select:focus, input:focus {
     display: inline-block;
     padding: 6px 14px;
     margin: 12px 0 8px 0;
-
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-
     border-radius: 999px; 
-
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-
     border: 1px solid rgba(255,255,255,0.2);
-
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
@@ -445,47 +433,23 @@ select:focus, input:focus {
 
 .selected { border:2px solid gold; }
 
-.A { 
-    background: linear-gradient(135deg, #9333ea, #6b21a8);
-    box-shadow: 0 2px 6px rgba(147,51,234,0.4);
-}
-
-.B { 
-    background: linear-gradient(135deg, #f59e0b, #b45309);
-    box-shadow: 0 2px 6px rgba(245,158,11,0.4);
-}
-
-.C { 
-    background: linear-gradient(135deg, #2563eb, #1e3a8a);
-    box-shadow: 0 2px 6px rgba(37,99,235,0.4);
-}
+.A { background: linear-gradient(135deg, #9333ea, #6b21a8); box-shadow: 0 2px 6px rgba(147,51,234,0.4); }
+.B { background: linear-gradient(135deg, #f59e0b, #b45309); box-shadow: 0 2px 6px rgba(245,158,11,0.4); }
+.C { background: linear-gradient(135deg, #2563eb, #1e3a8a); box-shadow: 0 2px 6px rgba(37,99,235,0.4); }
 .G { background:#e53935; }
 .OFF { background:#1b5e20; }
 .H { background:linear-gradient(135deg, #22c55e, #15803d); color:#ffffff; }
-
 .D { background:#43a047; }
 .N { background:#6b7280; color:white; }
 .L { background:#ffd600; color:black; }
 .T { background:#00acc1; color:black; }
 
-.badge.A { 
-    background: linear-gradient(135deg, #9333ea, #6b21a8);
-    box-shadow: 0 0 10px rgba(147,51,234,0.5);
-}
-
-.badge.B { 
-    background: linear-gradient(135deg, #f59e0b, #b45309);
-    box-shadow: 0 0 10px rgba(245,158,11,0.5);
-}
-
-.badge.C { 
-    background: linear-gradient(135deg, #2563eb, #1e3a8a);
-    box-shadow: 0 0 10px rgba(37,99,235,0.5);
-}
+.badge.A { background: linear-gradient(135deg, #9333ea, #6b21a8); box-shadow: 0 0 10px rgba(147,51,234,0.5); }
+.badge.B { background: linear-gradient(135deg, #f59e0b, #b45309); box-shadow: 0 0 10px rgba(245,158,11,0.5); }
+.badge.C { background: linear-gradient(135deg, #2563eb, #1e3a8a); box-shadow: 0 0 10px rgba(37,99,235,0.5); }
 .badge.G { background:#e53935; }
 .badge.OFF { background:#1b5e20; }
 .badge.H { background:linear-gradient(135deg, #22c55e, #15803d); color:#ffffff; }
-
 .badge.D { background:#43a047; }
 .badge.N { background:#6b7280; color:white; }
 
@@ -529,35 +493,26 @@ body.dark .badge.N { background:#9ca3af; color:black; }
 
 .notice-alert {
     position: relative;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 10px;
-
     padding: 10px 14px 10px 16px;
     margin-bottom: 12px;
-
     border-radius: 10px;
-
     font-size: 13px;
     font-weight: 600;
     text-align: center;
-
     color: #b71c1c;
-
     background: linear-gradient(135deg, #fff5f5, #ffe3e3);
-
     border: 1px solid rgba(183, 28, 28, 0.25);
-
     box-shadow:
         0 4px 10px rgba(183, 28, 28, 0.18),
         0 0 12px rgba(183, 28, 28, 0.25),
         0 0 22px rgba(183, 28, 28, 0.15);
 
     overflow: visible;
-
     animation: pulseGlow 2s infinite;
 }
 
@@ -599,7 +554,6 @@ body.dark .badge.N { background:#9ca3af; color:black; }
         linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-
     pointer-events: none;
     z-index: -1;
 }
@@ -803,57 +757,6 @@ body.dark .upcoming-training {
     border-left: 5px solid #fbbf24;
 }
 
-/* 13. THEME TOGGLE */
-.theme-switch {
-    position:absolute;
-    top:12px;
-    right:25px;
-    width:40px;
-    height:22px;
-    z-index:2000;
-}
-
-.theme-switch input {
-    opacity:0;
-    width:100%;
-    height:100%;
-    position:absolute;
-    top:0;
-    left:0;
-    cursor:pointer;
-    z-index:2;
-}
-
-.slider {
-    position:absolute;
-    cursor:pointer;
-    width:100%;
-    height:100%;
-    background:rgba(255,255,255,0.2);
-    border-radius:30px;
-    transition:0.3s;
-}
-
-.slider::before {
-    content:"";
-    position:absolute;
-    height:16px;
-    width:16px;
-    left:3px;
-    top:3px;
-    background:#90caf9;
-    border-radius:50%;
-    transition:0.3s;
-    box-shadow:0 0 8px rgba(144,202,249,0.6);
-}
-
-.theme-switch input:checked + .slider::before {
-    transform:translateX(18px);
-}
-
-.slider:hover {
-    transform: scale(1.05);
-}
 
 /* 14. DARK MODE OVERRIDES */
 body.dark .training-item {
@@ -2492,21 +2395,13 @@ body.dark #productionGradeSince {
 .holiday-cards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: 7px;
     width: auto;
     max-width: none;
-    margin: 10px;
+    margin: 7px 10px;
     box-sizing: border-box;
 }
 
-.holiday-card {
-    min-width: 0;
-    padding: 9px 8px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.08);
-    box-sizing: border-box;
-}
 
 .holiday-title {
     margin-bottom: 5px;
@@ -2622,24 +2517,9 @@ body.dark #productionGradeSince {
 }
 
 /* GH / RH HOLIDAY CARDS */
-.holiday-cards {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 7px;
-    width: auto;
-    margin: 7px 10px;
-    box-sizing: border-box;
-}
 
-.holiday-card {
-    min-width: 0;
-    padding: 7px 8px;
-    border: 1px solid #D5E3F2;
-    border-radius: 9px;
-    background: #F4F8FD;
-    color: #173B65;
-    box-sizing: border-box;
-}
+
+
 
 .holiday-title {
     margin-bottom: 3px;
@@ -3454,6 +3334,9 @@ body.dark #page-counters .eco-leave-heading {
     border-radius: 10px;
     color: #ffffff;
     text-align: center;
+    padding: 5px 7px;
+    min-width: 0;
+    box-sizing: border-box; 
 }
 
 /* Holiday card text colours */
@@ -3471,9 +3354,7 @@ body.dark #page-counters .eco-leave-heading {
 }
 
 /* Keep the compact layout */
-.holiday-card {
-    padding: 5px 7px;
-}
+
 
 .holiday-title,
 .holiday-date,
