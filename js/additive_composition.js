@@ -299,7 +299,7 @@
 
           
           <p class="additive-rounding-note">
-            *The required number of bags may be rounded off to the nearest whole number
+            The required number of bags may be rounded off to the nearest whole number
           </p>
 
           <div class="additive-summary">
