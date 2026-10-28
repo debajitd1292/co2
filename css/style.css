@@ -4023,7 +4023,7 @@ body.dark #page-calculator .calculator-result.status-high {
 
 /* Additive rounding note — blue on mobile and desktop */
 #page-calculator p.additive-rounding-note {
-    color: #2563eb !important;
+    color: #eb2549 !important;
     font-size: 11px;
     line-height: 1.4;
     margin: 8px 0;
@@ -4177,7 +4177,7 @@ body.dark #page-calculator .calculator-result.status-high {
       }
 
 #additiveCalculatorPanel .additive-rounding-note {
-        color: #2563eb;
+        color: #eb2549;
         font-size: 11px;
         line-height: 1.4;
         margin: 8px 0;
@@ -4529,7 +4529,7 @@ body.dark #page-calculator .calculator-result.status-high {
 
 /* Ensure the rounding note remains blue on mobile as well as desktop */
 #additiveCalculatorPanel .additive-rounding-note {
-    color: #2563eb !important;
+    color: #eb2549 !important;
     font-size: 11px;
     line-height: 1.4;
     margin: 8px 0;
