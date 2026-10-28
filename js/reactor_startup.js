@@ -475,14 +475,15 @@ addStyles();
     }
 
     function updateSelectedCalculator() {
-      if (selector.value === CALCULATOR_KEY) {
-        propylenePanel.style.display = "none";
-        panel.hidden = false;
-        render();
-      } else {
-        panel.hidden = true;
-      }
-    }
+  const isStartupSelected = selector.value === CALCULATOR_KEY;
+
+  panel.hidden = !isStartupSelected;
+
+  if (isStartupSelected) {
+    propylenePanel.style.display = "none";
+    render();
+  }
+}
 
     selector.addEventListener("change", updateSelectedCalculator);
 
