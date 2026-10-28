@@ -4597,3 +4597,17 @@ body.dark #page-counters #countersNameSelector {
     color: #e2e8f0 !important;
     border: 1px solid #405875;
 }
+
+/* Stock reading labels — theme-aware colours */
+
+/* Dark mode */
+body.dark #reactorStartupCalculator .startup-field span,
+body.dark #reactorShutdownCalculator .reactor-field span {
+    color: #ffffff !important;
+}
+
+/* Light mode */
+body:not(.dark) #reactorStartupCalculator .startup-field span,
+body:not(.dark) #reactorShutdownCalculator .reactor-field span {
+    color: #344054 !important;
+}
