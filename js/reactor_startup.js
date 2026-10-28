@@ -42,7 +42,7 @@
     );
 
     if (!response.ok) {
-      throw new Error("Unable to load reactor_startup.csv");
+      throw new Error("Unable to load");
     }
 
     const records = parseCSV(await response.text());
@@ -217,13 +217,36 @@
     }
 
     if (!Array.from(selector.options).some(
-      option => option.value === CALCULATOR_KEY
-    )) {
-      const option = document.createElement("option");
-      option.value = CALCULATOR_KEY;
-      option.textContent = "Reactor Start Up Planner";
-      selector.appendChild(option);
-    }
+  option => option.value === CALCULATOR_KEY
+)) {
+  const option = document.createElement("option");
+  option.value = CALCULATOR_KEY;
+  option.textContent = "Reactor Start Up Planner";
+  selector.appendChild(option);
+}
+
+// Standardise calculator names and order
+const calculatorOrder = [
+  ["propylene-stock", "Pumpable C3 Stock"],
+  ["reactor-shutdown", "Shutdown Planner"],
+  ["reactor-startup", "Startup Planner"],
+  ["additive-raffia", "WHO34N Composition"],
+  ["additive-im", "IH120N Composition"],
+  ["additive-tq", "FH110N Composition"]
+];
+
+calculatorOrder.forEach(([value, label]) => {
+  const option = Array.from(selector.options).find(
+    item => item.value === value
+  );
+
+  if (option) {
+    option.textContent = label;
+    selector.appendChild(option);
+  }
+});
+
+addStyles();
 
     function render() {
       const now = new Date();
@@ -311,7 +334,7 @@
         ) {
           results.innerHTML = `
             <p class="startup-error">
-              Please enter atleast 2 latest C3 stock reading
+              Please enter the latest three C3 stock readings
             </p>
           `;
           return;
@@ -387,7 +410,7 @@
           `;
         
         } else if (changeRate === null) {
-          warning = "Enter at least two valid stock readings.";
+          warning = "Please enter the latest three C3 stock readings";
         } else if (changeRate < 0) {
           timeHTML = `
             <div class="startup-result-row">
@@ -402,7 +425,7 @@
             </div>
           `;
         } else if (changeRate === 0) {
-          warning = "C3 stock is unchanged. Startup time cannot be estimated.";
+          warning = "C3 stock is unchanged";
         } else if (remainingToTarget <= 0) {
           warning =
             "The target stock is estimated to have already been reached.";
@@ -425,7 +448,7 @@
               </div>
             `;
           } else {
-            warning = "Unable to calculate a valid startup estimate.";
+            warning = "Unable to calculate";
           }
         }
 

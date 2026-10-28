@@ -1,9 +1,4 @@
 
-/* Additive Composition Calculator
-   Data source: calculators/additive.csv
-   PPU Operations Dashboard
-*/
-
 (function () {
   "use strict";
 
@@ -17,9 +12,9 @@
   };
 
   const CATEGORY_LABELS = {
-    "Raffia": "WH034N Composition",
-    "IM": "IH120N Composition",
-    "TQ": "FH110N Composition"
+    "Raffia": "Additive Composition - Raffia",
+    "IM": "Additive Composition - Injection Moulding",
+    "TQ": "Additive Composition - TQ Film"
   };
 
   let additiveData = [];
@@ -90,7 +85,7 @@
     );
 
     if (!response.ok) {
-      throw new Error("Could not load calculators/additive.csv");
+      throw new Error("Could not load Calculators");
     }
 
     const text = await response.text();
@@ -116,7 +111,7 @@
       );
 
     if (!additiveData.length) {
-      throw new Error("No valid additive records found in CSV.");
+      throw new Error("No valid additive records found");
     }
   }
 
@@ -246,7 +241,7 @@
         ) {
           results.innerHTML = `
             <p class="calculator-result error">
-              Enter a batch quantity greater than zero.
+              Enter a batch quantity greater than zero
             </p>
           `;
           return;
@@ -331,7 +326,9 @@
         renderCalculator(category);
       } else {
         panel.hidden = true;
-        propylenePanel.style.display = "";
+
+        propylenePanel.style.display =
+          selected === "propylene-stock" ? "" : "none";
       }
     }
 
