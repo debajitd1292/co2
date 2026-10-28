@@ -345,9 +345,7 @@
         propylenePanel.style.display = "none";
         panel.innerHTML = `
           <p class="calculator-result error">
-            Unable to load additive data. Please check that
-            calculators/additive.csv exists and has been committed.
-            Then refresh the dashboard.
+            Unable to load additive data
           </p>
         `;
       });
