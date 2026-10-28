@@ -1,9 +1,3 @@
-
-/* Reactor Start Up Planner
-   Data source: calculators/reactor_startup.csv
-   Calculation logic based on Reactor_Startup_Calculator.xlsx
-*/
-
 (function () {
   "use strict";
 
@@ -13,9 +7,9 @@
 
   const DEFAULTS = {
     target_c3_stock: 600,
-    stock_latest: 456,
-    stock_previous: 414,
-    stock_earlier: 380
+    stock_latest: 300,
+    stock_previous: 280,
+    stock_earlier: 250
   };
 
   let config = { ...DEFAULTS };
@@ -198,122 +192,7 @@
     return Number.isFinite(value) ? value : null;
   }
 
-  function addStyles() {
-    if (document.getElementById("reactorStartupStyles")) return;
-
-    const style = document.createElement("style");
-    style.id = "reactorStartupStyles";
-
-    style.textContent = `
-      #reactorStartupCalculator {
-        margin-top: 8px;
-      }
-
-      #reactorStartupCalculator .startup-input-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-
-      #reactorStartupCalculator .startup-field {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(100px, 45%);
-        align-items: center;
-        gap: 12px;
-        font-size: 12px;
-        font-weight: 600;
-      }
-
-      #reactorStartupCalculator .startup-field span {
-        line-height: 1.4;
-      }
-
-      #reactorStartupCalculator .startup-field input {
-        box-sizing: border-box;
-        width: 100%;
-        min-width: 0;
-      }
-
-      #reactorStartupCalculator .startup-stock-heading {
-        font-weight: 700;
-        font-size: 13px;
-        margin: 12px 0 8px;
-      }
-
-      #reactorStartupCalculator .startup-stock-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 10px;
-        margin-bottom: 12px;
-      }
-
-      #reactorStartupCalculator .startup-calculate-button {
-        width: 100%;
-        margin: 4px 0 12px;
-      }
-
-      #reactorStartupCalculator .startup-status-card {
-        border: 1px solid var(--border-color, rgba(128,128,128,.25));
-        border-radius: 10px;
-        padding: 12px;
-        margin-top: 8px;
-      }
-
-      #reactorStartupCalculator .startup-result-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 9px 0;
-        font-size: 13px;
-      }
-
-      #reactorStartupCalculator .startup-result-row + .startup-result-row {
-        border-top: 1px solid var(--border-color, rgba(128,128,128,.18));
-      }
-
-      #reactorStartupCalculator .startup-result-row > span {
-        flex: 1 1 42%;
-      }
-
-      #reactorStartupCalculator .startup-result-row > strong {
-        flex: 1 1 58%;
-        text-align: right;
-      }
-
-      #reactorStartupCalculator .increasing {
-        color: #16a34a;
-      }
-
-      #reactorStartupCalculator .depleting,
-      #reactorStartupCalculator .startup-warning,
-      #reactorStartupCalculator .startup-error {
-        color: #dc2626;
-      }
-
-      #reactorStartupCalculator .startup-warning,
-      #reactorStartupCalculator .startup-error {
-        font-size: 12px;
-        line-height: 1.5;
-        margin-top: 10px;
-      }
-
-      @media (min-width: 520px) {
-        #reactorStartupCalculator .startup-stock-grid {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        #reactorStartupCalculator .startup-stock-grid .startup-field {
-          display: flex;
-          flex-direction: column;
-          align-items: stretch;
-        }
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
+  
 
   function init() {
     const selector = document.getElementById("calculatorType");
@@ -346,8 +225,6 @@
       selector.appendChild(option);
     }
 
-    addStyles();
-
     function render() {
       const now = new Date();
       const times = getReadingTimes(now);
@@ -366,21 +243,21 @@
 
         <div class="startup-stock-grid">
           <label class="startup-field">
-            <span>Stock at ${formatReadingTime(times.latest)}</span>
+            <span class="stock-reading-label">Stock as of ${formatReadingTime(times.latest)}</span>
             <input id="startupStockLatest" type="number"
               min="0" step="any"
               value="${readStock(times.latest, "")}" placeholder="Enter stock in MT">
           </label>
 
           <label class="startup-field">
-            <span>Stock at ${formatReadingTime(times.previous)}</span>
+            <span class="stock-reading-label">Stock as of ${formatReadingTime(times.previous)}</span>
             <input id="startupStockPrevious" type="number"
               min="0" step="any"
               value="${readStock(times.previous, "")}" placeholder="Enter stock in MT">
           </label>
 
           <label class="startup-field">
-            <span>Stock at ${formatReadingTime(times.earlier)}</span>
+            <span class="stock-reading-label">Stock as of ${formatReadingTime(times.earlier)}</span>
             <input id="startupStockEarlier" type="number"
               min="0" step="any"
               value="${readStock(times.earlier, "")}" placeholder="Enter stock in MT">

@@ -1,9 +1,3 @@
-
-/* Reactor Shutdown Calculator
-   Data source: calculators/reactor_shutdown.csv
-   Calculation logic based on Reactor_Shutdown_Calculator.xlsx
-*/
-
 (function () {
   "use strict";
 
@@ -13,9 +7,9 @@
 
   const DEFAULTS = {
     c3_to_be_consumed: 150,
-    stock_latest: 564,
-    stock_previous: 570,
-    stock_earlier: 583,
+    stock_latest: 600,
+    stock_previous: 630,
+    stock_earlier: 660,
     reactor_load: 7
   };
 
@@ -239,8 +233,6 @@
       selector.appendChild(option);
     }
 
-    addStyles();
-
     function render() {
       const now = new Date();
       const times = getReadingTimes(now);
@@ -266,21 +258,21 @@
 
         <div class="reactor-stock-grid">
           <label class="reactor-field">
-            <span>Stock at ${formatReadingTime(times.latest)}</span>
+            <span class="stock-reading-label">Stock as of ${formatReadingTime(times.latest)}</span>
             <input id="reactorStockLatest" type="number"
               step="any"
               value="${readStock(times.latest, "")}" placeholder="Enter stock in MT">
           </label>
 
           <label class="reactor-field">
-            <span>Stock at ${formatReadingTime(times.previous)}</span>
+            <span class="stock-reading-label">Stock as of ${formatReadingTime(times.previous)}</span>
             <input id="reactorStockPrevious" type="number"
               step="any"
               value="${readStock(times.previous, "")}" placeholder="Enter stock in MT">
           </label>
 
           <label class="reactor-field">
-            <span>Stock at ${formatReadingTime(times.earlier)}</span>
+            <span class="stock-reading-label">Stock as of ${formatReadingTime(times.earlier)}</span>
             <input id="reactorStockEarlier" type="number"
               step="any"
               value="${readStock(times.earlier, "")}" placeholder="Enter stock in MT">
@@ -554,163 +546,7 @@
     updateSelectedCalculator();
   }
 
-  function addStyles() {
-    if (document.getElementById("reactorShutdownStyles")) return;
-
-    const style = document.createElement("style");
-    style.id = "reactorShutdownStyles";
-
-    style.textContent = `
-      #reactorShutdownCalculator {
-        margin-top: 8px;
-      }
-
-      #reactorShutdownCalculator .reactor-present-time {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 14px;
-        font-size: 13px;
-      }
-
-      #reactorShutdownCalculator .reactor-present-time strong {
-        text-align: right;
-      }
-
-      
-#reactorShutdownCalculator .reactor-input-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-#reactorShutdownCalculator .reactor-input-grid .reactor-field {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(100px, 45%);
-  align-items: center;
-  gap: 12px;
-}
-
-#reactorShutdownCalculator .reactor-input-grid .reactor-field span {
-  line-height: 1.4;
-}
-
-#reactorShutdownCalculator .reactor-stock-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-
-      #reactorShutdownCalculator .reactor-stock-grid {
-        grid-template-columns: 1fr;
-      }
-
-      #reactorShutdownCalculator .reactor-field {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        min-width: 0;
-        font-size: 12px;
-        font-weight: 600;
-      }
-
-      #reactorShutdownCalculator .reactor-field input {
-        box-sizing: border-box;
-        width: 100%;
-        min-width: 0;
-      }
-
-      #reactorShutdownCalculator .reactor-stock-heading {
-        font-weight: 700;
-        font-size: 13px;
-        margin: 12px 0 8px;
-      }
-
-      #reactorShutdownCalculator .reactor-calculate-button {
-        width: 100%;
-        margin: 4px 0 12px;
-      }
-
-      #reactorShutdownCalculator .reactor-status-card {
-        border: 1px solid var(--border-color, rgba(128,128,128,.25));
-        border-radius: 10px;
-        padding: 12px;
-        margin-top: 8px;
-      }
-
-      #reactorShutdownCalculator .reactor-result-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 9px 0;
-        font-size: 13px;
-      }
-
-      #reactorShutdownCalculator .reactor-result-row + .reactor-result-row {
-        border-top: 1px solid var(--border-color, rgba(128,128,128,.18));
-      }
-
-      #reactorShutdownCalculator .reactor-result-row > span {
-        flex: 1 1 42%;
-      }
-
-      #reactorShutdownCalculator .reactor-result-row > strong {
-        flex: 1 1 58%;
-        text-align: right;
-      }
-
-      #reactorShutdownCalculator .reactor-badge {
-        display: inline-block;
-        padding: 4px 8px;
-        border-radius: 7px;
-        font-size: 12px;
-      }
-
-      #reactorShutdownCalculator .running,
-      #reactorShutdownCalculator .increasing {
-        color: #16a34a;
-      }
-
-      #reactorShutdownCalculator .shutdown {
-        color: #dc2626;
-      }
-
-      #reactorShutdownCalculator .depleting {
-        color: #dc2626;
-      }
-
-      #reactorShutdownCalculator .neutral {
-        color: var(--text-color, inherit);
-        opacity: .8;
-      }
-
-      #reactorShutdownCalculator .reactor-note,
-      #reactorShutdownCalculator .reactor-warning,
-      #reactorShutdownCalculator .reactor-error {
-        font-size: 12px;
-        line-height: 1.5;
-        margin-top: 10px;
-      }
-
-      #reactorShutdownCalculator .reactor-warning,
-      #reactorShutdownCalculator .reactor-error {
-        color: #dc2626;
-      }
-
-      @media (min-width: 520px) {
-        #reactorShutdownCalculator .reactor-stock-grid {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
+  
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
