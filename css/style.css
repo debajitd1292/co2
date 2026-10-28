@@ -3891,6 +3891,7 @@ body:not(.dark) #page-calculator #calculatorHeader {
     display: grid;
     grid-template-columns: 1fr;
     gap: 13px;
+    margin-top: 8px;
 }
 
 #page-calculator .calculator-input-group {
