@@ -1,3 +1,4 @@
+
 (function () {
   "use strict";
 
@@ -123,14 +124,14 @@
   }
 
   function formatDateTime(date) {
-      return date.toLocaleString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
-      }).replace(/\b(am|pm)\b/gi, match => match.toUpperCase());
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    }).replace(/\b(am|pm)\b/gi, match => match.toUpperCase());
   }
 
   function formatCountdown(hours) {
@@ -192,8 +193,6 @@
     return Number.isFinite(value) ? value : null;
   }
 
-  
-
   function init() {
     const selector = document.getElementById("calculatorType");
     const propylenePanel = document.getElementById(
@@ -217,34 +216,34 @@
     }
 
     if (!Array.from(selector.options).some(
-  option => option.value === CALCULATOR_KEY
-)) {
-  const option = document.createElement("option");
-  option.value = CALCULATOR_KEY;
-  option.textContent = "Reactor Start Up Planner";
-  selector.appendChild(option);
-}
+      option => option.value === CALCULATOR_KEY
+    )) {
+      const option = document.createElement("option");
+      option.value = CALCULATOR_KEY;
+      option.textContent = "Reactor Start Up Planner";
+      selector.appendChild(option);
+    }
 
-// Standardise calculator names and order
-const calculatorOrder = [
-  ["propylene-stock", "Pumpable C3 Stock"],
-  ["reactor-shutdown", "Shutdown Planner"],
-  ["reactor-startup", "Startup Planner"],
-  ["additive-raffia", "WHO34N Composition"],
-  ["additive-im", "IH120N Composition"],
-  ["additive-tq", "FH110N Composition"]
-];
+    // Standardise calculator names and order
+    const calculatorOrder = [
+      ["propylene-stock", "Pumpable C3 Stock"],
+      ["reactor-shutdown", "Reactor Shutdown Planner"],
+      ["reactor-startup", "Reactor Startup Planner"],
+      ["additive-raffia", "WH034N Composition"],
+      ["additive-im", "IH120N Composition"],
+      ["additive-tq", "FH110N Composition"]
+    ];
 
-calculatorOrder.forEach(([value, label]) => {
-  const option = Array.from(selector.options).find(
-    item => item.value === value
-  );
+    calculatorOrder.forEach(([value, label]) => {
+      const option = Array.from(selector.options).find(
+        item => item.value === value
+      );
 
-  if (option) {
-    option.textContent = label;
-    selector.appendChild(option);
-  }
-});
+      if (option) {
+        option.textContent = label;
+        selector.appendChild(option);
+      }
+    });
 
     function render() {
       const now = new Date();
@@ -257,6 +256,16 @@ calculatorOrder.forEach(([value, label]) => {
             <input id="startupTargetStock" type="number"
               min="0" step="any"
               value="${readValue("targetStock", config.target_c3_stock)}">
+          </label>
+        </div>
+
+        <div class="startup-input-grid">
+          <label class="startup-field">
+            <span>Current Stock (MT) — Optional</span>
+            <input id="startupCurrentStock" type="number"
+              min="0" step="any"
+              value="${readValue("currentStock", "")}"
+              placeholder="Enter current stock in MT">
           </label>
         </div>
 
@@ -294,6 +303,7 @@ calculatorOrder.forEach(([value, label]) => {
       `;
 
       const targetInput = panel.querySelector("#startupTargetStock");
+      const currentInput = panel.querySelector("#startupCurrentStock");
       const latestInput = panel.querySelector("#startupStockLatest");
       const previousInput = panel.querySelector("#startupStockPrevious");
       const earlierInput = panel.querySelector("#startupStockEarlier");
@@ -302,6 +312,18 @@ calculatorOrder.forEach(([value, label]) => {
       targetInput.addEventListener("change", () =>
         saveValue("targetStock", targetInput.value)
       );
+
+      currentInput.addEventListener("change", () => {
+        saveValue("currentStock", currentInput.value);
+
+        if (currentInput.value.trim() === "") {
+          try {
+            localStorage.removeItem(
+              STORAGE_PREFIX + "currentStockTimestamp"
+            );
+          } catch (_) {}
+        }
+      });
 
       latestInput.addEventListener("change", () =>
         saveStock(times.latest, latestInput.value)
@@ -317,22 +339,64 @@ calculatorOrder.forEach(([value, label]) => {
 
       function calculate() {
         const target = numberFrom(targetInput);
+        const currentStock = numberFrom(currentInput);
         const latest = numberFrom(latestInput);
         const previous = numberFrom(previousInput);
         const earlier = numberFrom(earlierInput);
 
         saveValue("targetStock", targetInput.value);
+        saveValue("currentStock", currentInput.value);
         saveStock(times.latest, latestInput.value);
         saveStock(times.previous, previousInput.value);
         saveStock(times.earlier, earlierInput.value);
 
-        if (
-          target === null || target < 0 ||
-          latest === null || latest < 0
-        ) {
+        const currentTime = new Date();
+
+        let currentStockTimestamp = null;
+
+        if (currentInput.value.trim() !== "" &&
+            currentStock !== null && currentStock >= 0) {
+          currentStockTimestamp = currentTime;
+
+          try {
+            localStorage.setItem(
+              STORAGE_PREFIX + "currentStockTimestamp",
+              String(currentStockTimestamp.getTime())
+            );
+          } catch (_) {}
+        } else {
+          try {
+            localStorage.removeItem(
+              STORAGE_PREFIX + "currentStockTimestamp"
+            );
+          } catch (_) {}
+        }
+
+        const currentTimestampValid =
+          currentStock !== null &&
+          currentStock >= 0 &&
+          currentStockTimestamp !== null;
+
+        const scheduledReadings = [
+          { stock: latest, time: times.latest },
+          { stock: previous, time: times.previous },
+          { stock: earlier, time: times.earlier }
+        ]
+          .filter(item => item.stock !== null && item.stock >= 0)
+          .sort((a, b) => b.time.getTime() - a.time.getTime());
+
+        const validInputs =
+          target !== null &&
+          target >= 0 &&
+          (
+            (currentTimestampValid && scheduledReadings.length >= 1) ||
+            (!currentTimestampValid && scheduledReadings.length >= 2)
+          );
+
+        if (!validInputs) {
           results.innerHTML = `
-            <p class="startup-error">
-              Please enter the latest three C3 stock readings
+            <p class="reactor-error">
+              Please enter Target C3 Stock and either Current Stock with at least one scheduled reading, or at least two scheduled stock readings
             </p>
           `;
           return;
@@ -340,45 +404,70 @@ calculatorOrder.forEach(([value, label]) => {
 
         let changeRate = null;
 
-        if (latest !== null && earlier !== null) {
-          changeRate = (latest - earlier) / 16;
-        } else if (latest !== null && previous !== null) {
-          changeRate = (latest - previous) / 8;
-        } else if (previous !== null && earlier !== null) {
-          changeRate = (previous - earlier) / 8;
+        if (currentTimestampValid) {
+          // Compare Current Stock with the most recent earlier scheduled reading.
+          for (const reading of scheduledReadings) {
+            const hours =
+              (currentStockTimestamp.getTime() -
+                reading.time.getTime()) / 3600000;
+
+            if (hours > 0) {
+              changeRate = (currentStock - reading.stock) / hours;
+              break;
+            }
+          }
+        } else {
+          // Retain the existing scheduled-reading priority.
+          if (latest !== null && latest >= 0 &&
+              earlier !== null && earlier >= 0) {
+            changeRate = (latest - earlier) / 16;
+          } else if (latest !== null && latest >= 0 &&
+                     previous !== null && previous >= 0) {
+            changeRate = (latest - previous) / 8;
+          } else if (previous !== null && previous >= 0 &&
+                     earlier !== null && earlier >= 0) {
+            changeRate = (previous - earlier) / 8;
+          }
         }
+
+        const anchorReading = currentTimestampValid
+          ? { stock: currentStock, time: currentStockTimestamp }
+          : scheduledReadings.length > 0
+            ? scheduledReadings[0]
+            : null;
+
+        const elapsedHours = anchorReading
+          ? Math.max(
+              0,
+              (currentTime.getTime() -
+                anchorReading.time.getTime()) / 3600000
+            )
+          : 0;
+
+        const stockNow =
+          anchorReading && changeRate !== null
+            ? anchorReading.stock + changeRate * elapsedHours
+            : anchorReading
+              ? anchorReading.stock
+              : null;
+
+        const remainingToTarget =
+          stockNow === null ? null : target - stockNow;
 
         let stockStatus = "Change rate unavailable";
         let stockClass = "";
 
-        if (changeRate < 0) {
+        if (changeRate !== null && changeRate < 0) {
           stockStatus =
             `Depleting at ${formatOneDecimal(changeRate)} MT/hr`;
           stockClass = "depleting";
-        } else if (changeRate > 0) {
+        } else if (changeRate !== null && changeRate > 0) {
           stockStatus =
             `Increasing at ${formatOneDecimal(changeRate)} MT/hr`;
           stockClass = "increasing";
         } else if (changeRate === 0) {
           stockStatus = "Unchanged at 0.0 MT/hr";
         }
-
-        const now = new Date();
-        const elapsedHours = Math.max(
-          0,
-          (now.getTime() - times.latest.getTime()) / 3600000
-        );
-
-        // Excel logic:
-        // Production since latest reading = elapsed hours × change rate.
-        // Remaining stock to target = target − latest stock − production.
-        const productionSinceReading =
-          changeRate === null ? null : elapsedHours * changeRate;
-
-        const remainingToTarget =
-          changeRate === null
-            ? null
-            : target - latest - productionSinceReading;
 
         let timeHTML = `
           <div class="startup-result-row">
@@ -393,9 +482,10 @@ calculatorOrder.forEach(([value, label]) => {
 
         let warning = "";
 
-        if (target <= latest) {
+        if (stockNow !== null && stockNow >= target) {
           warning =
-            "The latest C3 stock is already at or above the target stock";
+            "The latest estimated C3 stock is already at or above the target stock";
+
           timeHTML = `
             <div class="startup-result-row">
               <span>Expected Start Up In</span>
@@ -406,9 +496,9 @@ calculatorOrder.forEach(([value, label]) => {
               <strong>Not applicable</strong>
             </div>
           `;
-        
         } else if (changeRate === null) {
-          warning = "Please enter the latest three C3 stock readings";
+          warning =
+            "Unable to calculate C3 stock change rate from the available readings";
         } else if (changeRate < 0) {
           timeHTML = `
             <div class="startup-result-row">
@@ -432,7 +522,7 @@ calculatorOrder.forEach(([value, label]) => {
 
           if (Number.isFinite(hoursToStartup) && hoursToStartup >= 0) {
             const expectedStartup = new Date(
-              now.getTime() + hoursToStartup * 3600000
+              currentTime.getTime() + hoursToStartup * 3600000
             );
 
             timeHTML = `
@@ -449,7 +539,6 @@ calculatorOrder.forEach(([value, label]) => {
             warning = "Unable to calculate";
           }
         }
-
 
         results.innerHTML = `
           <div class="startup-status-card">
@@ -473,15 +562,14 @@ calculatorOrder.forEach(([value, label]) => {
     }
 
     function updateSelectedCalculator() {
-  const isStartupSelected = selector.value === CALCULATOR_KEY;
-
-  panel.hidden = !isStartupSelected;
-
-  if (isStartupSelected) {
-    propylenePanel.style.display = "none";
-    render();
-  }
-}
+      if (selector.value === CALCULATOR_KEY) {
+        propylenePanel.style.display = "none";
+        panel.hidden = false;
+        render();
+      } else {
+        panel.hidden = true;
+      }
+    }
 
     selector.addEventListener("change", updateSelectedCalculator);
 
