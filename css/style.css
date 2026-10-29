@@ -4879,3 +4879,12 @@ body.dark #reactorShutdownCalculator .reactor-note {
         font-size: 12px;
     }
 }
+
+/* Red note in Reactor Shutdown Planner */
+#reactorShutdownCalculator .reactor-note {
+    color: #dc2626 !important;
+}
+
+body.dark #reactorShutdownCalculator .reactor-note {
+    color: #f87171 !important;
+}
