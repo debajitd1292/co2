@@ -4478,3 +4478,404 @@ body.dark #page-counters #countersNameSelector {
     color: #e2e8f0 !important;
     border: 1px solid #405875;
 }
+
+
+/* ==========================================
+   REACTOR SHUTDOWN PLANNER
+   Layout, inputs, stock readings and results
+   ========================================== */
+
+/* Main calculator container */
+#reactorShutdownCalculator {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    color: inherit;
+}
+
+#reactorShutdownCalculator *,
+#reactorShutdownCalculator *::before,
+#reactorShutdownCalculator *::after {
+    box-sizing: border-box;
+}
+
+/* General input section */
+#reactorShutdownCalculator .reactor-input-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+/* Each label and input row */
+#reactorShutdownCalculator .reactor-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(100px, 42%);
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Field labels */
+#reactorShutdownCalculator .reactor-field > span {
+    display: block;
+    min-width: 0;
+    margin: 0;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+/* Input fields */
+#reactorShutdownCalculator .reactor-field input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1f2937;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    box-shadow: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#reactorShutdownCalculator .reactor-field input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.16);
+}
+
+#reactorShutdownCalculator .reactor-field input::placeholder {
+    color: #98a2b3;
+    opacity: 1;
+}
+
+/* ==========================================
+   C3 STOCK READINGS
+   Four separate vertical rows
+   ========================================== */
+
+#reactorShutdownCalculator .reactor-stock-heading {
+    margin: 16px 0 10px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+#reactorShutdownCalculator .reactor-stock-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 16px;
+}
+
+/* Stock labels: latest, previous, earlier and current */
+#reactorShutdownCalculator .reactor-stock-grid .reactor-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(100px, 42%);
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+}
+
+#reactorShutdownCalculator .reactor-stock-grid .stock-reading-label {
+    display: block;
+    min-width: 0;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+/* Light mode */
+body:not(.dark) #reactorShutdownCalculator .reactor-stock-grid .stock-reading-label {
+    color: #344054 !important;
+}
+
+/* Dark mode */
+body.dark #reactorShutdownCalculator .reactor-stock-grid .stock-reading-label {
+    color: #ffffff !important;
+}
+
+/* Dark-mode inputs */
+body.dark #reactorShutdownCalculator .reactor-field input {
+    background: #243247;
+    color: #f1f5f9;
+    border-color: #475569;
+}
+
+body.dark #reactorShutdownCalculator .reactor-field input::placeholder {
+    color: #a8b4c5;
+}
+
+body.dark #reactorShutdownCalculator .reactor-field input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.18);
+}
+
+/* ==========================================
+   CALCULATE BUTTON
+   ========================================== */
+
+#reactorShutdownCalculator .reactor-calculate-button {
+    display: block;
+    width: 100%;
+    min-height: 42px;
+    margin: 6px 0 16px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 9px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+#reactorShutdownCalculator .reactor-calculate-button:hover {
+    background: #1d4ed8;
+}
+
+#reactorShutdownCalculator .reactor-calculate-button:active {
+    transform: scale(0.99);
+}
+
+#reactorShutdownCalculator .reactor-calculate-button:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 3px;
+}
+
+/* ==========================================
+   RESULTS CARD
+   ========================================== */
+
+#reactorShutdownCalculator .reactor-status-card {
+    width: 100%;
+    min-width: 0;
+    margin: 12px 0;
+    padding: 12px;
+    border: 1px solid #dbe3ee;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #263449;
+}
+
+#reactorShutdownCalculator .reactor-result-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    padding: 9px 0;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+#reactorShutdownCalculator .reactor-result-row:first-child {
+    padding-top: 0;
+}
+
+#reactorShutdownCalculator .reactor-result-row:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+#reactorShutdownCalculator .reactor-result-row > span {
+    flex: 1 1 45%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+#reactorShutdownCalculator .reactor-result-row > strong {
+    flex: 1 1 55%;
+    min-width: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* Dark-mode results */
+body.dark #reactorShutdownCalculator .reactor-status-card {
+    background: #202e42;
+    color: #e8eef7;
+    border-color: #3c4d64;
+}
+
+body.dark #reactorShutdownCalculator .reactor-result-row {
+    border-bottom-color: #3c4d64;
+}
+
+/* ==========================================
+   STATUS BADGES AND STOCK STATUS
+   ========================================== */
+
+#reactorShutdownCalculator .reactor-badge {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+#reactorShutdownCalculator .reactor-badge.running,
+#reactorShutdownCalculator .reactor-stock-status.increasing {
+    color: #15803d;
+}
+
+#reactorShutdownCalculator .reactor-badge.shutdown {
+    color: #b91c1c;
+}
+
+#reactorShutdownCalculator .reactor-stock-status.depleting {
+    color: #dc2626;
+}
+
+#reactorShutdownCalculator .reactor-stock-status.neutral {
+    color: #64748b;
+}
+
+body.dark #reactorShutdownCalculator .reactor-badge.running,
+body.dark #reactorShutdownCalculator .reactor-stock-status.increasing {
+    color: #86efac;
+}
+
+body.dark #reactorShutdownCalculator .reactor-badge.shutdown,
+body.dark #reactorShutdownCalculator .reactor-stock-status.depleting {
+    color: #fca5a5;
+}
+
+body.dark #reactorShutdownCalculator .reactor-stock-status.neutral {
+    color: #cbd5e1;
+}
+
+/* Running-status message */
+#reactorShutdownCalculator .reactor-result-row strong.running {
+    color: #15803d;
+}
+
+body.dark #reactorShutdownCalculator .reactor-result-row strong.running {
+    color: #86efac;
+}
+
+/* ==========================================
+   ERRORS, WARNINGS AND NOTES
+   ========================================== */
+
+#reactorShutdownCalculator .reactor-error,
+#reactorShutdownCalculator .reactor-warning,
+#reactorShutdownCalculator .reactor-note {
+    margin: 10px 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+#reactorShutdownCalculator .reactor-error {
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+#reactorShutdownCalculator .reactor-warning {
+    border: 1px solid #fed7aa;
+    background: #fff7ed;
+    color: #9a3412;
+}
+
+#reactorShutdownCalculator .reactor-note {
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+body.dark #reactorShutdownCalculator .reactor-error {
+    border-color: #7f1d1d;
+    background: #3b2028;
+    color: #fecaca;
+}
+
+body.dark #reactorShutdownCalculator .reactor-warning {
+    border-color: #854d0e;
+    background: #3b3020;
+    color: #fed7aa;
+}
+
+body.dark #reactorShutdownCalculator .reactor-note {
+    border-color: #1e40af;
+    background: #1e304a;
+    color: #bfdbfe;
+}
+
+/* ==========================================
+   RESPONSIVE LAYOUT
+   ========================================== */
+
+@media (min-width: 520px) {
+    #reactorShutdownCalculator .reactor-input-grid {
+        gap: 12px;
+    }
+
+    #reactorShutdownCalculator .reactor-field,
+    #reactorShutdownCalculator .reactor-stock-grid .reactor-field {
+        grid-template-columns: minmax(0, 1fr) minmax(120px, 42%);
+        gap: 12px;
+    }
+
+    #reactorShutdownCalculator .reactor-stock-grid {
+        gap: 10px;
+    }
+
+    #reactorShutdownCalculator .reactor-field input {
+        min-height: 40px;
+    }
+}
+
+/* Small mobile screens */
+@media (max-width: 380px) {
+    #reactorShutdownCalculator .reactor-field,
+    #reactorShutdownCalculator .reactor-stock-grid .reactor-field {
+        grid-template-columns: minmax(0, 1fr) minmax(95px, 42%);
+        gap: 7px;
+        font-size: 12px;
+    }
+
+    #reactorShutdownCalculator .reactor-field input {
+        min-height: 36px;
+        padding: 7px;
+        font-size: 12px;
+    }
+
+    #reactorShutdownCalculator .reactor-stock-grid .stock-reading-label {
+        font-size: 12px;
+    }
+
+    #reactorShutdownCalculator .reactor-status-card {
+        padding: 10px;
+    }
+
+    #reactorShutdownCalculator .reactor-result-row {
+        gap: 8px;
+        font-size: 12px;
+    }
+}
