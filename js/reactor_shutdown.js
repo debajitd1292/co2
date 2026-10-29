@@ -117,11 +117,7 @@
       hour12: true
     }).replace(/am/i, "AM").replace(/pm/i, "PM");
 
-    const displayTime = ["06:00", "14:00", "22:00"].includes(timeText)
-      ? `${timeText} hours`
-      : timeText;
-
-    return `${dateText}, ${displayTime}`;
+    return `${dateText}, ${timeText}`;
   }
 
   function readStock(date, defaultValue) {
@@ -190,14 +186,14 @@
   }
 
   function formatDateTime(date) {
-      return date.toLocaleString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
-      }).replace(/\b(am|pm)\b/gi, match => match.toUpperCase());
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    }).replace(/\b(am|pm)\b/gi, match => match.toUpperCase());
   }
 
   function init() {
@@ -233,6 +229,8 @@
       selector.appendChild(option);
     }
 
+    addStyles();
+
     function render() {
       const now = new Date();
       const times = getReadingTimes(now);
@@ -250,7 +248,16 @@
             <span>Reactor Load (MT/hr)</span>
             <input id="reactorLoad" type="number"
               min="0" step="any"
-              value="${readInput("reactorLoad", "")}" placeholder="Enter load in MT/hr">
+              value="${readInput("reactorLoad", "")}"
+              placeholder="Enter load in MT/hr">
+          </label>
+
+          <label class="reactor-field">
+            <span>What-if Reactor Load (MT/hr) — Optional</span>
+            <input id="reactorWhatIfLoad" type="number"
+              min="0" step="any"
+              value="${readInput("reactorWhatIfLoad", "")}"
+              placeholder="Enter proposed load">
           </label>
         </div>
 
@@ -258,24 +265,35 @@
 
         <div class="reactor-stock-grid">
           <label class="reactor-field">
-            <span class="stock-reading-label">Stock as of ${formatReadingTime(times.latest)}</span>
+            <span>Stock at ${formatReadingTime(times.latest)}</span>
             <input id="reactorStockLatest" type="number"
               step="any"
-              value="${readStock(times.latest, "")}" placeholder="Enter stock in MT">
+              value="${readStock(times.latest, "")}"
+              placeholder="Enter stock in MT">
           </label>
 
           <label class="reactor-field">
-            <span class="stock-reading-label">Stock as of ${formatReadingTime(times.previous)}</span>
+            <span>Stock at ${formatReadingTime(times.previous)}</span>
             <input id="reactorStockPrevious" type="number"
               step="any"
-              value="${readStock(times.previous, "")}" placeholder="Enter stock in MT">
+              value="${readStock(times.previous, "")}"
+              placeholder="Enter stock in MT">
           </label>
 
           <label class="reactor-field">
-            <span class="stock-reading-label">Stock as of ${formatReadingTime(times.earlier)}</span>
+            <span>Stock at ${formatReadingTime(times.earlier)}</span>
             <input id="reactorStockEarlier" type="number"
               step="any"
-              value="${readStock(times.earlier, "")}" placeholder="Enter stock in MT">
+              value="${readStock(times.earlier, "")}"
+              placeholder="Enter stock in MT">
+          </label>
+
+          <label class="reactor-field">
+            <span>Current Stock (Optional)</span>
+            <input id="reactorStockCurrent" type="number"
+              min="0" step="any"
+              value="${readInput("reactorStockCurrent", "")}"
+              placeholder="Enter current stock in MT">
           </label>
         </div>
 
@@ -285,7 +303,6 @@
         </button>
 
         <div id="reactorShutdownResults" aria-live="polite"></div>
-
       `;
 
       const consumedInput = panel.querySelector("#reactorC3Consumed");
@@ -293,7 +310,14 @@
       const latestInput = panel.querySelector("#reactorStockLatest");
       const previousInput = panel.querySelector("#reactorStockPrevious");
       const earlierInput = panel.querySelector("#reactorStockEarlier");
+      const currentStockInput = panel.querySelector("#reactorStockCurrent");
+      const whatIfLoadInput = panel.querySelector("#reactorWhatIfLoad");
       const results = panel.querySelector("#reactorShutdownResults");
+
+      let currentStockTimestamp = readInput(
+        "reactorStockCurrentTimestamp",
+        ""
+      );
 
       consumedInput.addEventListener("change", () =>
         saveInput("c3Consumed", consumedInput.value)
@@ -302,6 +326,25 @@
       loadInput.addEventListener("change", () =>
         saveInput("reactorLoad", loadInput.value)
       );
+
+      whatIfLoadInput.addEventListener("change", () =>
+        saveInput("reactorWhatIfLoad", whatIfLoadInput.value)
+      );
+
+      currentStockInput.addEventListener("change", () => {
+        saveInput("reactorStockCurrent", currentStockInput.value);
+
+        if (currentStockInput.value.trim() !== "") {
+          currentStockTimestamp = new Date().toISOString();
+          saveInput(
+            "reactorStockCurrentTimestamp",
+            currentStockTimestamp
+          );
+        } else {
+          currentStockTimestamp = "";
+          saveInput("reactorStockCurrentTimestamp", "");
+        }
+      });
 
       latestInput.addEventListener("change", () =>
         saveStock(times.latest, latestInput.value)
@@ -315,15 +358,20 @@
         saveStock(times.earlier, earlierInput.value)
       );
 
-      function calculate() {
+          function calculate() {
         const c3Consumed = numberFrom(consumedInput);
         const reactorLoad = numberFrom(loadInput);
         const stockLatest = numberFrom(latestInput);
         const stockPrevious = numberFrom(previousInput);
         const stockEarlier = numberFrom(earlierInput);
+        const stockCurrent = numberFrom(currentStockInput);
+        const whatIfLoad = numberFrom(whatIfLoadInput);
 
         saveInput("c3Consumed", consumedInput.value);
         saveInput("reactorLoad", loadInput.value);
+        saveInput("reactorWhatIfLoad", whatIfLoadInput.value);
+        saveInput("reactorStockCurrent", currentStockInput.value);
+
         saveStock(times.latest, latestInput.value);
         saveStock(times.previous, previousInput.value);
         saveStock(times.earlier, earlierInput.value);
@@ -336,15 +384,15 @@
         if (!validInputs) {
           results.innerHTML = `
             <p class="reactor-error">
-              Please enter Reactor load and atleast 2 latest C3 stock reading
+              Please enter Reactor load and at least the latest
+              two valid C3 stock readings.
             </p>
           `;
           return;
         }
 
-        // Match the Excel change-rate calculation:
-        // Prefer latest and earlier readings over 16 hours.
-        // Otherwise use the available pair over 8 hours.
+        // Prefer the stock change over 16 hours.
+        // Fall back to a valid pair over 8 hours.
         let changeRate = null;
 
         if (stockLatest !== null && stockEarlier !== null) {
@@ -360,29 +408,70 @@
         }
 
         const currentTime = new Date();
-        const elapsedHours = Math.max(
-          0,
-          (currentTime.getTime() - times.latest.getTime()) / 3600000
-        );
+
+        const enteredStockTime = currentStockTimestamp
+          ? new Date(currentStockTimestamp)
+          : null;
+
+        const liveReadingValid =
+          stockCurrent !== null &&
+          stockCurrent >= 0 &&
+          enteredStockTime &&
+          Number.isFinite(enteredStockTime.getTime()) &&
+          enteredStockTime.getTime() >= times.latest.getTime() &&
+          enteredStockTime.getTime() <= currentTime.getTime();
+
+        // If the optional current stock is valid, use its recorded
+        // timestamp to calculate the observed stock trend.
+        // Otherwise retain the scheduled-reading calculation.
+        if (liveReadingValid && stockLatest !== null) {
+          const hoursSinceLatest =
+            (enteredStockTime.getTime() -
+              times.latest.getTime()) / 3600000;
+
+          if (hoursSinceLatest >= 1) {
+            changeRate =
+              (stockCurrent - stockLatest) / hoursSinceLatest;
+          } else if (stockEarlier !== null) {
+            const hoursFromEarlier =
+              (enteredStockTime.getTime() -
+                times.earlier.getTime()) / 3600000;
+
+            if (hoursFromEarlier > 0) {
+              changeRate =
+                (stockCurrent - stockEarlier) / hoursFromEarlier;
+            }
+          }
+        }
+
+        const elapsedHours = liveReadingValid
+          ? 0
+          : Math.max(
+              0,
+              (currentTime.getTime() -
+                times.latest.getTime()) / 3600000
+            );
+
+        const stockForProjection = liveReadingValid
+          ? stockCurrent
+          : stockLatest;
 
         let stockStatus = "Stock change rate unavailable";
         let stockClass = "neutral";
 
         if (changeRate !== null) {
-          
-        if (changeRate < 0) {
-  stockStatus =
-    `Depleting at ${formatOneDecimal(changeRate)} MT/hr`;
-  stockClass = "depleting";
-} else if (changeRate > 0) {
-  stockStatus =
-    `Increasing at ${formatOneDecimal(changeRate)} MT/hr`;
-  stockClass = "increasing";
-} else {
-  stockStatus = "Unchanged at 0.0 MT/hr";
-  stockClass = "neutral";
-}
-
+          if (changeRate < 0) {
+            stockStatus =
+              `Depleting at ${formatOneDecimal(changeRate)} MT/hr`;
+            stockClass = "depleting";
+          } else if (changeRate > 0) {
+            stockStatus =
+              `Increasing at ${formatOneDecimal(changeRate)} MT/hr`;
+            stockClass = "increasing";
+          } else {
+            stockStatus = "Unchanged at 0.0 MT/hr";
+            stockClass = "neutral";
+          }
         }
 
         const reactorRunning = reactorLoad > 0;
@@ -398,7 +487,6 @@
           </div>
         `;
 
-        
         if (!reactorRunning) {
           countdownHTML = `
             <div class="reactor-result-row">
@@ -414,20 +502,25 @@
           countdownHTML = `
             <div class="reactor-result-row">
               <span>Shutdown in</span>
-              <strong></strong>
+              <strong>Unable to estimate</strong>
             </div>
             <div class="reactor-result-row">
               <span>Expected Shutdown On</span>
               <strong class="running">
-                Plant to keep running as C3 stock building up
+                Plant to keep running as C3 stock is building up
               </strong>
             </div>
           `;
         } else if (changeRate !== null && changeRate < 0) {
           const remaining =
-            stockLatest - c3Consumed - reactorLoad * elapsedHours;
+            stockForProjection -
+            c3Consumed -
+            reactorLoad * elapsedHours;
 
-          const hoursToShutdown = Math.abs(remaining / changeRate);
+          const hoursToShutdown = Math.max(
+            0,
+            remaining / Math.abs(changeRate)
+          );
 
           if (Number.isFinite(hoursToShutdown)) {
             const expectedShutdown = new Date(
@@ -449,15 +542,16 @@
           countdownHTML = `
             <div class="reactor-result-row">
               <span>Shutdown in</span>
-              <strong></strong>
+              <strong>Unable to estimate</strong>
             </div>
             <div class="reactor-result-row">
               <span>Expected Shutdown On</span>
-              <strong>Unable to estimate — C3 stock is unchanged</strong>
+              <strong>
+                Unable to estimate — C3 stock is unchanged
+              </strong>
             </div>
           `;
         }
-
 
         const statusText = reactorRunning
           ? "Reactor is Running"
@@ -487,10 +581,95 @@
           </div>
 
           ${
+            whatIfLoad !== null &&
+            whatIfLoad >= 0 &&
+            changeRate !== null &&
+            changeRate < 0 &&
+            reactorRunning
+              ? (() => {
+                  // Provisional model:
+                  // assume production stays steady and net depletion
+                  // changes one-for-one with reactor load.
+                  const observedDepletion = Math.abs(changeRate);
+
+                  const projectedDepletion =
+                    observedDepletion + (whatIfLoad - reactorLoad);
+
+                  const remainingForWhatIf =
+                    stockForProjection - c3Consumed;
+
+                  if (projectedDepletion <= 0) {
+                    return `
+                      <div class="reactor-status-card">
+                        <div class="reactor-result-row">
+                          <span>What-if Shutdown</span>
+                          <strong>
+                            Not expected at this load if production
+                            remains steady
+                          </strong>
+                        </div>
+                      </div>
+                    `;
+                  }
+
+                  const whatIfHours = Math.max(
+                    0,
+                    remainingForWhatIf / projectedDepletion
+                  );
+
+                  const whatIfDate = new Date(
+                    currentTime.getTime() +
+                    whatIfHours * 3600000
+                  );
+
+                  const baselineHours = Math.max(
+                    0,
+                    remainingForWhatIf / observedDepletion
+                  );
+
+                  const difference = baselineHours - whatIfHours;
+
+                  const differenceText =
+                    Math.abs(difference) < 0.01
+                      ? "No material change"
+                      : `${formatCountdown(Math.abs(difference))} ${
+                          difference > 0 ? "earlier" : "later"
+                        }`;
+
+                  return `
+                    <div class="reactor-status-card">
+                      <div class="reactor-result-row">
+                        <span>What-if Shutdown In</span>
+                        <strong>${formatCountdown(whatIfHours)}</strong>
+                      </div>
+
+                      <div class="reactor-result-row">
+                        <span>What-if Shutdown On</span>
+                        <strong>${formatDateTime(whatIfDate)}</strong>
+                      </div>
+
+                      <div class="reactor-result-row">
+                        <span>Compared with current load</span>
+                        <strong>${differenceText}</strong>
+                      </div>
+
+                      <p class="reactor-note">
+                        This estimate assumes production remains steady
+                        and net depletion changes one-for-one with
+                        reactor load. Validate this assumption against
+                        plant data before operational use.
+                      </p>
+                    </div>
+                  `;
+                })()
+              : ""
+          }
+
+          ${
             changeRate === 0
               ? `<p class="reactor-warning">
                    Stock change rate is zero. Shutdown timing cannot
-                   be estimated using the workbook formula.
+                   be estimated using the stock trend.
                  </p>`
               : ""
           }
@@ -518,8 +697,6 @@
         panel.hidden = false;
         render();
       } else {
-        // Hide only this panel; other calculator scripts manage
-        // their own panels and the propylene panel.
         panel.hidden = true;
       }
     }
@@ -546,7 +723,163 @@
     updateSelectedCalculator();
   }
 
-  
+   function addStyles() {
+    if (document.getElementById("reactorShutdownStyles")) return;
+
+    const style = document.createElement("style");
+    style.id = "reactorShutdownStyles";
+
+    style.textContent = `
+      #reactorShutdownCalculator {
+        margin-top: 8px;
+      }
+
+      #reactorShutdownCalculator .reactor-present-time {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        font-size: 13px;
+      }
+
+      #reactorShutdownCalculator .reactor-present-time strong {
+        text-align: right;
+      }
+
+      #reactorShutdownCalculator .reactor-input-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      #reactorShutdownCalculator .reactor-input-grid .reactor-field {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(100px, 45%);
+        align-items: center;
+        gap: 12px;
+      }
+
+      #reactorShutdownCalculator .reactor-input-grid .reactor-field span {
+        line-height: 1.4;
+      }
+
+      #reactorShutdownCalculator .reactor-stock-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        margin-bottom: 12px;
+      }
+
+      #reactorShutdownCalculator .reactor-stock-grid .reactor-field {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(100px, 42%);
+        align-items: center;
+        gap: 10px;
+      }
+
+      #reactorShutdownCalculator .reactor-field {
+        min-width: 0;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      #reactorShutdownCalculator .reactor-field input {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+      }
+
+      #reactorShutdownCalculator .reactor-stock-heading {
+        font-weight: 700;
+        font-size: 13px;
+        margin: 12px 0 8px;
+      }
+
+      #reactorShutdownCalculator .reactor-calculate-button {
+        width: 100%;
+        margin: 4px 0 12px;
+      }
+
+      #reactorShutdownCalculator .reactor-status-card {
+        border: 1px solid var(--border-color, rgba(128,128,128,.25));
+        border-radius: 10px;
+        padding: 12px;
+        margin-top: 8px;
+      }
+
+      #reactorShutdownCalculator .reactor-result-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 9px 0;
+        font-size: 13px;
+      }
+
+      #reactorShutdownCalculator .reactor-result-row + .reactor-result-row {
+        border-top: 1px solid var(--border-color, rgba(128,128,128,.18));
+      }
+
+      #reactorShutdownCalculator .reactor-result-row > span {
+        flex: 1 1 42%;
+      }
+
+      #reactorShutdownCalculator .reactor-result-row > strong {
+        flex: 1 1 58%;
+        text-align: right;
+      }
+
+      #reactorShutdownCalculator .reactor-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 7px;
+        font-size: 12px;
+      }
+
+      #reactorShutdownCalculator .running,
+      #reactorShutdownCalculator .increasing {
+        color: #16a34a;
+      }
+
+      #reactorShutdownCalculator .shutdown,
+      #reactorShutdownCalculator .depleting {
+        color: #dc2626;
+      }
+
+      #reactorShutdownCalculator .neutral {
+        color: var(--text-color, inherit);
+        opacity: .8;
+      }
+
+      #reactorShutdownCalculator .reactor-note,
+      #reactorShutdownCalculator .reactor-warning,
+      #reactorShutdownCalculator .reactor-error {
+        font-size: 12px;
+        line-height: 1.5;
+        margin-top: 10px;
+      }
+
+      #reactorShutdownCalculator .reactor-warning,
+      #reactorShutdownCalculator .reactor-error {
+        color: #dc2626;
+      }
+
+      @media (min-width: 520px) {
+        #reactorShutdownCalculator .reactor-stock-grid {
+          display: flex;
+          flex-direction: column;
+        }
+
+        #reactorShutdownCalculator .reactor-stock-grid .reactor-field {
+          grid-template-columns: minmax(0, 1fr) minmax(100px, 42%);
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
