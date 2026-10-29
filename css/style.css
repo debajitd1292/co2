@@ -4895,3 +4895,19 @@ body.dark #reactorShutdownCalculator .reactor-note {
 body.dark #reactorShutdownCalculator .reactor-instruction {
     color: #f87171;
 }
+
+/* Startup Planner error message — match Shutdown Planner */
+#reactorStartupCalculator .reactor-error {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 20px 0 0;
+  padding: 18px 20px;
+  border: 2px solid #f5caca;
+  border-radius: 18px;
+  background: #fff1f1;
+  color: #b4232d;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+}
