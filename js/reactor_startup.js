@@ -259,16 +259,6 @@
           </label>
         </div>
 
-        <div class="startup-input-grid">
-          <label class="startup-field">
-            <span>Current Stock (MT) — Optional</span>
-            <input id="startupCurrentStock" type="number"
-              min="0" step="any"
-              value="${readValue("currentStock", "")}"
-              placeholder="Enter current stock in MT">
-          </label>
-        </div>
-
         <div class="startup-stock-heading">C3 Stock Readings (MT)</div>
 
         <div class="startup-stock-grid">
@@ -293,6 +283,15 @@
               value="${readStock(times.earlier, "")}" placeholder="Enter stock in MT">
           </label>
         </div>
+
+        <label class="startup-field">
+  <span>Current Stock (Optional)</span>
+  <input id="startupCurrentStock" type="number"
+    min="0" step="any"
+    value="${readValue("currentStock", "")}"
+    placeholder="Enter current stock in MT">
+</label>
+
 
         <button type="button" id="calculateStartup"
           class="calculator-action startup-calculate-button">
