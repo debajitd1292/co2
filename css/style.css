@@ -4884,7 +4884,6 @@ body.dark #reactorShutdownCalculator .reactor-note {
 }
 
 #reactorShutdownCalculator .reactor-instruction {
-#reactorStartupCalculator .reactor-error {
     margin: 8px 0 0;
     padding: 0;
     border: none;
@@ -4900,4 +4899,18 @@ body.dark #reactorShutdownCalculator .reactor-note {
 body.dark #reactorShutdownCalculator .reactor-instruction {
 body.dark #reactorStartupCalculator .reactor-error {
     color: #f87171;
+}
+
+/* Reactor Startup Planner — validation message */
+#reactorStartupCalculator .reactor-error {
+    margin: 8px 0 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: center;
 }
