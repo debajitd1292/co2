@@ -285,7 +285,7 @@
         </div>
 
         <label class="startup-field">
-  <span>Current Stock (Optional)</span>
+  <span class="stock-reading-label">Current Stock (Optional)</span>
   <input id="startupCurrentStock" type="number"
     min="0" step="any"
     value="${readValue("currentStock", "")}"
