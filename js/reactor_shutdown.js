@@ -648,7 +648,11 @@ if (!validInputs) {
 
                   if (projectedDepletion <= 0) {
                     return `
-                      <div class="reactor-stock-heading">What-if Reactor Load</div>
+                      <div class="reactor-stock-heading">
+                        What-if Reactor Load${whatIfLoad !== null && whatIfLoad >= 0
+                          ? ` ${whatIfLoad} MT/hr`
+                          : ""}
+                      </div>
                       <div class="reactor-status-card">
                         <div class="reactor-result-row">
                           <span>What-if Shutdown</span>
@@ -686,7 +690,11 @@ if (!validInputs) {
                         }`;
 
                   return `
-                    <div class="reactor-stock-heading">What-if Reactor Load</div>
+                    <div class="reactor-stock-heading">
+                      What-if Reactor Load${whatIfLoad !== null && whatIfLoad >= 0
+                        ? ` ${whatIfLoad} MT/hr`
+                        : ""}
+                    </div>
                     <div class="reactor-status-card">
                       <div class="reactor-result-row">
                         <span>What-if Shutdown In</span>
@@ -703,7 +711,7 @@ if (!validInputs) {
                         <strong>${differenceText}</strong>
                       </div>
 
-                      <p class="reactor-note">
+                      <p class="reactor-instruction">
                         This estimate assumes production remains steady
                       </p>
                     </div>
