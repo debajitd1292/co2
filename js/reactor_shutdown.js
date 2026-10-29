@@ -43,7 +43,7 @@
     );
 
     if (!response.ok) {
-      throw new Error("Unable to load reactor_shutdown.csv");
+      throw new Error("Unable to load");
     }
 
     const records = parseCSV(await response.text());
@@ -237,26 +237,26 @@
       panel.innerHTML = `
         <div class="reactor-input-grid">
           <label class="reactor-field">
-            <span>C3 to be consumed till (MT)</span>
+            <span>Reserved C3 Stock (MT)</span>
             <input id="reactorC3Consumed" type="number"
               min="0" step="any"
               value="${readInput("c3Consumed", config.c3_to_be_consumed)}">
           </label>
 
           <label class="reactor-field">
-            <span>Reactor Load (MT/hr)</span>
+            <span>Reactor Load</span>
             <input id="reactorLoad" type="number"
               min="0" step="any"
               value="${readInput("reactorLoad", "")}"
-              placeholder="Enter load in MT/hr">
+              placeholder="Enter current load in MT/hr">
           </label>
 
           <label class="reactor-field">
-            <span>What-if Reactor Load (MT/hr) — Optional</span>
+            <span>What-if Reactor Load (Optional)</span>
             <input id="reactorWhatIfLoad" type="number"
               min="0" step="any"
               value="${readInput("reactorWhatIfLoad", "")}"
-              placeholder="Enter proposed load">
+              placeholder="Enter proposed load in MT/hr">
           </label>
         </div>
 
@@ -595,7 +595,7 @@ if (!validInputs) {
             <div class="reactor-result-row">
               <span>Expected Shutdown On</span>
               <strong>
-                Unable to estimate — C3 stock is unchanged
+                C3 stock is unchanged
               </strong>
             </div>
           `;
@@ -648,6 +648,7 @@ if (!validInputs) {
 
                   if (projectedDepletion <= 0) {
                     return `
+                      <div class="reactor-stock-heading">What-if Reactor Load</div>
                       <div class="reactor-status-card">
                         <div class="reactor-result-row">
                           <span>What-if Shutdown</span>
@@ -685,6 +686,7 @@ if (!validInputs) {
                         }`;
 
                   return `
+                    <div class="reactor-stock-heading">What-if Reactor Load</div>
                     <div class="reactor-status-card">
                       <div class="reactor-result-row">
                         <span>What-if Shutdown In</span>
@@ -697,7 +699,7 @@ if (!validInputs) {
                       </div>
 
                       <div class="reactor-result-row">
-                        <span>Compared with current load</span>
+                        <span>vs Current Load</span>
                         <strong>${differenceText}</strong>
                       </div>
 
@@ -721,7 +723,7 @@ if (!validInputs) {
           ${
             changeRate === null
               ? `<p class="reactor-warning">
-                   Enter at least two valid stock readings
+                   Please enter latest three C3 stock readings
                  </p>`
               : ""
           }
