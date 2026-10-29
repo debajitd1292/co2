@@ -4883,6 +4883,8 @@ body.dark #reactorShutdownCalculator .reactor-note {
     }
 }
 
+
+/* Reactor Shutdown Planner — instruction */
 #reactorShutdownCalculator .reactor-instruction {
     margin: 8px 0 0;
     padding: 0;
@@ -4893,17 +4895,14 @@ body.dark #reactorShutdownCalculator .reactor-note {
     font-size: 12px;
     font-weight: 600;
     line-height: 1.5;
-    text-align: center;
+    text-align: left;
 }
 
-body.dark #reactorShutdownCalculator .reactor-instruction {
-body.dark #reactorStartupCalculator .reactor-error {
-    color: #f87171;
-}
-
-/* Reactor Startup Planner — validation message */
+/* Reactor validation messages — match sphere-level warning */
+#reactorShutdownCalculator .reactor-error,
 #reactorStartupCalculator .reactor-error {
-    margin: 8px 0 0;
+    display: block;
+    margin: 6px 0 0;
     padding: 0;
     border: none;
     border-radius: 0;
@@ -4912,5 +4911,13 @@ body.dark #reactorStartupCalculator .reactor-error {
     font-size: 12px;
     font-weight: 600;
     line-height: 1.5;
-    text-align: center;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+/* Dark mode */
+body.dark #reactorShutdownCalculator .reactor-instruction,
+body.dark #reactorShutdownCalculator .reactor-error,
+body.dark #reactorStartupCalculator .reactor-error {
+    color: #f87171;
 }
