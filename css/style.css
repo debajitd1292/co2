@@ -2392,6 +2392,7 @@ body.dark #productionGradeSince {
 
 
 /* 28. GH / RH HOLIDAY CARDS */
+
 .holiday-cards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2436,17 +2437,19 @@ body.dark #productionGradeSince {
 }
 
 /* 29. GH / RH DATE AND HOLIDAY NAME */
+
 .holiday-date-main {
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 700;
     line-height: 1.4;
     margin-bottom: 3px;
+    color: #1e3a5f;
 }
 
 .holiday-name {
     font-size: 12px;
     font-weight: 500;
-    line-height: 1.4;
+    line-height: 1.2;
     opacity: 0.85;
     overflow-wrap: anywhere;
 }
@@ -2520,7 +2523,6 @@ body.dark #productionGradeSince {
 
 
 
-
 .holiday-title {
     margin-bottom: 3px;
     font-size: 11px;
@@ -2534,23 +2536,9 @@ body.dark #productionGradeSince {
     color: #1e3a5f;
 }
 
-.holiday-date-main {
-    font-size: 15px;
-    font-weight: 700;
-    line-height: 1.4;
-    margin-bottom: 3px;
-}
-
-.holiday-name {
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1.4;
-    opacity: 0.85;
-    overflow-wrap: anywhere;
-}
 
 /* DARK MODE */
-body.dark .today-weather-summary,
+
 body.dark .holiday-card {
     background: linear-gradient(135deg, #263f60, #1e3350);
     color: #e2eaf5;
