@@ -244,7 +244,7 @@
           </label>
 
           <label class="reactor-field">
-            <span>Reactor Load</span>
+            <span>Current Reactor Load (MT/hr)</span>
             <input id="reactorLoad" type="number"
               min="0" step="any"
               value="${readInput("reactorLoad", "")}"
@@ -561,9 +561,8 @@ if (!validInputs) {
           `;
         } else if (changeRate !== null && changeRate < 0) {
           const remaining =
-            stockForProjection -
-            c3Consumed -
-            reactorLoad * elapsedHours;
+          stockForProjection -
+          c3Consumed;
 
           const hoursToShutdown = Math.max(
             0,
@@ -684,7 +683,7 @@ if (!validInputs) {
 
                   const differenceText =
                     Math.abs(difference) < 0.01
-                      ? "No material change"
+                      ? "No change detected"
                       : `${formatCountdown(Math.abs(difference))} ${
                           difference > 0 ? "earlier" : "later"
                         }`;
@@ -697,12 +696,12 @@ if (!validInputs) {
                     </div>
                     <div class="reactor-status-card">
                       <div class="reactor-result-row">
-                        <span>What-if Shutdown In</span>
+                        <span>Shutdown In</span>
                         <strong>${formatCountdown(whatIfHours)}</strong>
                       </div>
 
                       <div class="reactor-result-row">
-                        <span>What-if Shutdown On</span>
+                        <span>Shutdown On</span>
                         <strong>${formatDateTime(whatIfDate)}</strong>
                       </div>
 
