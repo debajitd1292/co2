@@ -426,46 +426,46 @@ if (!validInputs) {
         let changeRate = null;
 
         if (liveReadingValid) {
-          // Priority 1: Current Stock vs Earlier Stock
-          if (stockEarlier !== null && stockEarlier >= 0) {
-            const hours =
-              (enteredStockTime.getTime() -
-                times.earlier.getTime()) / 3600000;
+  // Priority 1: Current Stock vs Latest Stock
+  if (stockLatest !== null && stockLatest >= 0) {
+    const hours =
+      (enteredStockTime.getTime() -
+        times.latest.getTime()) / 3600000;
 
-            if (hours > 0) {
-              changeRate = (stockCurrent - stockEarlier) / hours;
-            }
-          }
+    if (hours > 0) {
+      changeRate = (stockCurrent - stockLatest) / hours;
+    }
+  }
 
-          // Priority 2: Current Stock vs Previous Stock
-          if (
-            changeRate === null &&
-            stockPrevious !== null &&
-            stockPrevious >= 0
-          ) {
-            const hours =
-              (enteredStockTime.getTime() -
-                times.previous.getTime()) / 3600000;
+  // Priority 2: Current Stock vs Previous Stock
+  if (
+    changeRate === null &&
+    stockPrevious !== null &&
+    stockPrevious >= 0
+  ) {
+    const hours =
+      (enteredStockTime.getTime() -
+        times.previous.getTime()) / 3600000;
 
-            if (hours > 0) {
-              changeRate = (stockCurrent - stockPrevious) / hours;
-            }
-          }
+    if (hours > 0) {
+      changeRate = (stockCurrent - stockPrevious) / hours;
+    }
+  }
 
-          // Priority 3: Current Stock vs Latest Stock
-          if (
-            changeRate === null &&
-            stockLatest !== null &&
-            stockLatest >= 0
-          ) {
-            const hours =
-              (enteredStockTime.getTime() -
-                times.latest.getTime()) / 3600000;
+  // Priority 3: Current Stock vs Earlier Stock
+  if (
+    changeRate === null &&
+    stockEarlier !== null &&
+    stockEarlier >= 0
+  ) {
+    const hours =
+      (enteredStockTime.getTime() -
+        times.earlier.getTime()) / 3600000;
 
-            if (hours > 0) {
-              changeRate = (stockCurrent - stockLatest) / hours;
-            }
-          }
+    if (hours > 0) {
+      changeRate = (stockCurrent - stockEarlier) / hours;
+    }
+  }
         } else {
           // No valid Current Stock: retain scheduled-reading logic.
           if (
