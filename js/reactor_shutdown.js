@@ -229,7 +229,6 @@
       selector.appendChild(option);
     }
 
-    addStyles();
 
     function render() {
       const now = new Date();
@@ -265,31 +264,39 @@
 
         <div class="reactor-stock-grid">
           <label class="reactor-field">
-            <span>Stock at ${formatReadingTime(times.latest)}</span>
+            <span class="stock-reading-label">
+              Stock at ${formatReadingTime(times.latest)}
+            </span>
             <input id="reactorStockLatest" type="number"
-              step="any"
+              min="0" step="any"
               value="${readStock(times.latest, "")}"
               placeholder="Enter stock in MT">
           </label>
 
           <label class="reactor-field">
-            <span>Stock at ${formatReadingTime(times.previous)}</span>
+            <span class="stock-reading-label">
+              Stock at ${formatReadingTime(times.previous)}
+            </span>
             <input id="reactorStockPrevious" type="number"
-              step="any"
+              min="0" step="any"
               value="${readStock(times.previous, "")}"
               placeholder="Enter stock in MT">
           </label>
 
           <label class="reactor-field">
-            <span>Stock at ${formatReadingTime(times.earlier)}</span>
+            <span class="stock-reading-label">
+              Stock at ${formatReadingTime(times.earlier)}
+            </span>
             <input id="reactorStockEarlier" type="number"
-              step="any"
+              min="0" step="any"
               value="${readStock(times.earlier, "")}"
               placeholder="Enter stock in MT">
           </label>
 
           <label class="reactor-field">
-            <span>Current Stock (Optional)</span>
+            <span class="stock-reading-label">
+              Current Stock (Optional)
+            </span>
             <input id="reactorStockCurrent" type="number"
               min="0" step="any"
               value="${readInput("reactorStockCurrent", "")}"
@@ -376,36 +383,31 @@
         saveStock(times.previous, previousInput.value);
         saveStock(times.earlier, earlierInput.value);
 
-        const validInputs =
-          c3Consumed !== null && c3Consumed >= 0 &&
-          reactorLoad !== null && reactorLoad >= 0 &&
-          stockLatest !== null && stockLatest >= 0;
+const scheduledReadingsAvailable = [
+  stockLatest,
+  stockPrevious,
+  stockEarlier
+].filter(value => value !== null && value >= 0).length;
 
-        if (!validInputs) {
-          results.innerHTML = `
-            <p class="reactor-error">
-              Please enter Reactor load and at least the latest
-              two valid C3 stock readings.
-            </p>
-          `;
-          return;
-        }
+const currentStockAvailable =
+  stockCurrent !== null && stockCurrent >= 0;
 
-        // Prefer the stock change over 16 hours.
-        // Fall back to a valid pair over 8 hours.
-        let changeRate = null;
+const validInputs =
+  c3Consumed !== null && c3Consumed >= 0 &&
+  reactorLoad !== null && reactorLoad >= 0 &&
+  (
+    (currentStockAvailable && scheduledReadingsAvailable >= 1) ||
+    (!currentStockAvailable && scheduledReadingsAvailable >= 2)
+  );
 
-        if (stockLatest !== null && stockEarlier !== null) {
-          changeRate = (stockLatest - stockEarlier) / 16;
-        } else if (
-          stockLatest !== null && stockPrevious !== null
-        ) {
-          changeRate = (stockLatest - stockPrevious) / 8;
-        } else if (
-          stockPrevious !== null && stockEarlier !== null
-        ) {
-          changeRate = (stockPrevious - stockEarlier) / 8;
-        }
+if (!validInputs) {
+  results.innerHTML = `
+    <p class="reactor-error">
+      Please enter Reactor load and latest three C3 stock readings
+    </p>
+  `;
+  return;
+}
 
         const currentTime = new Date();
 
@@ -421,26 +423,72 @@
           enteredStockTime.getTime() >= times.latest.getTime() &&
           enteredStockTime.getTime() <= currentTime.getTime();
 
-        // If the optional current stock is valid, use its recorded
-        // timestamp to calculate the observed stock trend.
-        // Otherwise retain the scheduled-reading calculation.
-        if (liveReadingValid && stockLatest !== null) {
-          const hoursSinceLatest =
-            (enteredStockTime.getTime() -
-              times.latest.getTime()) / 3600000;
+        let changeRate = null;
 
-          if (hoursSinceLatest >= 1) {
-            changeRate =
-              (stockCurrent - stockLatest) / hoursSinceLatest;
-          } else if (stockEarlier !== null) {
-            const hoursFromEarlier =
+        if (liveReadingValid) {
+          // Priority 1: Current Stock vs Earlier Stock
+          if (stockEarlier !== null && stockEarlier >= 0) {
+            const hours =
               (enteredStockTime.getTime() -
                 times.earlier.getTime()) / 3600000;
 
-            if (hoursFromEarlier > 0) {
-              changeRate =
-                (stockCurrent - stockEarlier) / hoursFromEarlier;
+            if (hours > 0) {
+              changeRate = (stockCurrent - stockEarlier) / hours;
             }
+          }
+
+          // Priority 2: Current Stock vs Previous Stock
+          if (
+            changeRate === null &&
+            stockPrevious !== null &&
+            stockPrevious >= 0
+          ) {
+            const hours =
+              (enteredStockTime.getTime() -
+                times.previous.getTime()) / 3600000;
+
+            if (hours > 0) {
+              changeRate = (stockCurrent - stockPrevious) / hours;
+            }
+          }
+
+          // Priority 3: Current Stock vs Latest Stock
+          if (
+            changeRate === null &&
+            stockLatest !== null &&
+            stockLatest >= 0
+          ) {
+            const hours =
+              (enteredStockTime.getTime() -
+                times.latest.getTime()) / 3600000;
+
+            if (hours > 0) {
+              changeRate = (stockCurrent - stockLatest) / hours;
+            }
+          }
+        } else {
+          // No valid Current Stock: retain scheduled-reading logic.
+          if (
+            stockLatest !== null &&
+            stockLatest >= 0 &&
+            stockEarlier !== null &&
+            stockEarlier >= 0
+          ) {
+            changeRate = (stockLatest - stockEarlier) / 16;
+          } else if (
+            stockLatest !== null &&
+            stockLatest >= 0 &&
+            stockPrevious !== null &&
+            stockPrevious >= 0
+          ) {
+            changeRate = (stockLatest - stockPrevious) / 8;
+          } else if (
+            stockPrevious !== null &&
+            stockPrevious >= 0 &&
+            stockEarlier !== null &&
+            stockEarlier >= 0
+          ) {
+            changeRate = (stockPrevious - stockEarlier) / 8;
           }
         }
 
@@ -655,9 +703,6 @@
 
                       <p class="reactor-note">
                         This estimate assumes production remains steady
-                        and net depletion changes one-for-one with
-                        reactor load. Validate this assumption against
-                        plant data before operational use.
                       </p>
                     </div>
                   `;
@@ -668,8 +713,7 @@
           ${
             changeRate === 0
               ? `<p class="reactor-warning">
-                   Stock change rate is zero. Shutdown timing cannot
-                   be estimated using the stock trend.
+                   Stock change rate is Zero
                  </p>`
               : ""
           }
@@ -677,8 +721,7 @@
           ${
             changeRate === null
               ? `<p class="reactor-warning">
-                   Enter at least two valid stock readings to calculate
-                   the change rate.
+                   Enter at least two valid stock readings
                  </p>`
               : ""
           }
@@ -713,8 +756,7 @@
           panel.hidden = false;
           panel.innerHTML = `
             <p class="reactor-error">
-              Unable to load calculators/reactor_shutdown.csv.
-              Check the file path and refresh the dashboard.
+              Unable to load Calculators
             </p>
           `;
         }
@@ -723,163 +765,6 @@
     updateSelectedCalculator();
   }
 
-   function addStyles() {
-    if (document.getElementById("reactorShutdownStyles")) return;
-
-    const style = document.createElement("style");
-    style.id = "reactorShutdownStyles";
-
-    style.textContent = `
-      #reactorShutdownCalculator {
-        margin-top: 8px;
-      }
-
-      #reactorShutdownCalculator .reactor-present-time {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 14px;
-        font-size: 13px;
-      }
-
-      #reactorShutdownCalculator .reactor-present-time strong {
-        text-align: right;
-      }
-
-      #reactorShutdownCalculator .reactor-input-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-
-      #reactorShutdownCalculator .reactor-input-grid .reactor-field {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(100px, 45%);
-        align-items: center;
-        gap: 12px;
-      }
-
-      #reactorShutdownCalculator .reactor-input-grid .reactor-field span {
-        line-height: 1.4;
-      }
-
-      #reactorShutdownCalculator .reactor-stock-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 9px;
-        margin-bottom: 12px;
-      }
-
-      #reactorShutdownCalculator .reactor-stock-grid .reactor-field {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(100px, 42%);
-        align-items: center;
-        gap: 10px;
-      }
-
-      #reactorShutdownCalculator .reactor-field {
-        min-width: 0;
-        font-size: 12px;
-        font-weight: 600;
-      }
-
-      #reactorShutdownCalculator .reactor-field input {
-        box-sizing: border-box;
-        width: 100%;
-        min-width: 0;
-      }
-
-      #reactorShutdownCalculator .reactor-stock-heading {
-        font-weight: 700;
-        font-size: 13px;
-        margin: 12px 0 8px;
-      }
-
-      #reactorShutdownCalculator .reactor-calculate-button {
-        width: 100%;
-        margin: 4px 0 12px;
-      }
-
-      #reactorShutdownCalculator .reactor-status-card {
-        border: 1px solid var(--border-color, rgba(128,128,128,.25));
-        border-radius: 10px;
-        padding: 12px;
-        margin-top: 8px;
-      }
-
-      #reactorShutdownCalculator .reactor-result-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 9px 0;
-        font-size: 13px;
-      }
-
-      #reactorShutdownCalculator .reactor-result-row + .reactor-result-row {
-        border-top: 1px solid var(--border-color, rgba(128,128,128,.18));
-      }
-
-      #reactorShutdownCalculator .reactor-result-row > span {
-        flex: 1 1 42%;
-      }
-
-      #reactorShutdownCalculator .reactor-result-row > strong {
-        flex: 1 1 58%;
-        text-align: right;
-      }
-
-      #reactorShutdownCalculator .reactor-badge {
-        display: inline-block;
-        padding: 4px 8px;
-        border-radius: 7px;
-        font-size: 12px;
-      }
-
-      #reactorShutdownCalculator .running,
-      #reactorShutdownCalculator .increasing {
-        color: #16a34a;
-      }
-
-      #reactorShutdownCalculator .shutdown,
-      #reactorShutdownCalculator .depleting {
-        color: #dc2626;
-      }
-
-      #reactorShutdownCalculator .neutral {
-        color: var(--text-color, inherit);
-        opacity: .8;
-      }
-
-      #reactorShutdownCalculator .reactor-note,
-      #reactorShutdownCalculator .reactor-warning,
-      #reactorShutdownCalculator .reactor-error {
-        font-size: 12px;
-        line-height: 1.5;
-        margin-top: 10px;
-      }
-
-      #reactorShutdownCalculator .reactor-warning,
-      #reactorShutdownCalculator .reactor-error {
-        color: #dc2626;
-      }
-
-      @media (min-width: 520px) {
-        #reactorShutdownCalculator .reactor-stock-grid {
-          display: flex;
-          flex-direction: column;
-        }
-
-        #reactorShutdownCalculator .reactor-stock-grid .reactor-field {
-          grid-template-columns: minmax(0, 1fr) minmax(100px, 42%);
-        }
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
