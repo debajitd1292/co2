@@ -4881,6 +4881,7 @@ body.dark #reactorShutdownCalculator .reactor-note {
 }
 
 #reactorShutdownCalculator .reactor-instruction {
+#reactorStartupCalculator .reactor-error {
     margin: 8px 0 0;
     padding: 0;
     border: none;
@@ -4890,24 +4891,10 @@ body.dark #reactorShutdownCalculator .reactor-note {
     font-size: 12px;
     font-weight: 600;
     line-height: 1.5;
+    text-align: center;
 }
 
 body.dark #reactorShutdownCalculator .reactor-instruction {
+body.dark #reactorStartupCalculator .reactor-error {
     color: #f87171;
-}
-
-/* Startup Planner error message — match Shutdown Planner */
-#reactorStartupCalculator .reactor-error {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  margin: 20px 0 0;
-  padding: 18px 20px;
-  border: 2px solid #f5caca;
-  border-radius: 18px;
-  background: #fff1f1;
-  color: #b4232d;
-  font-size: 16px;
-  line-height: 1.5;
-  text-align: center;
 }
