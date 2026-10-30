@@ -4915,9 +4915,13 @@ body.dark #reactorShutdownCalculator .reactor-note {
     overflow-wrap: anywhere;
 }
 
-/* Dark mode */
+/* Dark mode — keep validation messages transparent */
 body.dark #reactorShutdownCalculator .reactor-instruction,
 body.dark #reactorShutdownCalculator .reactor-error,
 body.dark #reactorStartupCalculator .reactor-error {
-    color: #f87171;
+    color: #f87171 !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
 }
