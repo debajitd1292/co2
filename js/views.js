@@ -347,6 +347,37 @@ async function renderEcoLeaveCounter() {
 }
 
 
+
+function updateCounterSectionVisibility() {
+    const offCounter = document.getElementById("offDayCounter");
+    const ecoCounter = document.getElementById("ecoLeaveCounter");
+    const emptyMessage = document.getElementById("counterEmptyMessage");
+
+    const counterCards = [
+        offCounter?.closest(".card"),
+        ecoCounter?.closest(".card"),
+        document.querySelector("#page-counters .double-training-counter")
+    ].filter(Boolean);
+
+    const hasName = Boolean(
+        String(
+            (typeof countersSelectedName !== "undefined" && countersSelectedName) ||
+            (typeof selectedName !== "undefined" && selectedName) ||
+            ""
+        ).trim()
+    );
+
+    counterCards.forEach(card => {
+        card.hidden = !hasName;
+    });
+
+    if (emptyMessage) {
+        emptyMessage.hidden = hasName;
+    }
+}
+
+
+
 function renderNext7Days(){
 
     const box = document.getElementById("next7Days");
@@ -356,6 +387,7 @@ function renderNext7Days(){
     const offCounter = document.getElementById("offDayCounter");
     const ecoCounter = document.getElementById("ecoLeaveCounter");
 
+    
     if (!selectedName) {
         if (offCounter) {
             offCounter.style.display = "none";
@@ -368,10 +400,12 @@ function renderNext7Days(){
         }
 
         box.innerHTML =
-            "<div style='color:#777;'>Select name to view shifts</div>";
+            "<div style='color:#777;font-weight:bold;'>Select name to view shifts</div>";
 
+        updateCounterSectionVisibility();
         return;
     }
+
 
     if (offCounter) offCounter.style.display = "";
     if (ecoCounter) ecoCounter.style.display = "";
@@ -379,6 +413,8 @@ function renderNext7Days(){
     renderOffDayCounter();
     renderEcoLeaveCounter();
     renderDoubleShiftAndTrainingCounter();
+
+    updateCounterSectionVisibility();
 
     if (!header || header.length === 0 || !data || data.length === 0) {
         box.innerHTML =
@@ -402,6 +438,7 @@ function renderNext7Days(){
     const year = today.getFullYear();
     const month = today.getMonth();
     const todayDate = today.getDate();
+    const todayStart = new Date(year, month, todayDate);
 
     const firstDay = new Date(year, month, 1);
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -449,21 +486,41 @@ function renderNext7Days(){
 
         const isToday = day === todayDate;
 
-        html += `
-            <div class="calendar-day ${isToday ? "calendar-today" : ""}">
-                <div class="calendar-date">${day}</div>
-                <div class="calendar-shift">
-                    <span class="day-shift ${shiftClass}">${displayShift}</span>
-                </div>
-            </div>
-        `;
-    }
+// Find GH / RH from the existing holiday list
+const holiday = typeof holidays !== "undefined"
+    ? holidays.find(h =>
+        h.date === dateStr &&
+        (h.type === "GH" || h.type === "RH")
+    )
+    : null;
 
-    html += `
+const holidayType = holiday ? holiday.type.toLowerCase() : "";
+
+// Past holiday: steady dot
+// Today / upcoming holiday: blinking dot
+const holidayAnimation =
+    holiday && d >= todayStart ? "holiday-dot-blink" : "";
+
+html += `
+    <div class="calendar-day ${isToday ? "calendar-today" : ""}">
+        <div class="calendar-date">
+            ${day}
+            ${holidayType
+                ? `<span class="calendar-holiday-dot ${holidayType} ${holidayAnimation}"></span>`
+                : ""}
         </div>
-    `;
+        <div class="calendar-shift">
+            <span class="day-shift ${shiftClass}">${displayShift}</span>
+        </div>
+    </div>
+`;
+}
 
-    box.innerHTML = html;
+html += `
+    </div>
+`;
+
+box.innerHTML = html;
 }
 
 /* =========================================================
