@@ -4925,3 +4925,67 @@ body.dark #reactorStartupCalculator .reactor-error {
     padding: 0 !important;
     box-shadow: none !important;
 }
+
+/* GH / RH dots beside calendar dates */
+
+.calendar-date {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.calendar-holiday-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+/* General Holiday — Green */
+.calendar-holiday-dot.gh {
+    background: #16a34a;
+    box-shadow: 0 0 4px rgba(22, 163, 74, 0.45);
+}
+
+/* Restricted Holiday — Grey */
+.calendar-holiday-dot.rh {
+    background: #94a3b8;
+    box-shadow: 0 0 4px rgba(148, 163, 184, 0.45);
+}
+
+/* Today and upcoming holidays */
+.calendar-holiday-dot.holiday-dot-blink {
+    animation: calendarHolidayBlink 2s ease-in-out infinite;
+}
+
+@keyframes calendarHolidayBlink {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+}
+
+/* Dark mode */
+body.dark .calendar-holiday-dot.gh {
+    background: #4ade80;
+    box-shadow: 0 0 6px rgba(74, 222, 128, 0.65);
+}
+
+body.dark .calendar-holiday-dot.rh {
+    background: #cbd5e1;
+    box-shadow: 0 0 6px rgba(203, 213, 225, 0.5);
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .calendar-holiday-dot.holiday-dot-blink {
+        animation: none;
+    }
+}
