@@ -1,5 +1,16 @@
 let holidays = [];
 
+function normalizeHolidayDate(dateStr) {
+    const parts = dateStr?.trim().split("-");
+
+    if (!parts || parts.length !== 3) return dateStr?.trim();
+
+    const [day, month, year] = parts;
+
+    return `${day.padStart(2, "0")}-${month.padStart(2, "0")}-${year}`;
+}
+
+
 function loadHolidayData(holidayText){
 
     if(!holidayText){
@@ -13,7 +24,7 @@ function loadHolidayData(holidayText){
         .slice(1)
         .map(r => {
             return {
-                date: r[0]?.trim(),
+                date: normalizeHolidayDate(r[0]),
                 type: r[1]?.trim(),
                 name: r[2]?.trim()
             };
