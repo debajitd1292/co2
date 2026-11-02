@@ -1,0 +1,5 @@
+equipment_name,event,date,time
+Reactor,Shutdown,2026-11-01,14:00
+Reactor,Startup,2026-11-02,08:00
+Extruder,Shutdown,2026-11-02,10:00
+Extruder,Startup,2026-11-02,16:00
