@@ -652,7 +652,7 @@ function navigateToPage(page, addHistory = true) {
     }
 
     if (page !== "more") {
-        localStorage.setItem("lastDashboardPage", page);
+        sessionStorage.setItem("lastDashboardPage", page);
     }
 
     const targetPage = document.getElementById("page-" + page);
@@ -789,7 +789,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "others"
     ];
 
-    const savedPage = localStorage.getItem("lastDashboardPage");
+    const savedPage = sessionStorage.getItem("lastDashboardPage");
     const initialPage = validPages.includes(savedPage) ? savedPage : "home";
 
     navigateToPage(initialPage, false);
