@@ -312,16 +312,25 @@
         saveValue("targetStock", targetInput.value)
       );
 
-      currentInput.addEventListener("change", () => {
+            currentInput.addEventListener("change", () => {
         saveValue("currentStock", currentInput.value);
 
-        if (currentInput.value.trim() === "") {
-          try {
+        try {
+          if (currentInput.value.trim() === "") {
             localStorage.removeItem(
               STORAGE_PREFIX + "currentStockTimestamp"
             );
-          } catch (_) {}
-        }
+          } else {
+            const enteredStock = numberFrom(currentInput);
+
+            if (enteredStock !== null && enteredStock >= 0) {
+              localStorage.setItem(
+                STORAGE_PREFIX + "currentStockTimestamp",
+                String(Date.now())
+              );
+            }
+          }
+        } catch (_) {}
       });
 
       latestInput.addEventListener("change", () =>
@@ -336,6 +345,7 @@
         saveStock(times.earlier, earlierInput.value)
       );
 
+      
       function calculate() {
         const target = numberFrom(targetInput);
         const currentStock = numberFrom(currentInput);
@@ -350,18 +360,28 @@
         saveStock(times.earlier, earlierInput.value);
 
         const currentTime = new Date();
-
         let currentStockTimestamp = null;
 
-        if (currentInput.value.trim() !== "" &&
-            currentStock !== null && currentStock >= 0) {
-          currentStockTimestamp = currentTime;
-
+        // Retrieve the actual time when Current Stock was entered.
+        if (
+          currentInput.value.trim() !== "" &&
+          currentStock !== null &&
+          currentStock >= 0
+        ) {
           try {
-            localStorage.setItem(
-              STORAGE_PREFIX + "currentStockTimestamp",
-              String(currentStockTimestamp.getTime())
+            const savedTimestamp = Number(
+              localStorage.getItem(
+                STORAGE_PREFIX + "currentStockTimestamp"
+              )
             );
+
+            if (
+              Number.isFinite(savedTimestamp) &&
+              savedTimestamp > 0 &&
+              savedTimestamp <= currentTime.getTime()
+            ) {
+              currentStockTimestamp = new Date(savedTimestamp);
+            }
           } catch (_) {}
         } else {
           try {
@@ -371,84 +391,123 @@
           } catch (_) {}
         }
 
-        const currentTimestampValid =
-          currentStock !== null &&
-          currentStock >= 0 &&
-          currentStockTimestamp !== null;
-
-        const scheduledReadings = [
-          { stock: latest, time: times.latest },
-          { stock: previous, time: times.previous },
-          { stock: earlier, time: times.earlier }
-        ]
-          .filter(item => item.stock !== null && item.stock >= 0)
-          .sort((a, b) => b.time.getTime() - a.time.getTime());
-
-        const validInputs =
-          target !== null &&
-          target >= 0 &&
-          (
-            (currentTimestampValid && scheduledReadings.length >= 1) ||
-            (!currentTimestampValid && scheduledReadings.length >= 2)
-          );
-
-        if (!validInputs) {
+        if (target === null || target < 0) {
           results.innerHTML = `
             <p class="reactor-error">
-              Please enter Target C3 Stock and either Current Stock with at least one scheduled reading, or at least two scheduled stock readings
+              Please enter a valid Target C3 stock
             </p>
           `;
           return;
         }
 
-        let changeRate = null;
+        const scheduledReadings = [
+          { stock: latest, time: times.latest, source: "scheduled" },
+          { stock: previous, time: times.previous, source: "scheduled" },
+          { stock: earlier, time: times.earlier, source: "scheduled" }
+        ]
+          .filter(item =>
+            item.stock !== null &&
+            item.stock >= 0 &&
+            item.time.getTime() <= currentTime.getTime()
+          )
+          .sort((a, b) => a.time - b.time);
 
-        if (currentTimestampValid) {
-          // Compare Current Stock with the most recent earlier scheduled reading.
-          for (const reading of scheduledReadings) {
-            const hours =
-              (currentStockTimestamp.getTime() -
-                reading.time.getTime()) / 3600000;
+        const readingPoints = [...scheduledReadings];
 
-            if (hours > 0) {
-              changeRate = (currentStock - reading.stock) / hours;
-              break;
-            }
-          }
-        } else {
-          // Retain the existing scheduled-reading priority.
-          if (latest !== null && latest >= 0 &&
-              earlier !== null && earlier >= 0) {
-            changeRate = (latest - earlier) / 16;
-          } else if (latest !== null && latest >= 0 &&
-                     previous !== null && previous >= 0) {
-            changeRate = (latest - previous) / 8;
-          } else if (previous !== null && previous >= 0 &&
-                     earlier !== null && earlier >= 0) {
-            changeRate = (previous - earlier) / 8;
-          }
+        if (
+          currentStockTimestamp &&
+          currentStock !== null &&
+          currentStock >= 0
+        ) {
+          readingPoints.push({
+            stock: currentStock,
+            time: currentStockTimestamp,
+            source: "current"
+          });
         }
 
-        const anchorReading = currentTimestampValid
-          ? { stock: currentStock, time: currentStockTimestamp }
-          : scheduledReadings.length > 0
-            ? scheduledReadings[0]
-            : null;
+        // Consider readings from the last 24 hours only.
+        const cutoffTime =
+          currentTime.getTime() - 24 * 60 * 60 * 1000;
 
-        const elapsedHours = anchorReading
-          ? Math.max(
-              0,
-              (currentTime.getTime() -
-                anchorReading.time.getTime()) / 3600000
-            )
-          : 0;
+        const recentPoints = readingPoints
+          .filter(point =>
+            point.time.getTime() >= cutoffTime
+          )
+          .sort((a, b) =>
+            a.time.getTime() - b.time.getTime()
+          );
+
+        // Remove duplicate timestamps; prefer Current Stock.
+        const uniquePoints = [];
+
+        recentPoints.forEach(point => {
+          const existingIndex = uniquePoints.findIndex(
+            existing =>
+              existing.time.getTime() === point.time.getTime()
+          );
+
+          if (existingIndex === -1) {
+            uniquePoints.push(point);
+          } else if (point.source === "current") {
+            uniquePoints[existingIndex] = point;
+          }
+        });
+
+        if (uniquePoints.length < 2) {
+          results.innerHTML = `
+            <p class="reactor-error">
+              Please enter at least two valid C3 stock readings
+              with different timestamps within the last 24 hours
+            </p>
+          `;
+          return;
+        }
+
+        // Calculate stock accumulation/depletion rate using
+        // time-based linear regression.
+        const xValues = uniquePoints.map(point =>
+          (point.time.getTime() -
+            uniquePoints[0].time.getTime()) / 3600000
+        );
+
+        const yValues = uniquePoints.map(point => point.stock);
+
+        const meanX =
+          xValues.reduce((sum, value) => sum + value, 0) /
+          xValues.length;
+
+        const meanY =
+          yValues.reduce((sum, value) => sum + value, 0) /
+          yValues.length;
+
+        let numerator = 0;
+        let denominator = 0;
+
+        xValues.forEach((x, index) => {
+          numerator +=
+            (x - meanX) * (yValues[index] - meanY);
+
+          denominator += (x - meanX) ** 2;
+        });
+
+        const changeRate =
+          denominator > 0 ? numerator / denominator : null;
+
+        // Project stock from the latest valid reading to now.
+        const anchorReading =
+          uniquePoints[uniquePoints.length - 1];
+
+        const elapsedHours = Math.max(
+          0,
+          (currentTime.getTime() -
+            anchorReading.time.getTime()) / 3600000
+        );
 
         const stockNow =
-          anchorReading && changeRate !== null
+          changeRate !== null
             ? anchorReading.stock + changeRate * elapsedHours
-            : anchorReading
-              ? anchorReading.stock
-              : null;
+            : null;
 
         const remainingToTarget =
           stockNow === null ? null : target - stockNow;
@@ -513,15 +572,17 @@
           `;
         } else if (changeRate === 0) {
           warning = "C3 stock is unchanged";
-        } else if (remainingToTarget <= 0) {
-          warning =
-            "The target stock is estimated to have already been reached.";
-        } else {
-          const hoursToStartup = remainingToTarget / changeRate;
+        } else if (remainingToTarget > 0) {
+          const hoursToStartup =
+            remainingToTarget / changeRate;
 
-          if (Number.isFinite(hoursToStartup) && hoursToStartup >= 0) {
+          if (
+            Number.isFinite(hoursToStartup) &&
+            hoursToStartup >= 0
+          ) {
             const expectedStartup = new Date(
-              currentTime.getTime() + hoursToStartup * 3600000
+              currentTime.getTime() +
+              hoursToStartup * 3600000
             );
 
             timeHTML = `
@@ -553,6 +614,7 @@
             : ""}
         `;
       }
+
 
       panel.querySelector("#calculateStartup")
         .addEventListener("click", calculate);
