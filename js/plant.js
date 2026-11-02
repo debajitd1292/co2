@@ -1,8 +1,11 @@
 (function () {
   "use strict";
 
-    const CSV_URL =
-      "https://raw.githubusercontent.com/debajitd1292/co2/main/updates/plant_status.csv";
+        const CSV_URL =
+          "https://raw.githubusercontent.com/debajitd1292/co2/main/updates/plant_status.csv";
+
+        const MAJOR_CSV_URL =
+          "https://raw.githubusercontent.com/debajitd1292/co2/main/updates/major_equipment_shutdown.csv";
 
     const REFRESH_INTERVAL = 2 * 60 * 1000;
 
@@ -224,18 +227,80 @@ function getRow(rows, type, name) {
   }
 
   
-function majorCard(row, name) {
-  row = row || {};
+function formatMonthlyShutdown(events) {
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const elapsedMonthMs = Math.max(0, now.getTime() - monthStart.getTime());
 
-  const startup = parseEventDateTime(
-      row.last_startup_date,
-      row.last_startup_time
-  );
+  const ordered = events
+    .map((row) => ({
+      event: (row.event || "").trim().toLowerCase(),
+      dateTime: parseEventDateTime(row.date, row.time)
+    }))
+    .filter((item) =>
+      item.dateTime &&
+      item.dateTime <= now &&
+      (item.event === "shutdown" || item.event === "startup")
+    )
+    .sort((a, b) => a.dateTime - b.dateTime);
 
-  const shutdown = parseEventDateTime(
-      row.last_shutdown_date,
-      row.last_shutdown_time
-  );
+  let shutdownMs = 0;
+
+  ordered.forEach((item, index) => {
+    if (item.event !== "shutdown") return;
+
+    const nextStartup = ordered
+      .slice(index + 1)
+      .find((next) => next.event === "startup");
+
+    const intervalEnd = nextStartup ? nextStartup.dateTime : now;
+
+    const overlapStart = Math.max(
+      item.dateTime.getTime(),
+      monthStart.getTime()
+    );
+
+    const overlapEnd = Math.min(
+      intervalEnd.getTime(),
+      now.getTime()
+    );
+
+    if (overlapEnd > overlapStart) {
+      shutdownMs += overlapEnd - overlapStart;
+    }
+  });
+
+  const totalHours = Math.floor(shutdownMs / 3600000);
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+
+  const percentage = elapsedMonthMs > 0
+    ? (shutdownMs / elapsedMonthMs) * 100
+    : 0;
+
+  return `${days} days ${hours} hours (${percentage.toFixed(2)}%)`;
+}
+
+
+function majorCard(name, allEvents) {
+  const events = allEvents
+    .filter((row) =>
+      (row.equipment_name || "").trim().toLowerCase() === name.toLowerCase()
+    )
+    .map((row) => ({
+      event: (row.event || "").trim(),
+      date: (row.date || "").trim(),
+      time: (row.time || "").trim(),
+      dateTime: parseEventDateTime(row.date, row.time)
+    }))
+    .filter((row) =>
+      row.dateTime &&
+      (row.event.toLowerCase() === "shutdown" ||
+       row.event.toLowerCase() === "startup")
+    )
+    .sort((a, b) => a.dateTime - b.dateTime);
+
+  const latest = events.length ? events[events.length - 1] : null;
 
   let status = "Status Undetermined";
   let statusClass = "plant-unknown";
@@ -243,49 +308,33 @@ function majorCard(row, name) {
   let eventDate = "";
   let duration = "";
 
-  if (startup && shutdown && startup.getTime() !== shutdown.getTime()) {
-    if (startup > shutdown) {
+  if (latest) {
+    if (latest.event.toLowerCase() === "startup") {
       status = "Running";
       statusClass = "plant-running";
       eventLabel = "Last Startup";
-      eventDate = eventDateText(
-          row.last_startup_date,
-          row.last_startup_time,
-          row.last_event_shift
-      );
-
       duration = `Continuous uptime: ${formatDuration(
-          row.last_startup_date,
-          row.last_startup_time
+        latest.date,
+        latest.time
       )}`;
-      } else {
+    } else {
       status = "Shutdown";
       statusClass = "plant-shutdown";
       eventLabel = "Last Shutdown";
-      eventDate = eventDateText(
-          row.last_shutdown_date,
-          row.last_shutdown_time,
-          row.last_event_shift
-      );
-
       duration = `Continuous downtime: ${formatDuration(
-          row.last_shutdown_date,
-          row.last_shutdown_time
+        latest.date,
+        latest.time
       )}`;
     }
-  } else if (startup && !shutdown) {
-    eventLabel = "Last Startup";
-    eventDate = eventDateText(
-      row.last_startup_date,
-      row.last_event_shift
-    );
-  } else if (shutdown && !startup) {
-    eventLabel = "Last Shutdown";
-    eventDate = eventDateText(
-      row.last_shutdown_date,
-      row.last_event_shift
-    );
+
+    eventDate = eventDateText(latest.date, latest.time);
   }
+
+  const monthlyShutdown = formatMonthlyShutdown(
+    allEvents.filter((row) =>
+      (row.equipment_name || "").trim().toLowerCase() === name.toLowerCase()
+    )
+  );
 
   return `
     <article class="plant-major-card ${statusClass}">
@@ -293,9 +342,7 @@ function majorCard(row, name) {
       <div class="plant-status-text">${escapeHTML(status)}</div>
       ${
         eventDate
-           
           ? `<div class="plant-event-date"><span class="plant-date-label">${escapeHTML(eventLabel)}:</span> ${escapeHTML(eventDate)}</div>`
-
           : ""
       }
       ${
@@ -303,6 +350,7 @@ function majorCard(row, name) {
           ? `<div class="plant-duration">${escapeHTML(duration)}</div>`
           : ""
       }
+      <div class="plant-duration">Total shutdown during current month: ${escapeHTML(monthlyShutdown)}</div>
     </article>
   `;
 }
@@ -432,7 +480,7 @@ function fpuCard(row, name, pairStatus = null) {
 }
 
 
-function render(rows) {
+function render(rows, majorEvents) {
     const majorContainer = $("plantMajorCards");
     const fpuContainer = $("plantFpuCards");
 
@@ -441,8 +489,8 @@ function render(rows) {
     }
 
       majorContainer.innerHTML = [
-        majorCard(getRow(rows, "major", "Reactor"), "Reactor"),
-        majorCard(getRow(rows, "major", "Extruder"), "Extruder")
+        majorCard("Reactor", majorEvents),
+        majorCard("Extruder", majorEvents)
       ].join("");
 
     // Hide Current Production Grade when Reactor is Shutdown.
@@ -499,42 +547,54 @@ function render(rows) {
   }
 
 
+   let lastGoodMajorEvents = [];
+
   async function refreshPlantStatus() {
     if (isRefreshing) return;
 
     isRefreshing = true;
 
     try {
-      const url =
-        CSV_URL + "?v=" + Date.now();
+      const cacheKey = "?v=" + Date.now();
 
-      const response = await fetch(url, {
-        cache: "no-store"
-      });
+      const [plantResponse, majorResponse] = await Promise.all([
+        fetch(CSV_URL + cacheKey, { cache: "no-store" }),
+        fetch(MAJOR_CSV_URL + cacheKey, { cache: "no-store" })
+      ]);
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+      if (!plantResponse.ok) {
+        throw new Error(`Plant status CSV: HTTP ${plantResponse.status}`);
       }
 
-      const text = await response.text();
-      const rows = parseCSV(text);
+      if (!majorResponse.ok) {
+        throw new Error(`Major equipment CSV: HTTP ${majorResponse.status}`);
+      }
+
+      const [plantText, majorText] = await Promise.all([
+        plantResponse.text(),
+        majorResponse.text()
+      ]);
+
+      const rows = parseCSV(plantText);
+      const majorEvents = parseCSV(majorText);
 
       if (!rows.length) {
-        throw new Error("CSV is empty or could not be parsed");
+        throw new Error("Plant status CSV is empty or could not be parsed");
       }
 
-      // Save only valid, successfully retrieved data.
       lastGoodRows = rows;
-      render(lastGoodRows);
+      lastGoodMajorEvents = majorEvents;
+
+      render(lastGoodRows, lastGoodMajorEvents);
 
     } catch (error) {
       console.warn("Plant status refresh failed:", error);
 
       if (lastGoodRows.length) {
-        render(lastGoodRows);
-        setNote("Unable to refresh plant status. Showing last available data.");
+        render(lastGoodRows, lastGoodMajorEvents);
+        setNote("Unable to refresh plant data. Showing last available data.");
       } else {
-        setNote("Plant status data could not be loaded. Check the CSV file.");
+        setNote("Plant data could not be loaded. Check both CSV files.");
       }
     } finally {
       isRefreshing = false;
