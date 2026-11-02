@@ -789,8 +789,20 @@ document.addEventListener("DOMContentLoaded", function () {
         "others"
     ];
 
+    const IDLE_LIMIT = 15 * 60 * 1000; // 15 minutes
+
     const savedPage = sessionStorage.getItem("lastDashboardPage");
-    const initialPage = validPages.includes(savedPage) ? savedPage : "home";
+    const lastActivity = Number(
+        sessionStorage.getItem("dashboardLastActivity") || Date.now()
+    );
+
+    const isIdle = Date.now() - lastActivity >= IDLE_LIMIT;
+
+    const initialPage = isIdle
+        ? "home"
+        : (validPages.includes(savedPage) ? savedPage : "home");
+
+    sessionStorage.setItem("dashboardLastActivity", Date.now());
 
     navigateToPage(initialPage, false);
     syncCounterSelectors();
@@ -864,3 +876,69 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+
+/* ===== AUTO RETURN TO HOME AFTER 15 MINUTES OF INACTIVITY ===== */
+
+(function () {
+    const IDLE_LIMIT = 15 * 60 * 1000;
+    let idleTimer;
+
+    function returnHomeIfIdle() {
+        const lastActivity = Number(
+            sessionStorage.getItem("dashboardLastActivity") || Date.now()
+        );
+
+        const elapsed = Date.now() - lastActivity;
+
+        if (elapsed >= IDLE_LIMIT) {
+            clearTimeout(idleTimer);
+
+            sessionStorage.setItem(
+                "dashboardLastActivity",
+                Date.now()
+            );
+
+            navigateToPage("home");
+            return;
+        }
+
+        idleTimer = setTimeout(
+            returnHomeIfIdle,
+            IDLE_LIMIT - elapsed
+        );
+    }
+
+    function resetIdleTimer() {
+        sessionStorage.setItem(
+            "dashboardLastActivity",
+            Date.now()
+        );
+
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(
+            returnHomeIfIdle,
+            IDLE_LIMIT
+        );
+    }
+
+    // User activity restarts the 30-minute timer.
+    ["click", "touchstart", "pointerdown", "keydown", "scroll"]
+        .forEach(eventName => {
+            document.addEventListener(
+                eventName,
+                resetIdleTimer,
+                { passive: true }
+            );
+        });
+
+    // Check again when returning to the browser tab.
+    document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) {
+            returnHomeIfIdle();
+        }
+    });
+
+    // Start using the previously recorded activity time.
+    returnHomeIfIdle();
+})();
