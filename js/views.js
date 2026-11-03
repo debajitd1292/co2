@@ -171,6 +171,12 @@ function renderEcoLeaveCounterMarkup() {
         </div>
 
         <div class="combined-counter-section">
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:nowrap;font-size:0.85em;">
+                <span class="eco-leave-label">Safety Observations Reported (FY <span id="safetyObservationFY">----</span>):</span>
+                <span class="eco-leave-value" id="safetyObservationCount">---</span>
+            </div>
+        </div>
+
             <h3 class="combined-counter-heading">Training / Tour &amp; Leave Counter</h3>
             <div class="eco-leave-grid">
                 <div class="eco-leave-item training-tour-item">
@@ -188,6 +194,129 @@ function renderEcoLeaveCounterMarkup() {
 }
 
 
+let safetyObservationRenderToken = 0;
+
+async function renderSafetyObservationCounter() {
+
+    const fyElement = document.getElementById("safetyObservationFY");
+    const countElement = document.getElementById("safetyObservationCount");
+
+    if (!fyElement || !countElement) return;
+
+    const employee = String(countersSelectedName || "").trim();
+    const category = String(countersSelectedCategory || "").trim();
+
+    const token = ++safetyObservationRenderToken;
+
+    if (!employee || !category) {
+        countElement.textContent = "—";
+        return;
+    }
+
+    const now = new Date();
+
+    const startYear = now.getMonth() >= 3
+        ? now.getFullYear()
+        : now.getFullYear() - 1;
+
+    const fyLabel =
+        `${startYear}–${String(startYear + 1).slice(-2)}`;
+
+    fyElement.textContent = fyLabel;
+
+    try {
+
+        const url =
+            baseUrl + "updates/safety_observations.csv?v=" + Date.now();
+
+        const response = await fetch(url, { cache: "no-store" });
+
+        if (!response.ok) {
+            throw new Error("Safety Observation CSV could not be loaded");
+        }
+
+        const rows = parseCSV(await response.text());
+
+        if (!rows || rows.length < 2) {
+            throw new Error("Safety Observation CSV is empty");
+        }
+
+        const csvHeader = rows[0].map(value =>
+            String(value || "").trim()
+        );
+
+        const nameColumn = csvHeader.findIndex(
+            value => value.toLowerCase() === "employee name"
+        );
+
+        const categoryColumn = csvHeader.findIndex(
+            value => value.toLowerCase() === "category"
+        );
+
+        if (nameColumn === -1 || categoryColumn === -1) {
+            throw new Error("Required CSV columns are missing");
+        }
+
+        const employeeRow = rows.slice(1).find(row =>
+            String(row[nameColumn] || "").trim() === employee &&
+            String(row[categoryColumn] || "").trim().toLowerCase() ===
+                category.toLowerCase()
+        );
+
+        if (!employeeRow) {
+            if (token === safetyObservationRenderToken) {
+                countElement.textContent = "—";
+            }
+            return;
+        }
+
+        let total = 0;
+
+        const lastMonth = now.getMonth() + 1;
+
+        for (
+            let month = new Date(startYear, 3, 1);
+            month <= new Date(now.getFullYear(), now.getMonth(), 1);
+            month.setMonth(month.getMonth() + 1)
+        ) {
+
+            const monthKey =
+                String(month.getMonth() + 1).padStart(2, "0") +
+                "-" +
+                month.getFullYear();
+
+            const column = csvHeader.indexOf(monthKey);
+
+            if (column === -1) continue;
+
+            const value = Number(
+                String(employeeRow[column] || "0").replace(/,/g, "")
+            );
+
+            if (Number.isFinite(value)) {
+                total += value;
+            }
+        }
+
+        if (token !== safetyObservationRenderToken) return;
+
+        countElement.textContent = String(total).padStart(3, "0");
+
+        animateDataOnFirstLoad(
+            countElement,
+            `safety-observations-${employee}-${category}-${fyLabel}`
+        );
+
+    } catch (error) {
+
+        console.warn("Safety Observation counter:", error);
+
+        if (token === safetyObservationRenderToken) {
+            countElement.textContent = "—";
+        }
+    }
+}
+
 async function renderEcoLeaveCounter() {
     const box = document.getElementById("ecoLeaveCounter");
     if (!box) return;
@@ -204,6 +333,8 @@ async function renderEcoLeaveCounter() {
 
     box.style.display = "";
     box.innerHTML = renderEcoLeaveCounterMarkup();
+
+    renderSafetyObservationCounter();
 
     const now = new Date();
     const year = now.getFullYear();
