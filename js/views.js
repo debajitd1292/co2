@@ -184,6 +184,8 @@ function renderEcoLeaveCounterMarkup() {
                 </div>
             </div>
         </div>
+    `;
+}
 
 <div class="combined-counter-section">
         <div style="
@@ -211,8 +213,7 @@ function renderEcoLeaveCounterMarkup() {
         ">---</span>
       </div>
     </div>
-  `;
-}
+ 
 
 let safetyObservationRenderToken = 0;
 
