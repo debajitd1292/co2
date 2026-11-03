@@ -170,7 +170,22 @@ function renderEcoLeaveCounterMarkup() {
             </div>
         </div>
 
-        <div class="combined-counter-section">
+
+            <h3 class="combined-counter-heading">Training / Tour &amp; Leave Counter</h3>
+            <div class="eco-leave-grid">
+                <div class="eco-leave-item training-tour-item">
+                    <span class="eco-leave-label">Training / Tour</span>
+                    <span class="eco-leave-value training-tour-value" id="trainingTourCount">—</span>
+                </div>
+
+                <div class="eco-leave-item leave-card">
+                    <span class="eco-leave-label">Total Leaves</span>
+                    <span class="eco-leave-value" id="totalLeaveValue">—</span>
+                </div>
+            </div>
+        </div>
+
+<div class="combined-counter-section">
         <div style="
             display:flex;
             align-items:center;
@@ -196,23 +211,8 @@ function renderEcoLeaveCounterMarkup() {
         ">---</span>
       </div>
     </div>
-
-            <h3 class="combined-counter-heading">Training / Tour &amp; Leave Counter</h3>
-            <div class="eco-leave-grid">
-                <div class="eco-leave-item training-tour-item">
-                    <span class="eco-leave-label">Training / Tour</span>
-                    <span class="eco-leave-value training-tour-value" id="trainingTourCount">—</span>
-                </div>
-
-                <div class="eco-leave-item leave-card">
-                    <span class="eco-leave-label">Total Leaves</span>
-                    <span class="eco-leave-value" id="totalLeaveValue">—</span>
-                </div>
-            </div>
-        </div>
-    `;
+  `;
 }
-
 
 let safetyObservationRenderToken = 0;
 
