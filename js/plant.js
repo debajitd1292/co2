@@ -227,7 +227,7 @@ function getRow(rows, type, name) {
   }
 
   
-function formatMonthlyShutdown(events) {
+function getMonthlyShutdownData(events) {
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const elapsedMonthMs = Math.max(0, now.getTime() - monthStart.getTime());
@@ -274,11 +274,18 @@ function formatMonthlyShutdown(events) {
   const days = Math.floor(totalHours / 24);
   const hours = totalHours % 24;
 
-  const percentage = elapsedMonthMs > 0
-    ? (shutdownMs / elapsedMonthMs) * 100
+  const shutdownPercentage = elapsedMonthMs > 0
+    ? Math.min(100, (shutdownMs / elapsedMonthMs) * 100)
     : 0;
 
-  return `${days} days ${hours} hours (${percentage.toFixed(2)}%)`;
+  const runningPercentage = 100 - shutdownPercentage;
+
+  return {
+    days,
+    hours,
+    shutdownPercentage,
+    runningPercentage
+  };
 }
 
 
@@ -306,51 +313,118 @@ function majorCard(name, allEvents) {
   let statusClass = "plant-unknown";
   let eventLabel = "";
   let eventDate = "";
-  let duration = "";
+  let durationLabel = "";
+  let durationValue = "";
 
   if (latest) {
     if (latest.event.toLowerCase() === "startup") {
       status = "Running";
       statusClass = "plant-running";
-      eventLabel = "Last Startup";
-      duration = `Continuous uptime: ${formatDuration(
-        latest.date,
-        latest.time
-      )}`;
+      eventLabel = "Last Startup:";
+      durationLabel = "Continuous Uptime:";
+      durationValue = formatDuration(latest.date, latest.time);
     } else {
       status = "Shutdown";
       statusClass = "plant-shutdown";
-      eventLabel = "Last Shutdown";
-      duration = `Continuous downtime: ${formatDuration(
-        latest.date,
-        latest.time
-      )}`;
+      eventLabel = "Last Shutdown:";
+      durationLabel = "Continuous Downtime:";
+      durationValue = formatDuration(latest.date, latest.time);
     }
 
     eventDate = eventDateText(latest.date, latest.time);
   }
 
-  const monthlyShutdown = formatMonthlyShutdown(
+  const monthlyData = getMonthlyShutdownData(
     allEvents.filter((row) =>
       (row.equipment_name || "").trim().toLowerCase() === name.toLowerCase()
     )
   );
 
+  const monthlyDuration =
+    `${monthlyData.days} days & ${monthlyData.hours} hours`;
+
+  const runningWidth = monthlyData.runningPercentage.toFixed(2);
+  const shutdownWidth = monthlyData.shutdownPercentage.toFixed(2);
+
   return `
     <article class="plant-major-card ${statusClass}">
-      <div class="plant-card-title">${escapeHTML(name)}</div>
-      <div class="plant-status-text">${escapeHTML(status)}</div>
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:10px;
+      ">
+        <div class="plant-card-title">${escapeHTML(name)}</div>
+        <div class="plant-status-text">${escapeHTML(status)}</div>
+      </div>
+
+      <div style="margin-top:12px;">
+
+        <div style="
+          font-size:0.82em;
+          font-weight:500;
+          margin-bottom:5px;
+          color:var(--text-secondary, #64748b);
+        ">
+          Monthly Running Time
+        </div>
+
+        <div style="
+          width:100%;
+          height:10px;
+          display:flex;
+          overflow:hidden;
+          border-radius:20px;
+          background:#dc5555;
+        ">
+          <div style="
+            width:${runningWidth}%;
+            height:100%;
+            background:#16a34a;
+          "></div>
+        </div>
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          gap:8px;
+          margin-top:5px;
+          font-size:0.78em;
+        ">
+          <span style="color:#16a34a;font-weight:600;">
+            Running ${runningWidth}%
+          </span>
+          <span style="color:#dc5555;font-weight:600;">
+            Downtime ${shutdownWidth}%
+          </span>
+        </div>
+
+      </div>
+
       ${
         eventDate
-          ? `<div class="plant-event-date"><span class="plant-date-label">${escapeHTML(eventLabel)}:</span> ${escapeHTML(eventDate)}</div>`
+          ? `<div class="plant-event-date">
+               <span class="plant-date-label">${escapeHTML(eventLabel)}</span>
+               ${escapeHTML(eventDate)}
+             </div>`
           : ""
       }
+
       ${
-        duration
-          ? `<div class="plant-duration">${escapeHTML(duration)}</div>`
+        durationValue
+          ? `<div class="plant-duration">
+               <span class="plant-date-label">${escapeHTML(durationLabel)}</span>
+               ${escapeHTML(durationValue)}
+             </div>`
           : ""
       }
-      <div class="plant-duration">Total shutdown during current month: ${escapeHTML(monthlyShutdown)}</div>
+
+      <div class="plant-duration">
+        <span class="plant-date-label">Total Monthly Downtime:</span>
+        ${escapeHTML(monthlyDuration)}
+      </div>
+
     </article>
   `;
 }
