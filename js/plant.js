@@ -355,8 +355,8 @@ function majorCard(name, allEvents) {
         align-items:center;
         gap:10px;
       ">
+        <div class="plant-card-title plant-status-text">${escapeHTML(status)}</div>
         <div class="plant-card-title">${escapeHTML(name)}</div>
-        <div class="plant-status-text">${escapeHTML(status)}</div>
       </div>
 
       <div style="margin-top:12px;width:100%;display:block;">
