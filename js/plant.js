@@ -347,7 +347,7 @@ function majorCard(name, allEvents) {
   const shutdownWidth = monthlyData.shutdownPercentage.toFixed(2);
 
   return `
-    <article class="plant-major-card ${statusClass}">
+    <article class="plant-major-card ${statusClass}" data-equipment="${escapeHTML(name)}" role="button" tabindex="0" aria-label="View ${escapeHTML(name)} start and stop history">
 
        <div style="
         display:flex;
@@ -555,6 +555,320 @@ function fpuCard(row, name, pairStatus = null) {
   `;
 }
 
+function formatHistoryTime(value) {
+    const match = (value || "").trim().match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+    if (!match) return value || "Time not available";
+
+    const hours = Number(match[1]);
+    const suffix = hours >= 12 ? "PM" : "AM";
+
+    return `${String(hours % 12 || 12).padStart(2, "0")}:${match[2]} ${suffix}`;
+}
+
+function formatHistoryDate(value) {
+    const date = parseDate(value);
+    if (!date) return value || "Date not available";
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()];
+
+    return `${day} ${month} ${date.getFullYear()}`;
+}
+
+function ensureMajorHistoryPopup() {
+    if (document.getElementById("majorHistoryOverlay")) return;
+
+    const style = document.createElement("style");
+
+    style.textContent = `
+        .plant-major-card[data-equipment] {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #majorHistoryOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(15,23,42,.48);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .22s ease, visibility .22s ease;
+        }
+
+        #majorHistoryOverlay.is-open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #majorHistorySheet {
+            width: min(100%, 520px);
+            max-height: min(78vh, 720px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-primary, #111827);
+            background: var(--card-bg, #fff);
+            border-radius: 24px;
+            box-shadow: 0 18px 60px rgba(0,0,0,.24);
+            transform: translateY(24px);
+            transition: transform .22s ease;
+        }
+
+        #majorHistoryOverlay.is-open #majorHistorySheet {
+            transform: translateY(0);
+        }
+
+        .major-history-grabber {
+            width: 38px;
+            height: 4px;
+            margin: 10px auto 2px;
+            border-radius: 99px;
+            background: #9ca3af;
+        }
+
+        .major-history-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 18px 14px;
+            border-bottom: 1px solid var(--border-color, #e5e7eb);
+        }
+
+        .major-history-title {
+            margin: 0;
+            font-size: 1.08rem;
+            font-weight: 700;
+        }
+
+        .major-history-subtitle {
+            margin-top: 4px;
+            color: var(--text-secondary, #64748b);
+            font-size: .84rem;
+        }
+
+        .major-history-close {
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 50%;
+            color: var(--text-primary, #111827);
+            background: var(--surface-secondary, #f1f5f9);
+            font-size: 21px;
+            cursor: pointer;
+        }
+
+        .major-history-list {
+            overflow-y: auto;
+            padding: 8px 18px 20px;
+        }
+
+        .major-history-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border-color, #e5e7eb);
+        }
+
+        .major-history-event {
+            min-width: 66px;
+            padding: 6px 9px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: .72rem;
+            font-weight: 800;
+        }
+
+        .major-history-event.start {
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        .major-history-event.stop {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        .major-history-date {
+            font-weight: 600;
+            font-size: .9rem;
+        }
+
+        .major-history-time {
+            margin-top: 3px;
+            color: var(--text-secondary, #64748b);
+            font-size: .82rem;
+        }
+
+        .major-history-empty {
+            padding: 28px 8px;
+            color: var(--text-secondary, #64748b);
+            text-align: center;
+        }
+
+        @media (min-width: 600px) {
+            #majorHistoryOverlay {
+                align-items: center;
+            }
+        }
+    `;
+
+    style.id = "majorHistoryPopupStyles";
+    document.head.appendChild(style);
+
+    const overlay = document.createElement("div");
+    overlay.id = "majorHistoryOverlay";
+
+    overlay.innerHTML = `
+        <section id="majorHistorySheet" role="dialog" aria-modal="true">
+            <div class="major-history-grabber"></div>
+
+            <header class="major-history-header">
+                <div>
+                    <h2 class="major-history-title">Start / Stop History</h2>
+                    <div class="major-history-subtitle" id="majorHistorySubtitle"></div>
+                </div>
+
+                <button type="button"
+                    class="major-history-close"
+                    id="majorHistoryClose"
+                    aria-label="Close">×</button>
+            </header>
+
+            <div class="major-history-list" id="majorHistoryList"></div>
+        </section>
+    `;
+
+    document.body.appendChild(overlay);
+
+    function closePopup() {
+        overlay.classList.remove("is-open");
+        document.body.style.overflow = "";
+    }
+
+    overlay.addEventListener("click", (event) => {
+        if (
+            event.target === overlay ||
+            event.target.closest("#majorHistoryClose")
+        ) {
+            closePopup();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (
+            event.key === "Escape" &&
+            overlay.classList.contains("is-open")
+        ) {
+            closePopup();
+        }
+    });
+}
+
+function openMajorHistoryPopup(equipmentName) {
+    ensureMajorHistoryPopup();
+
+    const now = new Date();
+    const monthName = now.toLocaleString("en-IN", { month: "long" });
+    const year = now.getFullYear();
+
+    const events = lastGoodMajorEvents
+        .filter((row) =>
+            (row.equipment_name || "").trim().toLowerCase() ===
+            equipmentName.toLowerCase()
+        )
+        .map((row) => ({
+            event: (row.event || "").trim().toLowerCase(),
+            date: (row.date || "").trim(),
+            time: (row.time || "").trim(),
+            dateTime: parseEventDateTime(row.date, row.time)
+        }))
+        .filter((row) =>
+            row.dateTime &&
+            row.dateTime.getFullYear() === year &&
+            row.dateTime.getMonth() === now.getMonth() &&
+            (row.event === "startup" || row.event === "shutdown")
+        )
+        .sort((a, b) => b.dateTime - a.dateTime);
+
+    const overlay = document.getElementById("majorHistoryOverlay");
+
+    document.getElementById("majorHistorySubtitle").textContent =
+        `${equipmentName} • ${monthName} ${year}`;
+
+    const list = document.getElementById("majorHistoryList");
+
+    if (!events.length) {
+        list.innerHTML = `
+            <div class="major-history-empty">
+                No Start / Stop records available for ${escapeHTML(monthName)} ${year}.
+            </div>
+        `;
+    } else {
+        list.innerHTML = events.map((item) => {
+            const isStart = item.event === "startup";
+
+            return `
+                <div class="major-history-row">
+                    <span class="major-history-event ${isStart ? "start" : "stop"}">
+                        ${isStart ? "START" : "STOP"}
+                    </span>
+
+                    <div>
+                        <div class="major-history-date">
+                            ${escapeHTML(formatHistoryDate(item.date))}
+                        </div>
+
+                        <div class="major-history-time">
+                            ${escapeHTML(formatHistoryTime(item.time))}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    document.body.style.overflow = "hidden";
+
+    requestAnimationFrame(() => {
+        overlay.classList.add("is-open");
+    });
+}
+
+function setupMajorHistoryClick() {
+    const container = $("plantMajorCards");
+
+    if (!container || container.dataset.historyClickReady === "true") return;
+
+    container.dataset.historyClickReady = "true";
+
+    container.addEventListener("click", (event) => {
+        const card = event.target.closest(".plant-major-card[data-equipment]");
+
+        if (card && container.contains(card)) {
+            openMajorHistoryPopup(card.dataset.equipment);
+        }
+    });
+
+    container.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+
+        const card = event.target.closest(".plant-major-card[data-equipment]");
+
+        if (!card || !container.contains(card)) return;
+
+        event.preventDefault();
+        openMajorHistoryPopup(card.dataset.equipment);
+    });
+}
+
 
 function render(rows, majorEvents) {
     const majorContainer = $("plantMajorCards");
@@ -678,6 +992,7 @@ function render(rows, majorEvents) {
   }
 
 function startPlantStatus() {
+    setupMajorHistoryClick();
     refreshPlantStatus();
 
     if (refreshTimer) {
