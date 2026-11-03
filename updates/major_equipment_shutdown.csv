@@ -1,9 +1,7 @@
 equipment_name,event,date,time
 Reactor,Shutdown,2026-10-30,11:25
 Reactor,Startup,2026-10-30,16:34
-Reactor,Shutdown,2026-11-03,11:25
 Extruder,Shutdown,2026-10-30,12:33
 Extruder,Startup,2026-10-30,23:45
 Extruder,Shutdown,2026-11-01,13:20
 Extruder,Startup,2026-11-01,19:28
-Extruder,Shutdown,2026-11-03,13:20
