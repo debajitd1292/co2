@@ -359,7 +359,7 @@ function majorCard(name, allEvents) {
         <div class="plant-status-text">${escapeHTML(status)}</div>
       </div>
 
-      <div style="margin-top:12px;">
+      <div style="margin-top:12px;width:100%;display:block;">
 
         <div style="
           font-size:0.82em;
@@ -377,6 +377,7 @@ function majorCard(name, allEvents) {
           overflow:hidden;
           border-radius:20px;
           background:#dc5555;
+          box-sizing:border-box;
         ">
           <div style="
             width:${runningWidth}%;
@@ -402,27 +403,27 @@ function majorCard(name, allEvents) {
 
       </div>
 
-      ${
+            ${
         eventDate
-          ? `<div class="plant-event-date">
-               <span class="plant-date-label">${escapeHTML(eventLabel)}</span>
-               ${escapeHTML(eventDate)}
+          ? `<div class="plant-event-date" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
+               <span class="plant-date-label" style="flex-shrink:0;">${escapeHTML(eventLabel)}</span>
+               <span>${escapeHTML(eventDate)}</span>
              </div>`
           : ""
       }
 
       ${
         durationValue
-          ? `<div class="plant-duration">
-               <span class="plant-date-label">${escapeHTML(durationLabel)}</span>
-               ${escapeHTML(durationValue)}
+          ? `<div class="plant-duration" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
+               <span class="plant-date-label" style="flex-shrink:0;">${escapeHTML(durationLabel)}</span>
+               <span>${escapeHTML(durationValue)}</span>
              </div>`
           : ""
       }
 
-      <div class="plant-duration">
-        <span class="plant-date-label">Total Monthly Downtime:</span>
-        ${escapeHTML(monthlyDuration)}
+      <div class="plant-duration" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
+        <span class="plant-date-label" style="flex-shrink:0;">Total Monthly Downtime:</span>
+        <span>${escapeHTML(monthlyDuration)}</span>
       </div>
 
     </article>
