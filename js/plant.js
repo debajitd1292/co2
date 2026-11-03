@@ -359,6 +359,30 @@ function majorCard(name, allEvents) {
         <div class="plant-card-title plant-status-text">${escapeHTML(status)}</div>
       </div>
 
+     ${
+        eventDate
+          ? `<div class="plant-event-date" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
+               <span class="plant-date-label" style="flex-shrink:0;">${escapeHTML(eventLabel)}</span>
+               <span>${escapeHTML(eventDate)}</span>
+             </div>`
+          : ""
+      }
+
+      ${
+        durationValue
+          ? `<div class="plant-duration" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
+               <span class="plant-date-label" style="flex-shrink:0;">${escapeHTML(durationLabel)}</span>
+               <span>${escapeHTML(durationValue)}</span>
+             </div>`
+          : ""
+      }
+
+      <div class="plant-duration" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
+        <span class="plant-date-label" style="flex-shrink:0;">Total Monthly Downtime:</span>
+        <span>${escapeHTML(monthlyDuration)}</span>
+      </div>
+
+
       <div style="margin-top:12px;width:100%;display:block;">
 
         <div style="
@@ -401,29 +425,6 @@ function majorCard(name, allEvents) {
           </span>
         </div>
 
-      </div>
-
-            ${
-        eventDate
-          ? `<div class="plant-event-date" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
-               <span class="plant-date-label" style="flex-shrink:0;">${escapeHTML(eventLabel)}</span>
-               <span>${escapeHTML(eventDate)}</span>
-             </div>`
-          : ""
-      }
-
-      ${
-        durationValue
-          ? `<div class="plant-duration" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
-               <span class="plant-date-label" style="flex-shrink:0;">${escapeHTML(durationLabel)}</span>
-               <span>${escapeHTML(durationValue)}</span>
-             </div>`
-          : ""
-      }
-
-      <div class="plant-duration" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
-        <span class="plant-date-label" style="flex-shrink:0;">Total Monthly Downtime:</span>
-        <span>${escapeHTML(monthlyDuration)}</span>
       </div>
 
     </article>
