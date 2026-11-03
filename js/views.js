@@ -156,7 +156,9 @@ let ecoLeaveRenderToken = 0;
 function renderEcoLeaveCounterMarkup() {
     return `
         <div class="combined-counter-section">
+
             <h3 class="combined-counter-heading">Double Shift &amp; ECO Counter</h3>
+
             <div class="eco-leave-grid">
                 <div class="eco-leave-item double-shift-item">
                     <span class="eco-leave-label">Double Shift</span>
@@ -168,10 +170,9 @@ function renderEcoLeaveCounterMarkup() {
                     <span class="eco-leave-value" id="totalEcoValue">— / 26</span>
                 </div>
             </div>
-        </div>
-
 
             <h3 class="combined-counter-heading">Training / Tour &amp; Leave Counter</h3>
+
             <div class="eco-leave-grid">
                 <div class="eco-leave-item training-tour-item">
                     <span class="eco-leave-label">Training / Tour</span>
@@ -183,37 +184,39 @@ function renderEcoLeaveCounterMarkup() {
                     <span class="eco-leave-value" id="totalLeaveValue">—</span>
                 </div>
             </div>
+
+        </div>
+
+        <div class="combined-counter-section">
+
+            <div style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:10px;
+                padding:12px 14px;
+                background:#fff1f2;
+                border:1px solid #fecdd3;
+                border-radius:10px;
+            ">
+                <span class="eco-leave-label" style="
+                    font-size:1em;
+                    font-weight:600;
+                    color:#374151;
+                ">
+                    Safety Observations Reported (FY <span id="safetyObservationFY">----</span>)
+                </span>
+
+                <span class="eco-leave-value" id="safetyObservationCount" style="
+                    font-size:1.25em;
+                    font-weight:700;
+                    color:#be123c;
+                ">---</span>
+            </div>
+
         </div>
     `;
 }
-
-<div class="combined-counter-section">
-        <div style="
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:10px;
-            padding:12px 14px;
-            background:#fff1f2;
-            border:1px solid #fecdd3;
-            border-radius:10px;
-        ">
-        <span class="eco-leave-label" style="
-            font-size:1em;
-            font-weight:600;
-            color:#374151;
-        ">
-            Safety Observations Reported (FY <span id="safetyObservationFY">----</span>)
-        </span>
-
-        <span class="eco-leave-value" id="safetyObservationCount" style="
-            font-size:1.25em;
-            font-weight:700;
-            color:#be123c;
-        ">---</span>
-      </div>
-    </div>
- 
 
 let safetyObservationRenderToken = 0;
 
