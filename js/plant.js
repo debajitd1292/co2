@@ -391,12 +391,12 @@ function majorCard(name, allEvents) {
           justify-content:space-between;
           gap:8px;
           margin-top:5px;
-          font-size:0.78em;
+          font-size:0.72em;
         ">
-          <span style="color:#16a34a;font-weight:600;">
-            Running ${runningWidth}%
+          <span style="color:#2563eb;font-weight:500;">
+            Uptime ${runningWidth}%
           </span>
-          <span style="color:#dc5555;font-weight:600;">
+          <span style="color:#2563eb;font-weight:500;">
             Downtime ${shutdownWidth}%
           </span>
         </div>
