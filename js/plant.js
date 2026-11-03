@@ -349,20 +349,20 @@ function majorCard(name, allEvents) {
   return `
     <article class="plant-major-card ${statusClass}">
 
-      <div style="
+       <div style="
         display:flex;
         justify-content:space-between;
         align-items:center;
         gap:10px;
       ">
-        <div class="plant-card-title plant-status-text">${escapeHTML(status)}</div>
         <div class="plant-card-title">${escapeHTML(name)}</div>
+        <div class="plant-card-title plant-status-text">${escapeHTML(status)}</div>
       </div>
 
       <div style="margin-top:12px;width:100%;display:block;">
 
         <div style="
-          font-size:0.82em;
+          font-size:0.75em;
           font-weight:500;
           margin-bottom:5px;
           color:var(--text-secondary, #64748b);
