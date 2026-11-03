@@ -670,11 +670,11 @@ function ensureMajorHistoryPopup() {
         }
 
         .major-history-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 13px 0;
-            border-bottom: 1px solid var(--border-color, #e5e7eb);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
         }
 
         .major-history-event {
@@ -696,15 +696,24 @@ function ensureMajorHistoryPopup() {
             background: #fee2e2;
         }
 
+        .major-history-row > div {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        min-width: 0;
+        }
+
         .major-history-date {
-            font-weight: 600;
-            font-size: .9rem;
+        font-weight: 600;
+        font-size: .82rem;
+        white-space: nowrap;
         }
 
         .major-history-time {
-            margin-top: 3px;
-            color: var(--text-secondary, #64748b);
-            font-size: .82rem;
+        margin-top: 0;
+        color: var(--text-secondary, #64748b);
+        font-size: .76rem;
+        white-space: nowrap;
         }
 
         .major-history-empty {
