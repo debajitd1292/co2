@@ -171,6 +171,8 @@ function renderEcoLeaveCounterMarkup() {
                 </div>
             </div>
 
+            <hr style="border:0;border-top:1px solid #d1d5db;margin:18px 0;">
+
             <h3 class="combined-counter-heading">Training / Tour &amp; Leave Counter</h3>
 
             <div class="eco-leave-grid">
@@ -184,6 +186,8 @@ function renderEcoLeaveCounterMarkup() {
                     <span class="eco-leave-value" id="totalLeaveValue">—</span>
                 </div>
             </div>
+
+            <hr style="border:0;border-top:1px solid #d1d5db;margin:18px 0;">
 
         </div>
 
@@ -324,7 +328,7 @@ async function renderSafetyObservationCounter() {
 
         if (token !== safetyObservationRenderToken) return;
 
-        countElement.textContent = String(total).padStart(3, "0");
+        countElement.textContent = String(total);
 
         animateDataOnFirstLoad(
             countElement,
