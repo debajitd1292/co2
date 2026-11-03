@@ -171,11 +171,31 @@ function renderEcoLeaveCounterMarkup() {
         </div>
 
         <div class="combined-counter-section">
-            <div style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:nowrap;font-size:0.85em;">
-                <span class="eco-leave-label">Safety Observations Reported (FY <span id="safetyObservationFY">----</span>):</span>
-                <span class="eco-leave-value" id="safetyObservationCount">---</span>
-            </div>
-        </div>
+        <div style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            padding:12px 14px;
+            background:#fff1f2;
+            border:1px solid #fecdd3;
+            border-radius:10px;
+        ">
+        <span class="eco-leave-label" style="
+            font-size:1em;
+            font-weight:600;
+            color:#374151;
+        ">
+            Safety Observations Reported (FY <span id="safetyObservationFY">----</span>)
+        </span>
+
+        <span class="eco-leave-value" id="safetyObservationCount" style="
+            font-size:1.25em;
+            font-weight:700;
+            color:#be123c;
+        ">---</span>
+      </div>
+    </div>
 
             <h3 class="combined-counter-heading">Training / Tour &amp; Leave Counter</h3>
             <div class="eco-leave-grid">
