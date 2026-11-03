@@ -187,8 +187,6 @@ function renderEcoLeaveCounterMarkup() {
                 </div>
             </div>
 
-            <hr style="border:0;border-top:1px solid #d1d5db;margin:18px 0;">
-
         </div>
 
         <div class="combined-counter-section">
