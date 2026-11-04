@@ -382,7 +382,7 @@ function majorCard(name, allEvents) {
           display:flex;
           overflow:hidden;
           border-radius:10px;
-          background:#dc5555;
+          background:#16a34a;
           box-sizing:border-box;
           box-shadow:inset 0 1px 3px rgba(0,0,0,.18);
         ">
@@ -410,7 +410,7 @@ function majorCard(name, allEvents) {
           <div style="
             width:${shutdownWidth}%;
             height:100%;
-            display:flex;
+            display:${Number(shutdownWidth) > 0 ? "flex" : "none"};
             align-items:center;
             justify-content:flex-end;
             padding-right:10px;
