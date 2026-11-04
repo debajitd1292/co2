@@ -374,61 +374,64 @@ function majorCard(name, allEvents) {
           : ""
       }
 
-            <div style="margin-top:14px;width:100%;">
+         <div style="margin-top:14px;width:100%;">
 
-        <div style="
-          width:100%;
-          height:32px;
-          display:flex;
-          overflow:hidden;
-          border-radius:10px;
-          background:#16a34a;
-          box-sizing:border-box;
-          box-shadow:inset 0 1px 3px rgba(0,0,0,.18);
-        ">
+             <div style="
+                 width:100%;
+                 height:32px;
+                 display:flex;
+                 overflow:visible;
+                 border-radius:10px;
+                 background:#fecaca;
+                 box-sizing:border-box;
+                 box-shadow:inset 0 1px 3px rgba(0,0,0,.12);
+                 position:relative;
+             ">
 
-          <div style="
-            width:${runningWidth}%;
-            height:100%;
-            display:flex;
-            align-items:center;
-            justify-content:flex-start;
-            padding-left:10px;
-            overflow:hidden;
-            background:linear-gradient(135deg,#16a34a,#22c55e);
-            color:#ffffff;
-            font-size:.68rem;
-            font-weight:800;
-            white-space:nowrap;
-            box-sizing:border-box;
-          ">
-            ${Number(runningWidth) >= 15
-              ? `Uptime ${runningWidth}%`
-              : `${runningWidth}%`}
-          </div>
+    <div style="
+      width:${runningWidth}%;
+      flex:0 0 ${runningWidth}%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      padding-left:10px;
+      overflow:visible;
+      position:relative;
+      z-index:2;
+      background:#bbf7d0;
+      color:#166534;
+      font-size:.62rem;
+      font-weight:800;
+      white-space:nowrap;
+      box-sizing:border-box;
+    ">
+      Uptime ${runningWidth}%
+    </div>
 
-          <div style="
-            width:${shutdownWidth}%;
-            height:100%;
-            display:${Number(shutdownWidth) > 0 ? "flex" : "none"};
-            align-items:center;
-            justify-content:flex-end;
-            padding-right:10px;
-            overflow:hidden;
-            background:linear-gradient(135deg,#dc2626,#ef4444);
-            color:#ffffff;
-            font-size:.68rem;
-            font-weight:800;
-            white-space:nowrap;
-            box-sizing:border-box;
-          ">
-            ${Number(shutdownWidth) >= 15
-              ? `Downtime ${shutdownWidth}%`
-              : `${shutdownWidth}%`}
-          </div>
+    <div style="
+      width:${shutdownWidth}%;
+      flex:0 0 ${shutdownWidth}%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      padding-right:10px;
+      overflow:visible;
+      position:relative;
+      z-index:1;
+      background:#fecaca;
+      color:#991b1b;
+      font-size:.62rem;
+      font-weight:800;
+      white-space:nowrap;
+      box-sizing:border-box;
+    ">
+      Downtime ${shutdownWidth}%
+    </div>
 
-        </div>
-      </div>
+  </div>
+</div>
 
     </article>
   `;
@@ -831,7 +834,11 @@ function openMajorHistoryPopup(equipmentName) {
     );
 
     document.getElementById("majorHistoryDowntime").textContent =
-        `Total Downtime: ${monthlyData.days} days & ${monthlyData.hours} hours`;
+    `Total Downtime: ${
+        monthlyData.days > 0
+            ? `${monthlyData.days} days & ${monthlyData.hours} hours`
+            : `${monthlyData.hours} hours`
+    }`;
 
     const list = document.getElementById("majorHistoryList");
 
