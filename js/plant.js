@@ -392,7 +392,8 @@ function majorCard(name, allEvents) {
             height:100%;
             display:flex;
             align-items:center;
-            justify-content:center;
+            justify-content:flex-start;
+            padding-left:10px;
             overflow:hidden;
             background:linear-gradient(135deg,#16a34a,#22c55e);
             color:#ffffff;
@@ -402,7 +403,7 @@ function majorCard(name, allEvents) {
             box-sizing:border-box;
           ">
             ${Number(runningWidth) >= 15
-              ? `UPTIME ${runningWidth}%`
+              ? `Uptime ${runningWidth}%`
               : `${runningWidth}%`}
           </div>
 
@@ -411,7 +412,8 @@ function majorCard(name, allEvents) {
             height:100%;
             display:flex;
             align-items:center;
-            justify-content:center;
+            justify-content:flex-end;
+            padding-right:10px;
             overflow:hidden;
             background:linear-gradient(135deg,#dc2626,#ef4444);
             color:#ffffff;
@@ -421,7 +423,7 @@ function majorCard(name, allEvents) {
             box-sizing:border-box;
           ">
             ${Number(shutdownWidth) >= 15
-              ? `DOWNTIME ${shutdownWidth}%`
+              ? `Downtime ${shutdownWidth}%`
               : `${shutdownWidth}%`}
           </div>
 
