@@ -2,10 +2,10 @@
   "use strict";
 
         const CSV_URL =
-          "https://raw.githubusercontent.com/debajitd1292/co2/main/updates/plant_status.csv";
+          "https://raw.githubusercontent.com/debajitd1292/ppu/main/updates/plant_status.csv";
 
         const MAJOR_CSV_URL =
-          "https://raw.githubusercontent.com/debajitd1292/co2/main/updates/major_equipment_shutdown.csv";
+          "https://raw.githubusercontent.com/debajitd1292/ppu/main/updates/major_equipment_shutdown.csv";
 
     const REFRESH_INTERVAL = 2 * 60 * 1000;
 
@@ -340,9 +340,6 @@ function majorCard(name, allEvents) {
     )
   );
 
-  const monthlyDuration =
-    `${monthlyData.days} days & ${monthlyData.hours} hours`;
-
   const runningWidth = monthlyData.runningPercentage.toFixed(2);
   const shutdownWidth = monthlyData.shutdownPercentage.toFixed(2);
 
@@ -377,54 +374,58 @@ function majorCard(name, allEvents) {
           : ""
       }
 
-      <div class="plant-duration" style="display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap;">
-        <span class="plant-date-label" style="flex-shrink:0;">Total Monthly Downtime:</span>
-        <span>${escapeHTML(monthlyDuration)}</span>
-      </div>
-
-
-      <div style="margin-top:12px;width:100%;display:block;">
-
-        <div style="
-          font-size:0.75em;
-          font-weight:500;
-          margin-bottom:5px;
-          color:var(--text-secondary, #64748b);
-        ">
-          Monthly Running Time
-        </div>
+            <div style="margin-top:14px;width:100%;">
 
         <div style="
           width:100%;
-          height:10px;
+          height:32px;
           display:flex;
           overflow:hidden;
-          border-radius:20px;
+          border-radius:10px;
           background:#dc5555;
           box-sizing:border-box;
+          box-shadow:inset 0 1px 3px rgba(0,0,0,.18);
         ">
+
           <div style="
             width:${runningWidth}%;
             height:100%;
-            background:#16a34a;
-          "></div>
-        </div>
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            background:linear-gradient(135deg,#16a34a,#22c55e);
+            color:#ffffff;
+            font-size:.68rem;
+            font-weight:800;
+            white-space:nowrap;
+            box-sizing:border-box;
+          ">
+            ${Number(runningWidth) >= 15
+              ? `UPTIME ${runningWidth}%`
+              : `${runningWidth}%`}
+          </div>
 
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          gap:8px;
-          margin-top:5px;
-          font-size:0.72em;
-        ">
-          <span style="color:#2563eb;font-weight:500;">
-            Uptime ${runningWidth}%
-          </span>
-          <span style="color:#2563eb;font-weight:500;">
-            Downtime ${shutdownWidth}%
-          </span>
-        </div>
+          <div style="
+            width:${shutdownWidth}%;
+            height:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            background:linear-gradient(135deg,#dc2626,#ef4444);
+            color:#ffffff;
+            font-size:.68rem;
+            font-weight:800;
+            white-space:nowrap;
+            box-sizing:border-box;
+          ">
+            ${Number(shutdownWidth) >= 15
+              ? `DOWNTIME ${shutdownWidth}%`
+              : `${shutdownWidth}%`}
+          </div>
 
+        </div>
       </div>
 
     </article>
@@ -653,6 +654,13 @@ function ensureMajorHistoryPopup() {
             font-size: .84rem;
         }
 
+        .major-history-downtime {
+            margin-top: 7px;
+            font-size: .84rem;
+            font-weight: 700;
+            color: #dc5555;
+        }
+
         .major-history-close {
             width: 34px;
             height: 34px;
@@ -742,7 +750,8 @@ function ensureMajorHistoryPopup() {
             <header class="major-history-header">
                 <div>
                     <h2 class="major-history-title">Start / Stop History</h2>
-                    <div class="major-history-subtitle" id="majorHistorySubtitle"></div>
+                        <div class="major-history-subtitle" id="majorHistorySubtitle"></div>
+                        <div class="major-history-downtime" id="majorHistoryDowntime"></div>
                 </div>
 
                 <button type="button"
@@ -809,15 +818,25 @@ function openMajorHistoryPopup(equipmentName) {
 
     const overlay = document.getElementById("majorHistoryOverlay");
 
-    document.getElementById("majorHistorySubtitle").textContent =
+        document.getElementById("majorHistorySubtitle").textContent =
         `${equipmentName} • ${monthName} ${year}`;
+
+    const monthlyData = getMonthlyShutdownData(
+        lastGoodMajorEvents.filter((row) =>
+            (row.equipment_name || "").trim().toLowerCase() ===
+            equipmentName.toLowerCase()
+        )
+    );
+
+    document.getElementById("majorHistoryDowntime").textContent =
+        `Total Downtime: ${monthlyData.days} days & ${monthlyData.hours} hours`;
 
     const list = document.getElementById("majorHistoryList");
 
     if (!events.length) {
         list.innerHTML = `
             <div class="major-history-empty">
-                No Start / Stop records available for ${escapeHTML(monthName)} ${year}.
+                No records available for ${escapeHTML(monthName)} ${year}.
             </div>
         `;
     } else {
