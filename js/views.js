@@ -191,7 +191,7 @@ function renderEcoLeaveCounterMarkup() {
 
         <div class="combined-counter-section">
 
-            <div style="
+            <div class="safety-observation-banner" style="
                 display:flex;
                 align-items:center;
                 justify-content:space-between;
