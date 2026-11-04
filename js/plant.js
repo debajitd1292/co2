@@ -376,17 +376,16 @@ function majorCard(name, allEvents) {
 
          <div style="margin-top:14px;width:100%;">
 
-             <div style="
-                 width:100%;
-                 height:32px;
-                 display:flex;
-                 overflow:visible;
-                 border-radius:10px;
-                 background:#fecaca;
-                 box-sizing:border-box;
-                 box-shadow:inset 0 1px 3px rgba(0,0,0,.12);
-                 position:relative;
-             ">
+  <div style="
+    width:100%;
+    height:32px;
+    display:flex;
+    overflow:visible;
+    border-radius:10px;
+    background:${Number(runningWidth) === 0 ? '#fecaca' : '#bbf7d0'};
+    box-sizing:border-box;
+    position:relative;
+  ">
 
     <div style="
       width:${runningWidth}%;
@@ -399,6 +398,7 @@ function majorCard(name, allEvents) {
       overflow:visible;
       position:relative;
       z-index:2;
+      border-radius:10px 0 0 10px;
       background:#bbf7d0;
       color:#166534;
       font-size:.62rem;
@@ -420,6 +420,7 @@ function majorCard(name, allEvents) {
       overflow:visible;
       position:relative;
       z-index:1;
+      border-radius:0 10px 10px 0;
       background:#fecaca;
       color:#991b1b;
       font-size:.62rem;
