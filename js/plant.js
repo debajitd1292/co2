@@ -340,8 +340,8 @@ function majorCard(name, allEvents) {
     )
   );
 
-  const runningWidth = monthlyData.runningPercentage.toFixed(2);
-  const shutdownWidth = monthlyData.shutdownPercentage.toFixed(2);
+  const runningWidth = Number(monthlyData.runningPercentage.toFixed(2));
+  const shutdownWidth = Number(monthlyData.shutdownPercentage.toFixed(2));
 
   return `
     <article class="plant-major-card ${statusClass}" data-equipment="${escapeHTML(name)}" role="button" tabindex="0" aria-label="View ${escapeHTML(name)} start and stop history">
@@ -374,61 +374,47 @@ function majorCard(name, allEvents) {
           : ""
       }
 
-         <div style="margin-top:14px;width:100%;">
+  <div style="margin-top:14px;width:100%;">
 
   <div style="
     width:100%;
     height:32px;
-    display:flex;
-    overflow:visible;
-    border-radius:10px;
-    background:${Number(runningWidth) === 0 ? '#fecaca' : '#bbf7d0'};
-    box-sizing:border-box;
     position:relative;
+    overflow:hidden;
+    border-radius:10px;
+    background:#bbf7d0;
+    box-sizing:border-box;
   ">
 
     <div style="
-      width:${runningWidth}%;
-      flex:0 0 ${runningWidth}%;
+      position:absolute;
+      top:0;
+      right:0;
+      width:${shutdownWidth}%;
       height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:flex-start;
-      padding-left:10px;
-      overflow:visible;
-      position:relative;
-      z-index:2;
-      border-radius:10px 0 0 10px;
-      background:#bbf7d0;
-      color:#166534;
-      font-size:.62rem;
-      font-weight:800;
-      white-space:nowrap;
-      box-sizing:border-box;
-    ">
-      Uptime ${runningWidth}%
-    </div>
+      background:#fecaca;
+    "></div>
 
     <div style="
-      width:${shutdownWidth}%;
-      flex:0 0 ${shutdownWidth}%;
-      height:100%;
+      position:absolute;
+      inset:0;
       display:flex;
       align-items:center;
-      justify-content:flex-end;
-      padding-right:10px;
-      overflow:visible;
-      position:relative;
-      z-index:1;
-      border-radius:0 10px 10px 0;
-      background:#fecaca;
-      color:#991b1b;
+      justify-content:space-between;
+      padding:0 8px;
+      box-sizing:border-box;
+      pointer-events:none;
+      white-space:nowrap;
       font-size:.62rem;
       font-weight:800;
-      white-space:nowrap;
-      box-sizing:border-box;
     ">
-      Downtime ${shutdownWidth}%
+      <span style="color:#166534;">
+        Uptime ${runningWidth.toFixed(2)}%
+      </span>
+
+      <span style="color:#991b1b;">
+        Downtime ${shutdownWidth.toFixed(2)}%
+      </span>
     </div>
 
   </div>
