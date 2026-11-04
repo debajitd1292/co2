@@ -943,6 +943,12 @@ body.dark .badge {
     font-size: 10px;
 }
 
+.production-target.grade4 {
+    background: linear-gradient(135deg, #e0f2fe, #7dd3fc);
+    color: #075985;
+    border: 1px solid #38bdf8;
+}
+
 .production-table{
     width:100%;
     border-collapse:separate;
@@ -1051,6 +1057,12 @@ body.dark .production-today td{
     background: linear-gradient(135deg, #422b1b, #593820);
     color: #fed7aa;
     border: 1px solid #c17a3c;
+}
+
+.dark-mode .production-target.grade4 {
+    background: linear-gradient(135deg, #123047, #164e63);
+    color: #bae6fd;
+    border: 1px solid #0e7490;
 }
 
 .production-table tbody tr:not(.production-today):not(.production-past) td:first-child{
@@ -3190,14 +3202,13 @@ body.dark #page-counters .off-day-rotational-note { color: #60a5fa; }
     #page-counters .off-day-count-value { font-size: 10px; }
 }
 
+
 /* =========================================================
    ECO & LEAVE COUNTER — COMPACT TWO-CARD LAYOUT
    ========================================================= */
 
 #page-counters .eco-leave-counter {
-    margin-top: 0;
-    padding-top: 0;
-    border-top: none;
+    margin-top: 8px;
 }
 
 #page-counters .eco-leave-grid {
@@ -3296,7 +3307,13 @@ body.dark #page-counters .leave-card .eco-leave-value {
     }
 }
 
+
 /* ECO & Leaves heading — match Rest / OFF Counter separator */
+#page-counters .eco-leave-counter {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
 
 #page-counters .eco-leave-heading {
     margin: 0 0 7px;
@@ -3326,7 +3343,6 @@ body.dark #page-counters .eco-leave-heading {
 .holiday-title {
     color: #bfdbfe;
     text-align: center;
-    line-height: 1.2;
 }
 
 .holiday-date,
@@ -3339,12 +3355,14 @@ body.dark #page-counters .eco-leave-heading {
 
 /* Keep the compact layout */
 
+
 .holiday-title,
 .holiday-date,
 .holiday-date-main,
 .holiday-name {
     line-height: 1.2;
 }
+
 
 /* =========================================================
    TODAY CARD — DATE LEFT, SHIFT RIGHT
@@ -3358,52 +3376,32 @@ body.dark #page-counters .eco-leave-heading {
 
 /* Date and shift on the same line */
 .today-date-shift-row {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    text-align: left !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 10px;
-    width: 100% !important;
+    width: 100%;
 }
 
 /* Date */
 #todayDate {
-    flex: 1 1 auto !important;
+    flex: 1;
     min-width: 0;
-    margin: 0 !important;
-    text-align: left !important;
+    margin: 0;
+    text-align: left;
     line-height: 1.3;
-    width: auto !important;
 }
 
 #todayDate .header-date {
-    display: block;
     font-size: 17px;
     font-weight: 700;
     color: #ffffff;
-    text-align: left;
-}
-
-/* Preserve the original higher-specificity alignment overrides. */
-.today-date-shift-row #todayDate {
-    flex: 1 1 auto !important;
-    text-align: left !important;
-    margin: 0 !important;
-    width: auto !important;
-}
-
-.today-date-shift-row #todayDate .header-date {
-    display: block !important;
-    text-align: left !important;
 }
 
 /* Shift capsule */
 #todayShiftBadge {
-    flex: 0 0 auto !important;
     flex-shrink: 0;
     margin: 0;
-    margin-left: auto !important;
     padding: 7px 13px;
     min-width: 36px;
     text-align: center;
@@ -3414,21 +3412,12 @@ body.dark #page-counters .eco-leave-heading {
     border-radius: 999px;
 }
 
-.today-date-shift-row #todayShiftBadge {
-    flex: 0 0 auto !important;
-    margin-left: auto !important;
-}
-
 /* Holiday / special-day name */
 
 #todayReason {
-    display: block !important;
-    width: 100% !important;
-    text-align: left !important;
-    margin: 1px 0 0 !important;
-    padding: 0 !important;
-    align-self: flex-start !important;
-    box-sizing: border-box;
+    display: block;
+    margin: 1px 0 0;
+    text-align: left;
     font-family: inherit;
     font-size: 12px;
     font-weight: 500;
@@ -3437,8 +3426,9 @@ body.dark #page-counters .eco-leave-heading {
 }
 
 #todayReason:empty {
-    display: none !important;
+    display: none;
 }
+
 
 /* Dark mode */
 body.dark #todayReason {
@@ -3455,6 +3445,48 @@ body.dark #todayReason {
         padding: 6px 10px;
         font-size: 15px;
     }
+}
+
+/* Force date to the left and shift capsule to the right */
+.today-date-shift-row {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    text-align: left !important;
+    width: 100% !important;
+}
+
+.today-date-shift-row #todayDate {
+    flex: 1 1 auto !important;
+    text-align: left !important;
+    margin: 0 !important;
+    width: auto !important;
+}
+
+.today-date-shift-row #todayDate .header-date {
+    display: block !important;
+    text-align: left !important;
+}
+
+.today-date-shift-row #todayShiftBadge {
+    flex: 0 0 auto !important;
+    margin-left: auto !important;
+}
+
+
+#todayReason {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+    margin: 1px 0 0 0 !important;
+    padding: 0 !important;
+    align-self: flex-start !important;
+    box-sizing: border-box;
+}
+
+#todayReason:empty {
+    display: none !important;
 }
 
 /* Highlight important OFF Counter values */
@@ -3483,15 +3515,18 @@ body.dark #todayReason {
     font-weight: 700 !important;
 }
 
+
+
+
 /* =========================================================
    COMBINED EMPLOYEE COUNTERS
    Double Shift + ECO | Training/Tour + Leave
    ========================================================= */
 
 #page-counters .combined-counter-section + .combined-counter-section {
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(148, 163, 184, 0.30);
+    margin-top: 16px;
+    padding-top: 0;
+    border-top: none;
 }
 
 #page-counters .combined-counter-heading {
@@ -3534,7 +3569,11 @@ body.dark #todayReason {
     color: #7e22ce;
 }
 
-/* ECO — retain green (same colours as the ECO/Leave cards above) */
+/* ECO — retain green */
+#page-counters .eco-card {
+    background: #ecfdf3;
+    border-color: #bbf7d0;
+}
 
 /* Training / Tour — retain blue */
 #page-counters .training-tour-item {
@@ -3546,7 +3585,11 @@ body.dark #todayReason {
     color: #1d4ed8;
 }
 
-/* Leave — retain yellow (same colours as the ECO/Leave cards above) */
+/* Leave — retain yellow */
+#page-counters .leave-card {
+    background: #fefce8;
+    border-color: #fde68a;
+}
 
 /* Consistent typography for all four counter boxes */
 #page-counters .combined-counter-section .eco-leave-label {
@@ -3649,11 +3692,18 @@ body.dark #page-counters .leave-card .eco-leave-value {
     }
 }
 
+
 /* Separator between the two combined counter sections */
+#page-counters .combined-counter-section + .combined-counter-section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(148, 163, 184, 0.30);
+}
 
 body.dark #page-counters .combined-counter-section + .combined-counter-section {
     border-top-color: rgba(148, 163, 184, 0.24);
 }
+
 
 /* Match Rest / OFF counter labels with Double Shift / ECO */
 #page-counters .off-day-counter .off-day-count-label,
@@ -3662,6 +3712,7 @@ body.dark #page-counters .combined-counter-section + .combined-counter-section {
     font-weight: 700 !important;
     line-height: 1.3;
 }
+
 
 /* Empty-state message for Counters */
 #page-counters .counter-empty-message {
@@ -3676,7 +3727,6 @@ body.dark #page-counters .combined-counter-section + .combined-counter-section {
 #page-counters .counter-empty-message[hidden] {
     display: none !important;
 }
-
 
 
 /* ===== CALCULATOR PAGE ===== */
@@ -3830,14 +3880,10 @@ body.dark #page-calculator .calculator-result.status-high {
     color: #ffd0a3;
 }
 
-/* Additive rounding note — shared styling */
-#page-calculator p.additive-rounding-note,
-#additiveCalculatorPanel .additive-rounding-note {
-    color: #eb2549 !important;
-    font-size: 11px;
-    line-height: 1.4;
-    margin: 8px 0;
-    font-weight: 500;
+@media (min-width: 600px) {
+    #page-calculator .calculator-input-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 #page-calculator .calculator-description.sphere-level-warning {
@@ -3850,6 +3896,19 @@ body.dark #page-calculator .calculator-result.status-high {
 
 #page-calculator .sphere-level-warning.hidden {
   display: none !important;
+}
+
+.sphere-level-warning.hidden {
+  display: none;
+}
+
+/* Additive rounding note — blue on mobile and desktop */
+#page-calculator p.additive-rounding-note {
+    color: #eb2549 !important;
+    font-size: 11px;
+    line-height: 1.4;
+    margin: 8px 0;
+    font-weight: 500;
 }
 
 /* =========================================================
@@ -3996,6 +4055,14 @@ body.dark #page-calculator .calculator-result.status-high {
           padding-left: 2px;
           padding-right: 2px;
         }
+      }
+
+#additiveCalculatorPanel .additive-rounding-note {
+        color: #eb2549;
+        font-size: 11px;
+        line-height: 1.4;
+        margin: 8px 0;
+        font-weight: 500;
       }
 
 /* 36B. Reactor shutdown planner */
@@ -4332,8 +4399,22 @@ body.dark #page-calculator .calculator-result.status-high {
     min-width: 0;
 }
 
+/* Keep the three sphere fields compact and vertically aligned on phones */
+#page-calculator .calculator-input-grid {
+    gap: 10px;
+}
+
 #page-calculator .calculator-input-group input {
     max-width: 100%;
+}
+
+/* Ensure the rounding note remains blue on mobile as well as desktop */
+#additiveCalculatorPanel .additive-rounding-note {
+    color: #eb2549 !important;
+    font-size: 11px;
+    line-height: 1.4;
+    margin: 8px 0;
+    font-weight: 500;
 }
 
 @media (min-width: 520px) {
@@ -4928,4 +5009,18 @@ body.dark .calendar-holiday-dot.rh {
     line-height: 1.5;
     color: #b45309;
     font-style: italic;
+}
+
+/* Safety Observation — Dark Mode */
+body.dark #page-counters .safety-observation-banner {
+    background: #243247 !important;
+    border-color: #405875 !important;
+}
+
+body.dark #page-counters .safety-observation-banner .eco-leave-label {
+    color: #e2e8f0 !important;
+}
+
+body.dark #page-counters .safety-observation-banner #safetyObservationCount {
+    color: #fda4af !important;
 }
