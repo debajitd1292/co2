@@ -5024,3 +5024,8 @@ body.dark #page-counters .safety-observation-banner .eco-leave-label {
 body.dark #page-counters .safety-observation-banner #safetyObservationCount {
     color: #fda4af !important;
 }
+.training-attendees {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+}
