@@ -17,7 +17,7 @@ function loadTrainingData(trainingText){
                 date: r[0]?.trim(),
                 name: r[1]?.trim(),
                 type: r[2]?.trim(),
-                attendees: r[3]?.trim()
+                attendees: r[3]?.trim().split(";").map(name => name.trim()).filter(Boolean).join(", ")
             };
         })
         .filter(r => r.date);
@@ -226,7 +226,7 @@ function renderTraining(){
 
             ${t.attendees ? `
                <div class="training-attendees">
-                    Attended by: ${t.attendees}
+                    Attendees: ${t.attendees}
                </div>
            ` : ""}
 
