@@ -2,10 +2,10 @@
   "use strict";
 
         const CSV_URL =
-          "https://raw.githubusercontent.com/debajitd1292/ppu/main/updates/plant_status.csv";
+          "https://raw.githubusercontent.com/debajitd1292/co2/main/updates/plant_status.csv";
 
         const MAJOR_CSV_URL =
-          "https://raw.githubusercontent.com/debajitd1292/ppu/main/updates/major_equipment_shutdown.csv";
+          "https://raw.githubusercontent.com/debajitd1292/co2/main/updates/major_equipment_shutdown.csv";
 
     const REFRESH_INTERVAL = 2 * 60 * 1000;
 
@@ -83,24 +83,37 @@ function parseCSV(text) {
 function parseDate(value) {
     if (!value) return null;
 
-    // Expected CSV format: YYYY-MM-DD
-    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const input = value.trim();
+    let day, month, year;
 
-    if (!match) return null;
+    // Accept DD-MM-YYYY
+    let match = input.match(/^(\d{2})-(\d{2})-(\d{4})$/);
 
-    const date = new Date(
-      Number(match[1]),
-      Number(match[2]) - 1,
-      Number(match[3])
-    );
+    if (match) {
+        day = Number(match[1]);
+        month = Number(match[2]);
+        year = Number(match[3]);
+    } else {
 
-    // Reject invalid dates such as 2026-02-31
+        // Also accept existing YYYY-MM-DD entries
+        match = input.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+        if (!match) return null;
+
+        year = Number(match[1]);
+        month = Number(match[2]);
+        day = Number(match[3]);
+    }
+
+    const date = new Date(year, month - 1, day);
+
+    // Reject invalid dates
     if (
-      date.getFullYear() !== Number(match[1]) ||
-      date.getMonth() !== Number(match[2]) - 1 ||
-      date.getDate() !== Number(match[3])
+        date.getFullYear() !== year ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day
     ) {
-      return null;
+        return null;
     }
 
     date.setHours(0, 0, 0, 0);
