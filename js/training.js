@@ -17,7 +17,7 @@ function loadTrainingData(trainingText){
                 date: r[0]?.trim(),
                 name: r[1]?.trim(),
                 type: r[2]?.trim(),
-                attendees: r[3]?.trim().split(";").map(name => name.trim()).filter(Boolean).join(", ")
+                attendees: r.slice(3).join(";").split(";").map(name => name.trim()).filter(Boolean).join(", ")
             };
         })
         .filter(r => r.date);
