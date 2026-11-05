@@ -1,0 +1,84 @@
+﻿Month,Year,SOP No.,SOP Name
+4,2026,1,Line up of Propylene to FPU
+4,2026,2,Propylene Dryer Changeover (CC-110A ↔ CC-110B) 
+4,2026,3,Propylene Treater Changeover (CC-111A ↔ CC-111B) 
+4,2026,4,Propylene Filter Changeover (GN-110A ↔ GN-110B)
+4,2026,5,Propylene Dryer Regeneration (CC-110 A/B) 
+4,2026,5.1,Propylene Dryer Regeneration sheet (CC-110 A/B) 
+4,2026,6,Propylene Treater Regeneration (CC-111 A/B) 
+4,2026,6.1,Propylene Treater Regeneration Sheet (CC-111 A/B) 
+4,2026,7,Hydrogen line up to Reactor
+5,2026,8,Displacement of Air with Nitrogen in Reactor and Leak Test
+5,2026,9,Powder filling to the Reactor
+5,2026,10,Displacement of Air with Nitrogen in Cool-loop and Leak Test
+5,2026,11,Propylene Filling to RG Condenser Cool Loop and Start-up of Pump PA-310A/B
+5,2026,12,Reactor Start-up Procedure
+5,2026,13,Reactor Shutdown with CO2
+5,2026,14,Reactor Shutdown without CO2
+6,2026,15,Reactor Vessel Entry
+6,2026,16,Blockage Removal from Reactor Discharge Line
+6,2026,17,Leak Test and Purging of Discharge and Purge Vessel.
+6,2026,18,Start-up of Powder Discharge and Purge Vessel
+6,2026,19,Leak Test and Purging of Powder Conveying System
+6,2026,20,Start-up of Powder Conveying System
+6,2026,21,Extruder Start-up Procedure
+7,2026,22,Pellet Cooling Water System
+7,2026,23,Lube Oil System Start-up
+7,2026,24,Extruder Vacuum Unit Start-up
+7,2026,25,Extruder Screen-pack Changeover
+7,2026,26,Powder Additive System
+7,2026,27,Start-up of Hot Oil Unit
+7,2026,28,Start-up of Pellet Receiving System 
+8,2026,29,Pellet Receiving Silo Changeover
+8,2026,30,Pellet Blending System
+8,2026,31,Pellet Conveying System
+8,2026,32,Leak Test and Purging of Carrier Gas System
+8,2026,33,Refilling of Carrier Gas Wash Tower
+8,2026,34,Start-up & Shut-down of Carrier Gas Compressor
+8,2026,35,Leak Test and Purging of Catalyst Loading Pot
+9,2026,36,Leak test and Purging of Catalyst Preparation Vessel
+9,2026,37,Leak Test and Purging of Catalyst Metering Vessel 
+9,2026,38,Catalyst Batch Preparation
+9,2026,38.1,Checklist for unloading of Catalyst in Catalyst Preparation Vessel
+9,2026,39,Leak check and Purging of Teal System
+9,2026,40,TEAl Container Connection with Loading arm
+9,2026,41,TEAl Container Unloading to Holding Tank
+9,2026,42,TEAL Container Unloading arm Disconnection
+10,2026,43,Start-up of TEAl Pump (PA-170 A/B)
+10,2026,44,Teal Pump Change Over to Standby Pump
+10,2026,45,Flushing TEAL System
+10,2026,46,VV–171 Draining and Filling with White Oil
+10,2026,47,Filling of Silane Holding Tank (VV–190)
+10,2026,48,Operation of Silane Pumps (PA-190 A/B)
+10,2026,49,Leak Test and Purging of White Oil Preparation System
+11,2026,50,Leak Test and Purging of White Oil Atmer Mixture Preparation System
+11,2026,51,Leak Test and Purging of Waste White Oil System
+11,2026,52,Operation of White Oil Preparation System
+11,2026,53,Preparation of White Oil Atmer Mixture
+11,2026,54,Transfer of Waste White Oil from VV-672 to VV-673
+11,2026,55,De-activation of Waste White Oil+Atmer Mixture
+12,2026,56,Drumming of De-activated White Oil+Atmer Mixture
+12,2026,57,Preparation for Start Up of Membrane Unit
+12,2026,58,Start Up of Membrane Unit
+12,2026,59,Shutdown of Membrane Unit
+12,2026,60,Inlet Filter Change Over (GN–651A ↔ GN–651A)
+12,2026,61,Preparation for Start-up of HP N2 Howden Compressor
+1,2027,62,Start-up of HP N2 Howden Compressor
+1,2027,63,Shutdown of HP N2 Howden Compressor
+1,2027,64,Emergency Operating Procedures
+1,2027,65,Waste Management
+1,2027,66,Production Declaration Procedure
+1,2027,67,Mass Balance Declaration Procedure
+2,2027,68,Cooling Water Charging
+2,2027,69,Drinking Water Charging
+2,2027,70,Steam Charging
+2,2027,71,Grade Transition from WH034N to IH120N
+2,2027,72,Grade Transition from FH110N to IH120N
+2,2027,73,Grade Transition from IH120N to WH034N
+2,2027,74,Grade Transition from IH120N to FH110N
+3,2027,75,Storage and Transfer of Peroxide Holding Tank
+3,2027,76,Start-up of Peroxide Circulation around the Feeding Tank and Feeding to Extruder
+3,2027,77,Month end job for the specific purpose of MIS
+3,2027,78,Process Mock Drill in PPU
+3,2027,79,CG Compressor LO Cooler Changeover (EE-604A ↔ EE-604B)
+3,2027,80,Recycle Gas Filter Changeover (GN-310A ↔ GN-310B)
