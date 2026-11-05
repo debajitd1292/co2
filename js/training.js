@@ -412,6 +412,7 @@ async function openSOPTrainingPopup() {
                 align-items: center;
                 justify-content: center;
                 font-weight: 700;
+                font-size: 12px;
             `;
 
             const name = document.createElement("div");
@@ -421,6 +422,7 @@ async function openSOPTrainingPopup() {
             name.style.cssText = `
                 flex: 1;
                 padding-top: 7px;
+                font-size: 13px;
                 line-height: 1.4;
             `;
 
