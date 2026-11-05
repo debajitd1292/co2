@@ -142,7 +142,7 @@ function formatDate(date){
 
     gradeBox.textContent = grade || "Loading...";
 
-if(grade && since){
+    if(grade && since){
 
     const dateText = formatDate(since);
 
@@ -163,13 +163,10 @@ if(grade && since){
             : `${hours} ${hours === 1 ? "hour" : "hours"}`;
 
         dateBox.innerHTML =
-            "Since: " + dateText + ", " +
-            String(since.getHours()).padStart(2, "0") + ":" +
-            String(since.getMinutes()).padStart(2, "0") +
-            " hours" +
+            "Since: " + dateText + ", " + formatTime(since) +
             "<br>Days in Current Grade: " + durationText;
 
-    } else {
+        } else {
 
         const days = Math.max(
             0,
@@ -187,6 +184,15 @@ if(grade && since){
 } else {
     dateBox.innerHTML = "";
 }
+}
+
+
+function formatTime(date) {
+    return date.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    }).toUpperCase();
 }
 
 
