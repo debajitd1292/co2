@@ -198,7 +198,7 @@ function shiftText(shift) {
 
     const cleaned = shift.trim().replace(/\s*shift$/i, "");
     return ` (${cleaned} Shift)`;
-  }
+}
 
 
 
@@ -208,9 +208,17 @@ function eventDateText(date, time, shift) {
     const formattedDate = formatDate(date);
     const formattedTime = (time || "").trim();
 
-    const timeText = /^([01]\d|2[0-3]):([0-5]\d)$/.test(formattedTime)
-        ? `, ${formattedTime} hours`
-        : "";
+    let timeText = "";
+
+    const match = formattedTime.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+
+    if (match) {
+        const hours = Number(match[1]);
+        const minutes = match[2];
+        const suffix = hours >= 12 ? "PM" : "AM";
+
+        timeText = `, ${String(hours % 12 || 12).padStart(2, "0")}:${minutes} ${suffix}`;
+    }
 
     return formattedDate + timeText + shiftText(shift);
 }
@@ -563,12 +571,14 @@ function fpuCard(row, name, pairStatus = null) {
 
 function formatHistoryTime(value) {
     const match = (value || "").trim().match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+
     if (!match) return value || "Time not available";
 
     const hours = Number(match[1]);
+    const minutes = match[2];
     const suffix = hours >= 12 ? "PM" : "AM";
 
-    return `${String(hours % 12 || 12).padStart(2, "0")}:${match[2]} ${suffix}`;
+    return `${String(hours % 12 || 12).padStart(2, "0")}:${minutes} ${suffix}`;
 }
 
 function formatHistoryDate(value) {
