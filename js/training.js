@@ -239,112 +239,215 @@ function renderTraining(){
 async function openSOPTrainingPopup() {
 
     const now = new Date();
-
     const month = now.getMonth() + 1;
     const year = now.getFullYear();
 
-    const monthName = now.toLocaleString("en-US", {
+    const monthName = now.toLocaleString("en-IN", {
         month: "long"
     });
 
-    // Remove any previously opened popup
-    document.getElementById("sopTrainingModal")?.remove();
+    document.getElementById("sopTrainingOverlay")?.remove();
 
-    // Create popup overlay
+    // Popup styles
+    if (!document.getElementById("sopTrainingPopupStyles")) {
+
+        const style = document.createElement("style");
+
+        style.id = "sopTrainingPopupStyles";
+
+        style.textContent = `
+            #sopTrainingOverlay {
+                position: fixed;
+                inset: 0;
+                z-index: 99999;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                padding: 16px;
+                background: rgba(15,23,42,.48);
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity .22s ease, visibility .22s ease;
+            }
+
+            #sopTrainingOverlay.is-open {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            #sopTrainingSheet {
+                width: min(100%, 520px);
+                max-height: min(78vh, 720px);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                color: var(--text-primary, #111827);
+                background: var(--card-bg, #fff);
+                border-radius: 24px;
+                box-shadow: 0 18px 60px rgba(0,0,0,.24);
+                transform: translateY(24px);
+                transition: transform .22s ease;
+            }
+
+            #sopTrainingOverlay.is-open #sopTrainingSheet {
+                transform: translateY(0);
+            }
+
+            .sop-training-grabber {
+                width: 38px;
+                height: 4px;
+                margin: 10px auto 2px;
+                border-radius: 99px;
+                background: #9ca3af;
+            }
+
+            .sop-training-header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 12px 18px 14px;
+                border-bottom: 1px solid var(--border-color, #e5e7eb);
+            }
+
+            .sop-training-title {
+                margin: 0;
+                font-size: 1.08rem;
+                font-weight: 700;
+            }
+
+            .sop-training-subtitle {
+                margin-top: 4px;
+                color: var(--text-secondary, #64748b);
+                font-size: .84rem;
+            }
+
+            .sop-training-close {
+                width: 34px;
+                height: 34px;
+                flex-shrink: 0;
+                border: 0;
+                border-radius: 50%;
+                color: var(--text-primary, #111827);
+                background: var(--surface-secondary, #f1f5f9);
+                font-size: 21px;
+                cursor: pointer;
+            }
+
+            .sop-training-list {
+                overflow-y: auto;
+                padding: 8px 18px 20px;
+            }
+
+            .sop-training-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 9px 0;
+                border-bottom: 1px solid var(--border-color, #e5e7eb);
+            }
+
+            .sop-training-number {
+                min-width: 34px;
+                height: 34px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--surface-secondary, #f1f5f9);
+                color: var(--text-primary, #111827);
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+            .sop-training-name {
+                flex: 1;
+                padding-top: 7px;
+                font-size: 13px;
+                line-height: 1.4;
+            }
+
+            .sop-training-empty {
+                padding: 28px 8px;
+                color: var(--text-secondary, #64748b);
+                text-align: center;
+                font-size: .85rem;
+            }
+
+            @media (min-width: 600px) {
+                #sopTrainingOverlay {
+                    align-items: center;
+                }
+            }
+        `;
+
+        document.head.appendChild(style);
+    }
+
+    // Create popup
     const overlay = document.createElement("div");
 
-    overlay.id = "sopTrainingModal";
+    overlay.id = "sopTrainingOverlay";
 
-    overlay.style.cssText = `
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.65);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 99999;
-        padding: 15px;
+    overlay.innerHTML = `
+        <section id="sopTrainingSheet"
+                 role="dialog"
+                 aria-modal="true">
+
+            <div class="sop-training-grabber"></div>
+
+            <header class="sop-training-header">
+
+                <div>
+                    <h2 class="sop-training-title">
+                        SOP Training Schedule
+                    </h2>
+
+                    <div class="sop-training-subtitle">
+                        ${monthName} ${year}
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="sop-training-close"
+                        aria-label="Close">×</button>
+
+            </header>
+
+            <div class="sop-training-list"
+                 id="sopTrainingList">
+                <div class="sop-training-empty">
+                    Loading SOP training schedule...
+                </div>
+            </div>
+
+        </section>
     `;
-
-    // Popup box
-    const popup = document.createElement("div");
-
-    popup.style.cssText = `
-        width: 100%;
-        max-width: 480px;
-        max-height: 80vh;
-        overflow-y: auto;
-        background: var(--card-bg, #ffffff);
-        color: var(--text-color, #222222);
-        border-radius: 14px;
-        padding: 20px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    `;
-
-    // Heading
-    const heading = document.createElement("div");
-
-    heading.style.cssText = `
-        text-align: center;
-        margin-bottom: 18px;
-    `;
-
-    heading.innerHTML = `
-        <div style="font-size:20px;font-weight:700;">
-            SOP Training Schedule
-        </div>
-
-        <div style="
-            font-size:14px;
-            color:var(--text-secondary, #777);
-            margin-top:4px;
-        ">
-            ${monthName} ${year}
-        </div>
-    `;
-
-    popup.appendChild(heading);
-
-    // Loading message
-    const list = document.createElement("div");
-
-    list.textContent = "Loading SOP training schedule...";
-
-    popup.appendChild(list);
-
-    // Close button
-    const closeButton = document.createElement("button");
-
-    closeButton.textContent = "Close";
-
-    closeButton.style.cssText = `
-        display: block;
-        margin: 20px auto 0;
-        padding: 9px 25px;
-        border: none;
-        border-radius: 8px;
-        background: var(--accent-color, #2878c8);
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-    `;
-
-    closeButton.onclick = () => overlay.remove();
-
-    popup.appendChild(closeButton);
-
-    overlay.appendChild(popup);
-
-    // Close when clicking outside popup
-    overlay.addEventListener("click", e => {
-        if (e.target === overlay) {
-            overlay.remove();
-        }
-    });
 
     document.body.appendChild(overlay);
 
-    // Fetch SOP CSV
+    function closePopup() {
+        overlay.classList.remove("is-open");
+        document.body.style.overflow = "";
+    }
+
+    overlay.addEventListener("click", event => {
+
+        if (
+            event.target === overlay ||
+            event.target.closest(".sop-training-close")
+        ) {
+            closePopup();
+        }
+    });
+
+    document.body.style.overflow = "hidden";
+
+    requestAnimationFrame(() => {
+        overlay.classList.add("is-open");
+    });
+
+    // Load SOP CSV
     try {
 
         const response = await fetch(
@@ -356,7 +459,6 @@ async function openSOPTrainingPopup() {
         }
 
         const csvText = await response.text();
-
         const rows = parseCSV(csvText);
 
         const sopList = rows.slice(1)
@@ -376,68 +478,48 @@ async function openSOPTrainingPopup() {
                 Number(a.number) - Number(b.number)
             );
 
-        list.innerHTML = "";
+        const list = document.getElementById("sopTrainingList");
 
-        if (sopList.length === 0) {
+        if (!list) return;
 
-            list.textContent =
-                "No SOP training details available for this month.";
+        if (!sopList.length) {
+
+            list.innerHTML = `
+                <div class="sop-training-empty">
+                    No SOP training details available for
+                    ${monthName} ${year}.
+                </div>
+            `;
 
             return;
         }
 
-        sopList.forEach(sop => {
+        list.innerHTML = sopList.map(sop => `
+            <div class="sop-training-row">
 
-            const item = document.createElement("div");
+                <div class="sop-training-number">
+                    ${sop.number}
+                </div>
 
-            item.style.cssText = `
-                display: flex;
-                align-items: flex-start;
-                gap: 12px;
-                padding: 11px 0;
-                border-bottom: 1px solid var(--border-color, #ddd);
-            `;
+                <div class="sop-training-name">
+                    ${escapeHTML(sop.name)}
+                </div>
 
-            const number = document.createElement("div");
-
-            number.textContent = sop.number;
-
-            number.style.cssText = `
-                min-width: 36px;
-                height: 36px;
-                border-radius: 8px;
-                background: var(--accent-color, #2878c8);
-                color: white;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 700;
-                font-size: 12px;
-            `;
-
-            const name = document.createElement("div");
-
-            name.textContent = sop.name;
-
-            name.style.cssText = `
-                flex: 1;
-                padding-top: 7px;
-                font-size: 13px;
-                line-height: 1.4;
-            `;
-
-            item.appendChild(number);
-            item.appendChild(name);
-
-            list.appendChild(item);
-        });
+            </div>
+        `).join("");
 
     } catch (error) {
 
         console.error("SOP Training Error:", error);
 
-        list.textContent =
-            "Unable to load";
+        const list = document.getElementById("sopTrainingList");
 
+        if (list) {
+            list.innerHTML = `
+                <div class="sop-training-empty">
+                    Unable to load
+                </div>
+            `;
+        }
     }
 }
