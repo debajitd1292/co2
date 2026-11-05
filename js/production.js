@@ -67,7 +67,6 @@ function renderCurrentProductionGrade(){
 
 function parseOverrideDate(value){
     const parts = String(value || "").trim().split(/\s+/);
-
     const p = parts[0].split("-").map(Number);
 
     if(p.length !== 3) return null;
@@ -111,19 +110,22 @@ function formatDate(date){
     }
 
     const overrides = productionPlans
-        .map(r => ({
-            grade: r.grade,
-            date: parseOverrideDate(r.currentGradeSince)
-        }))
-        .filter(r => r.grade && r.date && r.date <= now)
-        .sort((a, b) => b.date - a.date);
+    .map(r => ({
+        grade: r.grade,
+        date: parseOverrideDate(r.currentGradeSince),
+        hasTime: /\s+\d{1,2}:\d{2}$/.test(r.currentGradeSince || "")
+    }))
+    .filter(r => r.grade && r.date && r.date <= now)
+    .sort((a, b) => b.date - a.date);
 
     let grade = "";
     let since = null;
+    let sinceHasTime = false;
 
     if(overrides.length){
         grade = overrides[0].grade;
         since = overrides[0].date;
+        sinceHasTime = overrides[0].hasTime;
     } else {
         const currentPlan = productionPlans.find(r => {
             const from = parsePlanDate(r.from);
@@ -140,29 +142,47 @@ function formatDate(date){
 
     gradeBox.textContent = grade || "Loading...";
 
-    if(grade && since){
+if(grade && since){
 
-    const totalHours = Math.max(
-        0,
-        Math.floor((now - since) / 3600000)
-    );
+    const dateText = formatDate(since);
 
-    const days = Math.floor(totalHours / 24);
-    const hours = totalHours % 24;
+    let durationText = "";
 
-    const durationText =
-        `${days} ${days === 1 ? "day" : "days"}, ` +
-        `${hours} ${hours === 1 ? "hour" : "hours"}`;
+    if(sinceHasTime){
 
-    const dateTimeText =
-        formatDate(since) + ", " +
-        String(since.getHours()).padStart(2, "0") + ":" +
-        String(since.getMinutes()).padStart(2, "0") +
-        " hours";
+        const totalHours = Math.max(
+            0,
+            Math.floor((now - since) / 3600000)
+        );
 
-    dateBox.innerHTML =
-        "Since: " + dateTimeText +
-        "<br>Days in Current Grade: " + durationText;
+        const days = Math.floor(totalHours / 24);
+        const hours = totalHours % 24;
+
+        durationText = days > 0
+            ? `${days} ${days === 1 ? "day" : "days"}, ${hours} ${hours === 1 ? "hour" : "hours"}`
+            : `${hours} ${hours === 1 ? "hour" : "hours"}`;
+
+        dateBox.innerHTML =
+            "Since: " + dateText + ", " +
+            String(since.getHours()).padStart(2, "0") + ":" +
+            String(since.getMinutes()).padStart(2, "0") +
+            " hours" +
+            "<br>Days in Current Grade: " + durationText;
+
+    } else {
+
+        const days = Math.max(
+            0,
+            Math.floor((today - since) / 86400000)
+        );
+
+        durationText =
+            `${days} ${days === 1 ? "day" : "days"}`;
+
+        dateBox.innerHTML =
+            "Since: " + dateText +
+            "<br>Days in Current Grade: " + durationText;
+    }
 
 } else {
     dateBox.innerHTML = "";
