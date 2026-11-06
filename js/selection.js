@@ -9,37 +9,12 @@ function populateNames(){
 
     if(category === "exec"){
 
-        for(let i = 1; i < data.length; i++){
-
-            let n = data[i][0]?.trim();
-
-            if(n) names.push(n);
-        }
-
-        names = sortBySeniority(names);
+        names = [...seniorityOrder];
 
     }else{
 
-        for(let i = 1; i < nonExecData.length; i++){
-
-            let n = nonExecData[i][0]?.trim();
-
-            // Hide employees whose surname is DMBI
-            if(n && !/\bDMBI$/i.test(n)) {
-                names.push(n);
-            }
-        }
-
-        names = names.sort((a,b)=>{
-
-            let ia = nonExecSeniorityOrder.indexOf(a);
-            let ib = nonExecSeniorityOrder.indexOf(b);
-
-            if(ia === -1) ia = 999;
-            if(ib === -1) ib = 999;
-
-            return ia - ib;
-        });
+        names = nonExecSeniorityOrder
+            .filter(n => n && !/\bDMBI$/i.test(n));
     }
 
     sel.innerHTML = "";
