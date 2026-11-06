@@ -557,6 +557,7 @@ function syncCounterSelectors() {
     countersSelectedName = counterName.value;
 }
 
+
 function populateCounterNames() {
     const category = document.getElementById("countersCategorySelector")?.value;
     const sel = document.getElementById("countersNameSelector");
@@ -571,36 +572,17 @@ function populateCounterNames() {
     let names = [];
 
     if (category === "exec") {
-        for (let i = 1; i < data.length; i++) {
-            const name = data[i][0]?.trim();
-            if (name) names.push(name);
-        }
-
-        names = sortBySeniority(names);
+        names = [...seniorityOrder];
     } else {
-        for (let i = 1; i < nonExecData.length; i++) {
-            const name = nonExecData[i][0]?.trim();
-
-            if (name && !/\bDMBI$/i.test(name)) {
-                names.push(name);
-            }
-        }
-
-        names.sort((a, b) => {
-            let ia = nonExecSeniorityOrder.indexOf(a);
-            let ib = nonExecSeniorityOrder.indexOf(b);
-
-            if (ia === -1) ia = 999;
-            if (ib === -1) ib = 999;
-
-            return ia - ib;
-        });
+        names = nonExecSeniorityOrder
+            .filter(n => n && !/\bDMBI$/i.test(n));
     }
 
     names.forEach(name =>
         sel.add(new Option(getFirstName(name), name))
     );
 }
+
 
 function renderCounterPageData() {
     renderOffDayCounter();
@@ -922,7 +904,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
-    // User activity restarts the 30-minute timer.
+    // User activity restarts the 15-minute timer.
     ["click", "touchstart", "pointerdown", "keydown", "scroll"]
         .forEach(eventName => {
             document.addEventListener(
